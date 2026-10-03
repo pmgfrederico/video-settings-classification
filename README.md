@@ -57,8 +57,6 @@ All three pages run the same engine against the same six sample PCs. Switch the 
 | [mockups/](mockups/) | The three pages above, plus the engine (`engine.js`), the facet grouping (`facets.js`) and shared renderers (`ui.js`). |
 | [tests/engine.test.mjs](tests/engine.test.mjs) | Scenario tests that check the rules against the rigs. |
 | [input/](input/) | The original game config (v2) and the first UI prototype. |
-| [sankey.html](sankey.html), [sankey_rows.json](sankey_rows.json) | An earlier visualization of the classification (reset tier → scope → class → field). |
-| [HANDOVER.md](HANDOVER.md) | How the work got here: the original handover notes and the history of the classification. |
 
 ## Running it
 
