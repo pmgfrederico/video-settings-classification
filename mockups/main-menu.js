@@ -1,4 +1,4 @@
-// Main menu page logic, shared by mockups/main-menu.html and winui/main-menu.html.
+// Main menu page logic: mockups/main-menu.html (and the archived ai-slop/main-menu.html).
 // Each page supplies its own markup and stylesheet; this module only needs the element ids
 // (rig, rigdesc, disc, toGame, toExplorer, rigstrip, health, search, nav, center, ledger, ledCount,
 // inspector, inspTag, back, export, fstat, applySum, applyBtn, revertAll, layer).

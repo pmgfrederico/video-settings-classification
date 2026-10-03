@@ -37,7 +37,7 @@ All three pages run the same engine against the same six sample PCs. Switch the 
 
 [mockups/main-menu.html](mockups/main-menu.html) shows the settings screen the rules produce: hardware-aware upscaler choices, locked fields that link to what controls them, a change ledger that lists implied changes, the cost of applying before you commit, and a Keep/Revert countdown for display changes. Use the Basic / Advanced / Expert switch to see progressive disclosure.
 
-The same page also comes in a WinUI 3 version: [winui/main-menu.html](winui/main-menu.html) shows it as a Windows 11 configurator app in the Fluent design system, with light and dark themes. It runs the same page logic ([mockups/main-menu.js](mockups/main-menu.js)) and the same renderers; only the markup and the stylesheet ([winui/fluent.css](winui/fluent.css)) differ. A third version, [ai-slop/main-menu.html](ai-slop/main-menu.html), uses a dark in-game motorsport style ([ai-slop/motorsport.css](ai-slop/motorsport.css)) based on [input/ai-slop-prototype.html](input/ai-slop-prototype.html).
+The main menu and the in-game pages use the WinUI 3 (Fluent) design system, with light and dark themes: the main menu is laid out as a Windows 11 settings app, and the in-game overlays use translucent acrylic surfaces. The look lives in [mockups/fluent.css](mockups/fluent.css); the page logic is in [mockups/main-menu.js](mockups/main-menu.js).
 
 ### In-game: what can change while you play
 
@@ -56,11 +56,9 @@ The same page also comes in a WinUI 3 version: [winui/main-menu.html](winui/main
 | [schema/](schema/) | The data the engine reads: UI schema v4 (fields × facets), dependency rules v3, the upscaling provider matrix, insight rules and the system-facts schema. Older versions are kept for reference. |
 | [tools/build-ui-schema.mjs](tools/build-ui-schema.mjs) | Generates the UI schema from one compact table, so facet defaults stay consistent. |
 | [fixtures/rigs/](fixtures/rigs/) | Six sample PCs (RTX 5080, RTX 4060 laptop on battery, RTX 4070 + VR, RX 6800, RX 9070 triple-screen, Arc B580) used as facts. |
-| [mockups/](mockups/) | The three pages above, plus the engine (`engine.js`), the facet grouping (`facets.js`), shared renderers (`ui.js`) and the main menu's page logic (`main-menu.js`). |
-| [winui/](winui/) | The main menu restyled as a WinUI 3 app: page markup and a Fluent stylesheet over the same renderers. |
-| [ai-slop/](ai-slop/) | The main menu in a dark motorsport style, over the same renderers. |
+| [mockups/](mockups/) | The three pages above, plus the engine (`engine.js`), the facet grouping (`facets.js`), shared renderers (`ui.js`), the main menu's page logic (`main-menu.js`) and the WinUI 3 stylesheet (`fluent.css`). |
 | [tests/engine.test.mjs](tests/engine.test.mjs) | Scenario tests that check the rules against the rigs. |
-| [input/](input/) | The original game config (v2), the first UI prototype and the design references for the WinUI 3 and motorsport versions. |
+| [input/](input/) | The original game config (v2), the first UI prototype and the WinUI 3 design reference. |
 
 ## Running it
 

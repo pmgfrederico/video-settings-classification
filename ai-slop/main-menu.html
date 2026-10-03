@@ -134,7 +134,7 @@
   <label>Rig <select id="rig"></select></label>
   <span class="rigdesc" id="rigdesc"></span>
   <span>Detail</span><div class="seg" id="disc"></div>
-  <span class="links"><a href="../mockups/main-menu.html" id="toClassic">Original style</a><a href="../winui/main-menu.html" id="toWinui">WinUI 3</a><a href="../mockups/explorer.html" id="toExplorer">Facet explorer →</a><a href="../mockups/in-game.html" id="toGame">In-game →</a></span>
+  <span class="links"><a href="../mockups/main-menu.html" id="toWinui">Current main menu</a><a href="../mockups/explorer.html" id="toExplorer">Facet explorer →</a><a href="../mockups/in-game.html" id="toGame">In-game →</a></span>
 </div>
 <header>
   <div class="logo">Assetto Corsa<span>EVO</span></div>
@@ -163,9 +163,8 @@
 
 <script type="module" src="../mockups/main-menu.js"></script>
 <script>
-  // Keep the other-style links on the same rig and detail level.
-  for (const [id, path] of [['toClassic', '../mockups/main-menu.html'], ['toWinui', '../winui/main-menu.html']])
-    document.getElementById(id).addEventListener('click', e => { e.currentTarget.href = path + location.search; });
+  // Archived style (not linked from the site). Keep the main-menu link on the same rig and detail level.
+  document.getElementById('toWinui').addEventListener('click', e => { e.currentTarget.href = '../mockups/main-menu.html' + location.search; });
 </script>
 </body>
 </html>

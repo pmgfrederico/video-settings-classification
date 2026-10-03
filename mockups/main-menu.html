@@ -7,97 +7,129 @@
 <link rel="icon" href="data:,">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="fluent.css">
+<script src="winui-shell.js"></script>
 <style>
   body { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
-  .devbar { background: #0F172A; color: #CBD5E1; font-family: var(--mono); font-size: 11px; display: flex; align-items: center; gap: 14px; padding: 6px 16px; flex-shrink: 0; }
+  /* Mockup controls: deliberately not Fluent, so they read as outside the app window. */
+  .devbar { background: #0F172A; color: #CBD5E1; font-family: 'JetBrains Mono', monospace; font-size: 11px; line-height: 16px; display: flex; align-items: center; gap: 14px; padding: 6px 16px; flex-shrink: 0; white-space: nowrap; overflow-x: auto; }
+  .devbar .rigdesc { flex: 1 1 0; min-width: 0; }
   .devbar b { color: #fff; letter-spacing: .08em; }
   .devbar select { font: inherit; background: #1E293B; color: #fff; border: 1px solid #334155; border-radius: 4px; padding: 3px 6px; }
-  .devbar .seg { background: #1E293B; border-color: #334155; padding: 2px; }
-  .devbar .seg button { color: #94A3B8; padding: 2px 8px; font-size: 11px; }
-  .devbar .seg button.on { background: #FA5A46; color: #fff; }
-  .devbar a { color: #93C5FD; margin-left: auto; }
-  .devbar .rigdesc { color: #94A3B8; max-width: 520px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  header { height: 60px; flex-shrink: 0; background: rgba(255,255,255,.95); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 22px; gap: 18px; }
-  .logo { font-family: var(--racing); font-weight: 700; font-size: 20px; letter-spacing: .04em; text-transform: uppercase; white-space: nowrap; }
-  .logo span { color: var(--red); margin-left: 4px; }
-  .crumb { font-family: var(--mono); font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; white-space: nowrap; }
-  .rigstrip { display: flex; gap: 8px; align-items: center; margin-left: 12px; overflow: hidden; }
-  .pill { font-family: var(--mono); font-size: 11px; padding: 4px 9px; border: 1px solid var(--border); background: var(--panel-2); border-radius: 5px; white-space: nowrap; color: var(--text-2); display: inline-flex; gap: 5px; align-items: center; }
-  .health { margin-left: auto; cursor: pointer; }
-  .health.warn { border-color: #FDE68A; background: var(--warn-soft); color: var(--warn); }
-  .health.critical { border-color: #FECACA; background: var(--rebuild-soft); color: var(--rebuild); }
-  .health.ok { border-color: #A7F3D0; background: var(--live-soft); color: var(--live); }
-  .search { position: relative; }
-  .search input { width: 220px; padding: 7px 10px 7px 26px; border: 1px solid var(--border); border-radius: 6px; font: inherit; font-size: 12px; background: var(--panel-2); }
-  .search input:focus { outline: none; border-color: var(--red); background: #fff; }
-  .search::before { content: '/'; position: absolute; left: 10px; top: 7px; font-family: var(--mono); color: var(--dim); font-size: 12px; }
-  main { flex: 1; display: flex; overflow: hidden; min-height: 0; }
-  nav.rail { width: 236px; flex-shrink: 0; border-right: 1px solid var(--border); background: rgba(255,255,255,.85); overflow-y: auto; padding: 16px 12px; }
-  .nav-h { font-family: var(--mono); font-size: 10px; font-weight: 600; color: var(--dim); text-transform: uppercase; letter-spacing: .08em; margin: 14px 8px 6px; }
-  .nav-i { display: flex; align-items: center; gap: 9px; width: 100%; text-align: left; border: 0; background: transparent; padding: 9px 10px; border-radius: 6px; font-size: 12.5px; font-weight: 500; color: var(--text-2); }
-  .nav-i:hover { background: #F1F5F9; color: var(--text); }
-  .nav-i.on { background: var(--red); color: #fff; font-weight: 600; }
-  .nav-i .cnt { margin-left: auto; font-family: var(--mono); font-size: 10px; padding: 1px 6px; border-radius: 4px; background: var(--red); color: #fff; }
-  .nav-i.on .cnt { background: rgba(0,0,0,.2); }
-  .nav-i .sev { margin-left: auto; width: 8px; height: 8px; border-radius: 50%; }
+  .devbar .seg { flex-wrap: nowrap; flex-shrink: 0; background: #1E293B; border: 1px solid #334155; border-radius: 6px; padding: 2px; gap: 2px; }
+  .devbar .seg button { color: #94A3B8; padding: 1px 8px; font-size: 11px; line-height: 16px; border-radius: 4px; box-shadow: none; }
+  .devbar .seg button:hover { background: #334155; color: #fff; }
+  .devbar .seg button.on { background: #60A5FA; color: #0F172A; }
+  .devbar .seg button.on::after { display: none; }
+  .devbar a { color: #93C5FD; }
+  .devbar .links { display: flex; gap: 14px; flex-shrink: 0; }
+  .devbar .rigdesc { color: #94A3B8; overflow: hidden; text-overflow: ellipsis; }
+
+  /* Title bar (WinUI custom title bar with back button) */
+  .titlebar { height: 48px; flex-shrink: 0; display: flex; align-items: center; gap: 4px; padding-left: 4px; font-size: 12px; line-height: 16px; }
+  .tb-back { width: 40px; height: 36px; border: 0; background: transparent; border-radius: var(--r-ctl); color: var(--text-2); display: flex; align-items: center; justify-content: center; }
+  .tb-back:hover { background: var(--fill-subtle); color: var(--text); }
+  .tb-back .ms { font-size: 18px; }
+  .tb-icon { width: 16px; height: 16px; border-radius: 3px; background: var(--accent); color: var(--on-accent); display: flex; align-items: center; justify-content: center; margin: 0 12px 0 6px; }
+  .tb-icon .ms { font-size: 12px; }
+  .tb-sub { color: var(--text-2); margin-left: 8px; }
+  .tb-caps { margin-left: auto; display: flex; align-self: flex-start; }
+  .tb-caps span { width: 46px; height: 32px; display: flex; align-items: center; justify-content: center; color: var(--text-2); }
+  .tb-caps .ms { font-size: 16px; }
+  .tb-caps span:last-child:hover { background: #C42B1C; color: #fff; }
+
+  .shell { flex: 1; display: flex; min-height: 0; }
+  /* NavigationView left pane, on Mica */
+  nav.pane { width: 300px; flex-shrink: 0; display: flex; flex-direction: column; min-height: 0; padding: 0 4px; }
+  .search { position: relative; margin: 4px 12px 8px 12px; }
+  .search input { width: 100%; height: 32px; padding: 0 32px 0 11px; font: inherit; font-size: 14px; color: var(--text); background: var(--fill-ctl); border: 1px solid var(--stroke); border-bottom-color: var(--stroke-ctl-bottom); border-radius: var(--r-ctl); }
+  .search input::placeholder { color: var(--text-2); }
+  .search input:focus { outline: none; background: var(--layer); border-bottom: 2px solid var(--accent); padding-bottom: 1px; }
+  .search .ms { position: absolute; right: 10px; top: 8px; color: var(--text-2); pointer-events: none; }
+  #nav { flex: 1; overflow-y: auto; padding: 0 8px 12px; display: flex; flex-direction: column; }
+  .nav-h { font-size: 14px; font-weight: 600; color: var(--text); margin: 16px 12px 6px; }
+  .nav-i { flex-shrink: 0; position: relative; display: flex; align-items: center; gap: 16px; width: 100%; height: 36px; margin: 2px 0; text-align: left; border: 0; background: transparent; padding: 0 12px; border-radius: var(--r-ctl); font-size: 14px; color: var(--text); }
+  .nav-i:hover { background: var(--fill-subtle); }
+  .nav-i.on { background: var(--fill-subtle); }
+  .nav-i.on::before { content: ''; position: absolute; left: 0; top: 50%; height: 16px; margin-top: -8px; width: 3px; border-radius: 2px; background: var(--accent); }
   .nav-i .ms { font-size: 18px; }
-  .disc { margin: 18px 6px 0; padding: 10px; border: 1px solid var(--border); border-radius: 7px; background: var(--panel-2); }
-  .disc .nav-h { margin: 0 0 6px; }
-  .center { flex: 1; overflow-y: auto; padding: 26px 34px 40px; scroll-behavior: smooth; }
-  .group-h { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 4px; }
-  .group-h h1 { font-family: var(--racing); font-size: 26px; text-transform: uppercase; letter-spacing: .03em; margin: 0; }
-  .ctxnote { font-size: 12px; color: var(--muted); margin-bottom: 18px; display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
-  .sec { margin-bottom: 26px; }
-  .sec-h { display: flex; align-items: center; gap: 8px; padding-bottom: 7px; margin-bottom: 10px; border-bottom: 1px solid var(--border); }
-  .sec-h h2 { margin: 0; font-family: var(--racing); font-size: 14px; text-transform: uppercase; letter-spacing: .06em; display: flex; align-items: center; gap: 8px; }
-  .sec-h h2::before { content: ''; width: 5px; height: 14px; background: var(--red); border-radius: 2px; }
-  .sec-h .why { font-size: 11px; color: var(--muted); font-family: var(--mono); }
-  /* Cards flow into as many ~440px columns as the screen allows; wide controls take the full row. */
-  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 440px), 1fr)); gap: 10px; align-items: start; }
-  .cards .card.wide { grid-column: 1 / -1; }
-  /* Large monitors: scale the whole UI up instead of leaving 12px text on a 4K panel. */
+  .nav-i .cnt { margin-left: auto; min-width: 16px; height: 16px; padding: 0 5px; border-radius: 8px; font-size: 11px; line-height: 16px; font-weight: 600; text-align: center; background: var(--accent); color: var(--on-accent); }
+  .nav-i .sev { margin-left: auto; width: 8px; height: 8px; border-radius: 50%; }
+  /* Legend sits at the foot of the pane, where NavigationView keeps footer items. */
+  .disc { margin: auto 4px 0; padding: 12px; border-top: 1px solid var(--stroke-card); }
+  .disc > div { flex-direction: row !important; flex-wrap: wrap; }
+  .disc .nav-h { margin: 0 0 8px; font-size: 12px; }
+
+  /* Content layer: the rounded, slightly lighter surface NavigationView puts content on. */
+  .content { flex: 1; min-width: 0; display: flex; flex-direction: column; background: var(--layer); border: 1px solid var(--stroke-card); border-right: 0; border-bottom: 0; border-top-left-radius: var(--r-card); }
+  .pagebar { display: flex; align-items: center; gap: 8px; padding: 12px 24px 0 40px; flex-wrap: wrap; flex-shrink: 0; }
+  /* Rig summary: plain caption text with glyphs, like the device header in Windows Settings. */
+  .pill { font-size: 12px; line-height: 16px; padding: 4px 0; margin-right: 16px; white-space: nowrap; color: var(--text-2); display: inline-flex; gap: 6px; align-items: center; }
+  .pill .ms { font-size: 16px; }
+  .health { margin: 0 0 0 auto; cursor: pointer; padding: 4px 10px; border-radius: var(--r-ctl); border: 1px solid var(--stroke-card); }
+  .health.warn { color: var(--caution); background: var(--caution-bg); }
+  .health.critical { color: var(--critical); background: var(--critical-bg); }
+  .health.ok { color: var(--success); background: var(--success-bg); }
+  .body { flex: 1; display: flex; min-height: 0; }
+  .center { flex: 1; min-width: 0; overflow-y: auto; padding: 16px 40px 40px; }
+  .center > * { max-width: 1000px; }
+  .group-h h1 { font-family: var(--font-display); font-size: 28px; line-height: 36px; font-weight: 600; margin: 0 0 8px; }
+  .ctxnote { font-size: 12px; color: var(--text-2); margin-bottom: 20px; display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+  .sec { margin-bottom: 28px; }
+  .sec-h { display: flex; align-items: baseline; gap: 10px; margin: 0 0 8px; }
+  .sec-h h2 { margin: 0; font-size: 14px; line-height: 20px; font-weight: 600; }
+  .sec-h .why { font-size: 12px; color: var(--text-2); }
+  /* Windows Settings stacks cards in one column, 4px apart. */
+  .cards { display: flex; flex-direction: column; gap: 4px; }
+  .more { font-size: 12px; color: var(--text-2); padding: 6px 2px; }
+
+  /* Right pane: change ledger + inspector */
+  aside.right { width: 360px; flex-shrink: 0; border-left: 1px solid var(--stroke-card); display: flex; flex-direction: column; min-height: 0; }
+  .panel-h { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 12px 16px 8px; font-size: 14px; font-weight: 600; }
+  .panel-h > span { display: inline-flex; align-items: center; gap: 8px; }
+  .panel-b { padding: 4px 16px 16px; overflow-y: auto; }
+  .ledger { flex: 1 1 55%; display: flex; flex-direction: column; min-height: 0; border-bottom: 1px solid var(--stroke-card); }
+  .inspector { flex: 1 1 45%; display: flex; flex-direction: column; min-height: 0; }
+  #inspTag { font-family: var(--mono); font-size: 11px; font-weight: 400; color: var(--text-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  /* Command bar */
+  footer { height: 64px; flex-shrink: 0; border-top: 1px solid var(--stroke-card); background: var(--mica); display: flex; align-items: center; padding: 0 24px; gap: 8px; }
+  .fstat { font-size: 12px; color: var(--text-2); display: flex; gap: 8px; margin-left: 12px; white-space: nowrap; overflow: hidden; }
+  .apply { margin-left: auto; display: flex; gap: 16px; align-items: center; }
+  .apply-sum { font-size: 12px; line-height: 16px; color: var(--text-2); text-align: right; }
+  .apply-sum b { color: var(--text); font-weight: 600; }
+  #applyBtn { min-width: 120px; }
+
+  /* System & health page */
+  .sys-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 8px; margin-bottom: 28px; }
+  .box { background: var(--card); border: 1px solid var(--stroke-card); border-radius: var(--r-card); padding: 16px; }
+  .box h3 { margin: 0 0 10px; font-size: 12px; font-weight: 400; color: var(--text-2); display: flex; gap: 8px; align-items: center; }
+  .rig-name { font-weight: 600; font-size: 16px; line-height: 22px; }
+  .rig-sub { font-size: 12px; line-height: 18px; color: var(--text-2); margin-top: 4px; }
+  .check, .ins { display: grid; grid-template-columns: 24px 1fr auto; gap: 12px; padding: 12px 0; border-top: 1px solid var(--stroke-card); align-items: start; }
+  .check:first-of-type, .ins:first-of-type { border-top: 0; padding-top: 0; }
+  .check .ms, .ins > .ms { font-size: 20px; }
+  .ok-c { color: var(--success); } .warn-c { color: var(--caution); } .info-c { color: var(--accent-text); } .crit-c { color: var(--critical); } .dim-c { color: var(--text-3); }
+  .check .t, .ins .t { font-size: 14px; } .check .d, .ins .d { color: var(--text-2); font-size: 12px; line-height: 16px; margin-top: 2px; }
+  .check .v { font-size: 12px; color: var(--text-2); white-space: nowrap; }
+  .tech { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .tech th { text-align: left; font-size: 12px; font-weight: 400; color: var(--text-2); padding: 0 8px 8px; border-bottom: 1px solid var(--stroke-card); }
+  .tech td { padding: 10px 8px; border-bottom: 1px solid var(--stroke-card); vertical-align: top; }
+  .tech tr:last-child td { border-bottom: 0; }
+  .tech td:first-child { white-space: nowrap; }
+  .tstat { display: inline-flex; flex-direction: column; gap: 2px; margin: 0 6px 6px 0; padding: 6px 10px; border-radius: var(--r-ctl); border: 1px solid var(--stroke); background: var(--fill-ctl); min-width: 130px; }
+  .tstat .n { font-size: 14px; }
+  .tstat .s { font-size: 12px; }
+  .tstat.active { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); background: var(--accent-subtle); }
+  .tstat.none { opacity: .55; border-style: dashed; background: transparent; }
+  details.unav summary { cursor: pointer; font-size: 14px; color: var(--text-2); }
+  details.unav li { font-size: 12px; margin: 4px 0; } details.unav li span { color: var(--text-2); }
+
+  @media (max-width: 1280px) { aside.right { width: 300px; } nav.pane { width: 240px; } .center { padding: 16px 24px 32px; } .pagebar { padding-left: 24px; } }
   @media (min-width: 2400px) and (min-height: 1300px) { body { zoom: 1.2; height: calc(100vh / 1.2); } }
   @media (min-width: 3400px) and (min-height: 1900px) { body { zoom: 1.5; height: calc(100vh / 1.5); } }
-  .more { font-size: 12px; color: var(--muted); padding: 6px 2px; }
-  aside.right { width: 340px; flex-shrink: 0; border-left: 1px solid var(--border); background: rgba(255,255,255,.85); display: flex; flex-direction: column; min-height: 0; }
-  .panel-h { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-bottom: 1px solid var(--border); background: var(--panel-2); font-family: var(--mono); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
-  .panel-b { padding: 12px 14px; overflow-y: auto; }
-  .ledger { flex: 1 1 55%; display: flex; flex-direction: column; min-height: 0; border-bottom: 1px solid var(--border); }
-  .inspector { flex: 1 1 45%; display: flex; flex-direction: column; min-height: 0; background: rgba(248,250,252,.8); }
-  footer { height: 62px; flex-shrink: 0; border-top: 1px solid var(--border); background: rgba(255,255,255,.97); display: flex; align-items: center; padding: 0 22px; gap: 10px; }
-  .fstat { font-family: var(--mono); font-size: 11px; color: var(--muted); display: flex; gap: 10px; margin-left: 10px; white-space: nowrap; overflow: hidden; }
-  .apply { margin-left: auto; display: flex; gap: 10px; align-items: center; }
-  .apply-sum { font-size: 11.5px; color: var(--muted); text-align: right; line-height: 1.35; }
-  .apply-sum b { color: var(--text); }
-  /* System page */
-  .sys-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; margin-bottom: 22px; }
-  .box { background: rgba(255,255,255,.92); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; }
-  .box h3 { margin: 0 0 10px; font-family: var(--mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: .08em; color: var(--dim); display: flex; gap: 6px; align-items: center; }
-  .rig-name { font-weight: 700; font-size: 15px; }
-  .rig-sub { font-family: var(--mono); font-size: 11.5px; color: var(--muted); margin-top: 3px; line-height: 1.5; }
-  .check { display: grid; grid-template-columns: 22px 1fr auto; gap: 8px; padding: 8px 0; border-top: 1px solid var(--border); align-items: start; }
-  .check:first-of-type { border-top: 0; }
-  .check .ms { font-size: 18px; }
-  .ok-c { color: var(--live); } .warn-c { color: var(--warn); } .info-c { color: var(--info); } .crit-c { color: var(--rebuild); } .dim-c { color: var(--dim); }
-  .check .t { font-weight: 600; font-size: 12.5px; } .check .d { color: var(--muted); font-size: 11.5px; margin-top: 2px; line-height: 1.4; }
-  .check .v { font-family: var(--mono); font-size: 11px; color: var(--text-2); white-space: nowrap; }
-  .tech { width: 100%; border-collapse: collapse; font-size: 12px; }
-  .tech th { text-align: left; font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: var(--dim); padding: 6px 8px; border-bottom: 1px solid var(--border); font-weight: 600; }
-  .tech td { padding: 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
-  .tech td:first-child { font-weight: 600; white-space: nowrap; }
-  .tstat { display: inline-flex; flex-direction: column; gap: 2px; margin: 0 8px 6px 0; padding: 6px 9px; border-radius: 6px; border: 1px solid var(--border); min-width: 130px; }
-  .tstat .n { font-weight: 600; font-size: 12px; }
-  .tstat .s { font-family: var(--mono); font-size: 10px; }
-  .tstat.active { border-color: var(--red); background: var(--red-soft); }
-  .tstat.none { opacity: .55; border-style: dashed; }
-  .ins { display: grid; grid-template-columns: 22px 1fr auto; gap: 10px; padding: 11px 0; border-top: 1px solid var(--border); align-items: start; }
-  .ins:first-of-type { border-top: 0; }
-  .ins .t { font-weight: 600; } .ins .d { color: var(--muted); font-size: 12px; margin-top: 3px; line-height: 1.45; }
-  details.unav summary { cursor: pointer; font-size: 12px; color: var(--muted); }
-  details.unav li { font-size: 12px; margin: 4px 0; } details.unav li span { color: var(--muted); }
 </style>
 </head>
 <body>
@@ -106,30 +138,36 @@
   <label>Rig <select id="rig"></select></label>
   <span class="rigdesc" id="rigdesc"></span>
   <span>Detail</span><div class="seg" id="disc"></div>
-  <a href="explorer.html" id="toExplorer">Facet explorer →</a>
-  <a href="in-game.html" id="toGame" style="margin-left:0">Open in-game mockup →</a>
+  <span>Theme</span><div class="seg" id="theme"></div>
+  <span class="links"><a href="explorer.html" id="toExplorer">Facet explorer →</a><a href="in-game.html" id="toGame">In-game →</a></span>
 </div>
-<header>
-  <div class="logo">Assetto Corsa<span>EVO</span></div>
-  <div class="crumb">/ Video Settings</div>
-  <div class="rigstrip" id="rigstrip"></div>
-  <div class="pill health" id="health"></div>
-  <div class="search"><input id="search" placeholder="Search settings" autocomplete="off"></div>
-</header>
-<main>
-  <nav class="rail" id="nav"></nav>
-  <section class="center" id="center"></section>
-  <aside class="right">
-    <div class="ledger"><div class="panel-h"><span>Changes <span id="ledCount"></span></span><button class="icon-btn" id="revertAll" title="Revert all"><span class="ms">restart_alt</span></button></div><div class="panel-b" id="ledger"></div></div>
-    <div class="inspector"><div class="panel-h"><span>Inspector</span><span id="inspTag" class="mono" style="font-weight:500;text-transform:none;letter-spacing:0;color:var(--muted)"></span></div><div class="panel-b" id="inspector"></div></div>
-  </aside>
-</main>
-<footer>
-  <button class="btn" id="back">Back</button>
-  <button class="btn" id="export">Export config</button>
-  <div class="fstat" id="fstat"></div>
-  <div class="apply"><div class="apply-sum" id="applySum"></div><button class="btn btn-primary" id="applyBtn">Apply</button></div>
-</footer>
+<div class="titlebar">
+  <button class="tb-back" id="back" title="Back"><span class="ms">arrow_back</span></button>
+  <span class="tb-icon"><span class="ms">sports_motorsports</span></span>
+  <span>Video settings</span><span class="tb-sub">Configurator · Direct3D 12</span>
+  <span class="tb-caps" aria-hidden="true"><span><span class="ms">remove</span></span><span><span class="ms">crop_square</span></span><span><span class="ms">close</span></span></span>
+</div>
+<div class="shell">
+  <nav class="pane">
+    <div class="search"><input id="search" placeholder="Search settings" autocomplete="off"><span class="ms">search</span></div>
+    <div id="nav"></div>
+  </nav>
+  <div class="content">
+    <div class="pagebar"><div style="display:contents" id="rigstrip"></div><div class="pill health" id="health"></div></div>
+    <div class="body">
+      <section class="center" id="center"></section>
+      <aside class="right">
+        <div class="ledger"><div class="panel-h"><span>Changes <span id="ledCount"></span></span><button class="icon-btn" id="revertAll" title="Revert all"><span class="ms">restart_alt</span></button></div><div class="panel-b" id="ledger"></div></div>
+        <div class="inspector"><div class="panel-h"><span>Inspector</span><span id="inspTag"></span></div><div class="panel-b" id="inspector"></div></div>
+      </aside>
+    </div>
+    <footer>
+      <button class="btn" id="export"><span class="ms">ios_share</span>Export config</button>
+      <div class="fstat" id="fstat"></div>
+      <div class="apply"><div class="apply-sum" id="applySum"></div><button class="btn btn-primary" id="applyBtn">Apply</button></div>
+    </footer>
+  </div>
+</div>
 <div id="layer"></div>
 
 <script type="module" src="main-menu.js"></script>
