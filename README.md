@@ -84,3 +84,8 @@ The mockups need HTTP because they load the schemas with `fetch`. Use the dark b
 - **Pin a behavior:** add a scenario to [tests/engine.test.mjs](tests/engine.test.mjs).
 
 Cost and performance figures in the mockups are illustrative estimates and are labelled "est." everywhere.
+
+## Caveats
+
+- **Apply tiers are hypotheses.** The Live / Quick reload / Rebuild assignments are informed guesses for a custom DX12 engine using NVIDIA Streamline (DLSS) and FidelityFX (FSR). A config file doesn't reveal resource lifetimes, preallocation, PSO caching or how the SDKs are integrated. Validate each tier against the renderer before relying on it.
+- **Check the source config.** The settings payload was first shared as pasted text, and some values were cut off, including `anisotropicFilteringQuality` and `screenSpaceShadowQuality`. [input/raw_settings_config.json](input/raw_settings_config.json) is valid JSON, but compare it with the game's own config before treating it as authoritative.
