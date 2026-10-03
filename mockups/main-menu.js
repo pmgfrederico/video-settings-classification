@@ -103,7 +103,8 @@ function renderNav() {
   $('nav').innerHTML = html;
 }
 
-const ctx = () => ({ bundle, vm, focus: S.focus, disclosure: S.disclosure });
+// A page can set window.cardIcon = field => icon name to give setting cards a header icon.
+const ctx = () => ({ bundle, vm, focus: S.focus, disclosure: S.disclosure, icon: window.cardIcon });
 
 function renderCenter() {
   const el = $('center');

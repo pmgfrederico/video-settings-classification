@@ -71,7 +71,10 @@ export function renderCard(f, ctx) {
   if (f.state !== 'derived') badges.push(tierBadge(f.tier));
   const proposed = f.engineSupport === 'proposed' ? '<span class="badge b-proposed" title="Not in today\'s v2 config — introduced by the v4 provider abstraction">v4 proposal</span>' : '';
 
-  return `<div class="${cls}" id="card-${cssId(f.path)}" data-focus="${f.path}">
+  // Optional header icon: pages that want one pass ctx.icon(f) → icon name.
+  const icon = ctx.icon?.(f);
+  return `<div class="${cls}${icon ? ' has-icon' : ''}" id="card-${cssId(f.path)}" data-focus="${f.path}">
+    ${icon ? `<span class="card-icon"><span class="ms">${esc(icon)}</span></span>` : ''}
     <div class="card-head">
       <div><div class="card-label">${esc(f.label)} ${proposed}</div>${f.help ? `<div class="card-help">${esc(f.help)}</div>` : ''}</div>
       <div class="badges">${badges.join('')}</div>

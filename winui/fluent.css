@@ -63,7 +63,7 @@ a:hover { text-decoration: underline; }
 ::-webkit-scrollbar { width: 6px; height: 6px; } ::-webkit-scrollbar-thumb { background: var(--fill-strong); border-radius: 3px; } ::-webkit-scrollbar-track { background: transparent; }
 
 /* ---------- badges (InfoBadge / tag style) ---------- */
-.badge { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; line-height: 16px; font-weight: 400; padding: 1px 7px; border-radius: var(--r-ctl); border: 1px solid transparent; white-space: nowrap; }
+.badge { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; line-height: 16px; font-weight: 400; padding: 1px 7px; border-radius: var(--r-ctl); border: 1px solid var(--stroke-card); white-space: nowrap; }
 .badge .ms { font-size: 13px; vertical-align: 0; }
 .b-t3 { color: var(--success); background: var(--success-bg); }
 .b-t2 { color: var(--caution); background: var(--caution-bg); }
@@ -76,38 +76,48 @@ a:hover { text-decoration: underline; }
 .b-proposed { color: var(--text-3); border: 1px dashed var(--stroke-strong); background: transparent; }
 .b-rec { color: var(--success); background: var(--success-bg); }
 
-/* ---------- setting card (SettingsCard: header + description on the left, control on the right) ---------- */
-.card { background: var(--card); border: 1px solid var(--stroke-card); border-radius: var(--r-card); box-shadow: var(--shadow-card); padding: 14px 16px; display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 24px; row-gap: 10px; align-items: center; position: relative; scroll-margin-top: 16px; }
-.card:hover { background: var(--card-2); }
-.card.is-focus { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
-.card.is-pending::before, .card.is-implied::before { content: ''; position: absolute; left: -1px; top: 50%; height: 16px; margin-top: -8px; width: 3px; border-radius: 2px; background: var(--accent); }
-.card.is-implied::before { background: var(--implied); }
-.card.wide .ctl, .card .readouts, .card .reason { grid-column: 1 / -1; }
+/* ---------- setting card (Toolkit SettingsCard / SettingsExpander) ----------
+   Row: header icon · header + description · control on the right. Lists of choices (provider tiles,
+   chips) become the expander's item rows under the header, aligned with the header text. */
+.card { --indent: 16px; background: var(--card); border: 1px solid var(--stroke-card); border-radius: var(--r-card); min-height: 68px; padding: 13px 16px; display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 16px; row-gap: 8px; align-items: center; position: relative; scroll-margin-top: 16px; }
+.card.has-icon { --indent: 68px; grid-template-columns: 36px minmax(0, 1fr) auto; }
+.card-icon { width: 36px; height: 36px; border-radius: var(--r-ctl); background: var(--fill-subtle); color: var(--text); display: flex; align-items: center; justify-content: center; align-self: start; margin-top: 2px; }
+.card-icon .ms { font-size: 20px; }
+.card.is-pending .card-icon { background: var(--accent-subtle); color: var(--accent-text); }
+/* Selected card (drives the inspector): the same 3px pill NavigationView uses for selection. */
+.card.is-focus::before { content: ''; position: absolute; left: -1px; top: 26px; height: 16px; width: 3px; border-radius: 2px; background: var(--accent); }
+.card.is-focus { background: var(--card-2); }
+.card .readouts, .card .reason, .card.wide .ctl { grid-column: 1 / -1; }
+.card.has-icon .readouts, .card.has-icon .reason, .card.has-icon.wide .ctl { grid-column: 2 / -1; }
 .card.st-locked .ctl, .card.st-blocked .ctl, .card.st-readOnly .ctl { opacity: .5; }
-/* Header: label, then badges inline, then the description on its own line. */
-.card-head { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; min-width: 0; }
+/* Header: label, then status tags inline, then the description on its own line. */
+.card-head { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; min-width: 0; }
 .card-head > div:first-child { display: contents; }
-.card-label { font-size: 14px; line-height: 20px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.card-label { font-size: 14px; line-height: 20px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+/* Modified-this-session dot, as in the prototype. */
+.card.is-pending .card-label::after { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); order: 5; }
 .badges { display: flex; gap: 4px; flex-wrap: wrap; order: 1; }
+/* Keep only the tags that change a decision: Live is the default, Pending has the dot, Locked has its reason line. */
+.card .badges .b-t3, .card .badges .b-pending, .card .badges .b-lock { display: none; }
 .card-help { order: 2; flex-basis: 100%; color: var(--text-2); font-size: 12px; line-height: 16px; }
 .ctl { justify-self: end; min-width: 0; }
 .card.wide .ctl { justify-self: stretch; }
-.readouts { display: flex; flex-direction: column; gap: 2px; }
-.readout { font-family: var(--mono); font-size: 12px; line-height: 16px; color: var(--text-2); display: flex; gap: 6px; align-items: baseline; }
-.readout::before { content: '↳'; color: var(--text-3); }
+.readouts { display: flex; flex-direction: column; gap: 2px; margin-top: -4px; }
+.readout { font-size: 12px; line-height: 16px; color: var(--text-2); }
 .readout.warn { color: var(--caution); font-weight: 600; }
-/* Reasons read as a compact InfoBar inside the card. */
-.reason { font-size: 12px; line-height: 16px; color: var(--text); background: var(--fill-subtle-2); border: 1px solid var(--stroke-card); border-radius: var(--r-ctl); padding: 8px 10px; display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
-.reason > .ms { color: var(--text-2); }
-.reason.blocked { background: var(--caution-bg); } .reason.blocked > .ms { color: var(--caution); }
-.reason.implied { background: var(--implied-bg); } .reason.implied > .ms { color: var(--implied); }
+/* Reasons: secondary text with a glyph; a blocked setting gets a Warning InfoBar. */
+.reason { font-size: 12px; line-height: 16px; color: var(--text-2); display: flex; gap: 6px; align-items: baseline; flex-wrap: wrap; margin-top: -4px; }
+.reason > .ms { font-size: 14px; vertical-align: -2px; }
+.reason.blocked { color: var(--text); background: var(--caution-bg); border: 1px solid var(--stroke-card); border-radius: var(--r-ctl); padding: 8px 12px; margin-top: 0; }
+.reason.blocked > .ms { color: var(--caution); }
+.reason.implied > .ms { color: var(--implied); }
 .reason .fix { font-weight: 600; }
-.linkish { background: none; border: 0; padding: 0; color: var(--accent-text); font-weight: 400; }
+.linkish { background: none; border: 0; padding: 0; color: var(--accent-text); font-weight: 400; font-size: inherit; }
 .linkish:hover { text-decoration: underline; }
 
 /* ---------- controls ---------- */
 /* Shared control surface: ControlFillColorDefault with the darker bottom edge WinUI controls have. */
-.seg, .chip, .tile, select.sel, .btn, .slider output { border: 1px solid var(--stroke); border-bottom-color: var(--stroke-ctl-bottom); background: var(--fill-ctl); border-radius: var(--r-ctl); }
+.seg, select.sel, .btn, .slider output { border: 1px solid var(--stroke); border-bottom-color: var(--stroke-ctl-bottom); background: var(--fill-ctl); border-radius: var(--r-ctl); }
 /* Segmented (Community Toolkit Segmented control) */
 .seg { display: inline-flex; flex-wrap: wrap; padding: 2px; gap: 2px; background: var(--fill-subtle-2); }
 .seg button { border: 0; background: transparent; padding: 4px 12px; border-radius: 3px; font-size: 14px; color: var(--text-2); position: relative; }
@@ -115,29 +125,30 @@ a:hover { text-decoration: underline; }
 .seg button.on { background: var(--card); color: var(--text); box-shadow: 0 0 0 1px var(--stroke); }
 .seg button.on::after { content: ''; position: absolute; left: 50%; bottom: 2px; width: 16px; margin-left: -8px; height: 3px; border-radius: 2px; background: var(--accent); }
 .seg button:disabled { color: var(--text-dis); }
-/* Chips (GridView items) */
-.chips { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; }
-.chip { text-align: left; padding: 8px 12px; display: flex; flex-direction: column; gap: 2px; }
-.chip:hover:not(:disabled) { background: var(--fill-ctl-hover); }
-.chip.on { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); background: var(--accent-subtle); }
-.chip:disabled { color: var(--text-dis); }
-.chip-label { font-size: 14px; display: flex; gap: 6px; align-items: center; }
-.chip-sub { font-family: var(--mono); font-size: 11px; line-height: 15px; color: var(--text-2); }
-/* Provider tiles (RadioButtons laid out as cards) */
-.tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; }
-.tile { text-align: left; padding: 12px; display: flex; flex-direction: column; gap: 6px; }
-.tile:hover:not(:disabled) { background: var(--fill-ctl-hover); }
-.tile.on { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); background: var(--accent-subtle); }
-.tile:disabled { background: transparent; }
-.tile:disabled .tile-label { color: var(--text-dis); }
-.tile-top { display: flex; justify-content: space-between; gap: 6px; align-items: center; }
-.tile-label { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
-.tile-label .dot { width: 20px; height: 20px; border-radius: 50%; border: 1px solid var(--stroke-strong); background: var(--fill-subtle-2); flex-shrink: 0; }
-.tile.on .dot { border-color: var(--accent); background: radial-gradient(circle, var(--on-accent) 0 4px, var(--accent) 4.5px); }
-.tile-sub { font-size: 12px; line-height: 16px; color: var(--text-2); }
-.tile-why { font-size: 12px; line-height: 16px; color: var(--caution); }
-.tile-why.dep { color: var(--text-2); }
+/* Expander items: the choice list runs edge to edge under the header, one RadioButton row per option. */
+.card.wide .ctl:has(.tiles, .chips) { grid-column: 1 / -1; order: 10; margin: 5px -16px -13px; border-top: 1px solid var(--stroke-card); background: var(--card-2); border-radius: 0 0 7px 7px; overflow: hidden; }
+.card.st-locked .ctl:has(.tiles, .chips), .card.st-blocked .ctl:has(.tiles, .chips) { opacity: 1; }
+.tiles, .chips { display: flex; flex-direction: column; }
+.tile, .chip { text-align: left; border: 0; border-top: 1px solid var(--stroke-card); border-radius: 0; background: transparent; padding: 12px 16px 12px var(--indent); }
+.tile:first-child, .chip:first-child { border-top: 0; }
+.tile:hover:not(:disabled), .chip:hover:not(:disabled) { background: var(--fill-subtle-2); }
+.tile:disabled, .chip:disabled { color: var(--text-dis); }
+/* RadioButton glyph: 20px ring; checked = accent fill with a light center dot. */
+.tile-label .dot, .chip::before { width: 20px; height: 20px; border-radius: 50%; border: 1px solid var(--stroke-strong); background: var(--fill-subtle-2); flex-shrink: 0; }
+.tile.on .dot, .chip.on::before { border-color: var(--accent); background: radial-gradient(circle, var(--on-accent) 0 5px, var(--accent) 5.5px); }
+.tile:disabled .dot, .chip:disabled::before { border-color: var(--text-dis); }
+.tile { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; }
+.tile-top { display: flex; align-items: center; }
+.tile-label { font-size: 14px; display: flex; align-items: center; gap: 8px; }
 .tile-tags { display: flex; gap: 4px; flex-wrap: wrap; }
+.tile-sub, .tile-why { flex-basis: 100%; padding-left: 28px; font-size: 12px; line-height: 16px; color: var(--text-2); }
+.tile-why { color: var(--caution); }
+.tile-why.dep { color: var(--text-2); }
+.tile:disabled .tile-sub { color: var(--text-dis); }
+.chip { display: grid; grid-template-columns: 20px 1fr; column-gap: 8px; align-items: center; }
+.chip::before { content: ''; grid-row: 1 / span 2; align-self: start; }
+.chip-label { font-size: 14px; display: flex; gap: 6px; align-items: center; }
+.chip-sub { grid-column: 2; font-size: 12px; line-height: 16px; color: var(--text-2); }
 /* Slider */
 .slider { display: flex; align-items: center; gap: 12px; }
 .slider input[type=range] { -webkit-appearance: none; appearance: none; width: 240px; height: 4px; background: var(--fill-track); border-radius: 2px; outline: none; }
