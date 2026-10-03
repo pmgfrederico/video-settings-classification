@@ -150,6 +150,20 @@
       "effects": [ { "action": "lock", "targets": ["graphics.ambientOcclusionType"], "reason": "Ambient occlusion is off" } ]
     },
     {
+      "id": "nr_unsupported_forces_off",
+      "rule": "R1",
+      "controller": "graphics.neural_rendering.mode",
+      "when": { "ref": "facts:sdk.dlss_nr.supported", "neq": true },
+      "effects": [ { "action": "force", "targets": ["graphics.neural_rendering.mode"], "value": "NeuralRendering_Off", "reason": "Needs an RTX 50 series GPU" } ]
+    },
+    {
+      "id": "nr_children_when_off",
+      "rule": "R3",
+      "controller": "graphics.neural_rendering.mode",
+      "when": { "any": [ { "ref": "cfg:graphics.neural_rendering.mode", "eq": "NeuralRendering_Off" }, { "ref": "facts:sdk.dlss_nr.supported", "neq": true } ] },
+      "effects": [ { "action": "hide", "quiet": true, "targets": ["graphics.neural_rendering.intensity", "graphics.neural_rendering.tone_strength", "graphics.neural_rendering.structure_strength", "graphics.neural_rendering.skin_structure_strength", "graphics.neural_rendering.auto_mask", "graphics.neural_rendering.style", "graphics.neural_rendering.preset", "graphics.neural_rendering.performance_mode"] } ]
+    },
+    {
       "id": "panini_off",
       "rule": "R3",
       "controller": "display.panini.distance",

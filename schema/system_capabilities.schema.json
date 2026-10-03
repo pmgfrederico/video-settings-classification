@@ -98,6 +98,7 @@
       "properties": {
         "dlss": { "$ref": "#/definitions/feature" },
         "dlss_g": { "$ref": "#/definitions/feature" },
+        "dlss_nr": { "$ref": "#/definitions/feature", "description": "DLSS neural rendering (Streamline sl.dlss_nr, feature id 1004). Officially RTX 50 series only. The game reports it as graphics.is_dlss_neural_rendering_available." },
         "reflex": { "$ref": "#/definitions/feature" },
         "fsr4": { "$ref": "#/definitions/feature" },
         "fsr31": { "$ref": "#/definitions/feature" },

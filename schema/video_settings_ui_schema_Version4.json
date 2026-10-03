@@ -185,6 +185,10 @@
           "label": "Post-process & exposure"
         },
         {
+          "id": "neural",
+          "label": "Neural rendering"
+        },
+        {
           "id": "camera",
           "label": "Camera effects"
         },
@@ -4297,6 +4301,39 @@
         "type": "number"
       }
     },
+    "graphics.photoLook": {
+      "label": "Photo look",
+      "help": "A lightweight filter that pushes the final image toward a photographic look. Much cheaper than neural rendering and runs on any GPU.",
+      "group": "look",
+      "section": "grading",
+      "scope": [
+        "general"
+      ],
+      "tier": 3,
+      "editableIn": [
+        "menu",
+        "session.paused",
+        "session.live"
+      ],
+      "preview": "live-visual",
+      "impact": [
+        "gpu"
+      ],
+      "disclosure": "basic",
+      "role": "independent",
+      "control": "slider",
+      "range": {
+        "min": 0,
+        "max": 1,
+        "step": 0.01
+      },
+      "engineSupport": "shipping",
+      "note": "New in 0.11.0-beta. Range assumed 0–1.",
+      "v2": {
+        "path": "graphics.photoLook",
+        "type": "number"
+      }
+    },
     "graphics.veil": {
       "label": "Veiling glare",
       "help": "Simulates glare scattering in the eye or lens.",
@@ -4333,6 +4370,342 @@
       "engineSupport": "shipping",
       "v2": {
         "path": "graphics.veil",
+        "type": "string"
+      }
+    },
+    "graphics.neural_rendering.mode": {
+      "label": "Neural rendering",
+      "help": "DLSS 5 neural rendering. An AI model reworks the final image for more lifelike lighting and materials. It runs on the final output, whatever upscaler is used, and costs a lot of GPU time.",
+      "group": "look",
+      "section": "neural",
+      "scope": [
+        "general"
+      ],
+      "tier": 2,
+      "editableIn": [
+        "menu",
+        "session.paused"
+      ],
+      "preview": "snapshot",
+      "impact": [
+        "gpu",
+        "vram"
+      ],
+      "disclosure": "basic",
+      "role": "controller",
+      "control": "segmented",
+      "options": [
+        {
+          "value": "NeuralRendering_Off",
+          "label": "Off"
+        },
+        {
+          "value": "NeuralRendering_Performance",
+          "label": "Performance"
+        },
+        {
+          "value": "NeuralRendering_Quality",
+          "label": "Quality"
+        }
+      ],
+      "gate": {
+        "hw": {
+          "ref": "facts:sdk.dlss_nr.supported",
+          "eq": true
+        },
+        "hwReason": "Needs an RTX 50 series GPU"
+      },
+      "cost": {
+        "gpu": {
+          "NeuralRendering_Off": 1,
+          "NeuralRendering_Performance": 1.15,
+          "NeuralRendering_Quality": 1.3
+        }
+      },
+      "engineSupport": "shipping",
+      "v2": {
+        "path": "graphics.neural_rendering.mode",
+        "type": "string",
+        "capability": "graphics.is_dlss_neural_rendering_available"
+      },
+      "dx12": "Loads or unloads the Streamline sl.dlss_nr feature on the resident proxy swapchain. Assumed quick reload; confirm in game.",
+      "note": "Off / Performance / Quality is provisional. Cost multipliers are guesses."
+    },
+    "graphics.neural_rendering.intensity": {
+      "label": "Neural rendering intensity",
+      "help": "How strongly the neural result replaces the rendered image.",
+      "group": "look",
+      "section": "neural",
+      "scope": [
+        "general"
+      ],
+      "tier": 3,
+      "editableIn": [
+        "menu",
+        "session.paused",
+        "session.live"
+      ],
+      "preview": "live-visual",
+      "impact": [],
+      "disclosure": "basic",
+      "role": "dependent",
+      "control": "slider",
+      "range": {
+        "min": 0,
+        "max": 1,
+        "step": 0.01
+      },
+      "engineSupport": "shipping",
+      "v2": {
+        "path": "graphics.neural_rendering.intensity",
+        "type": "number"
+      }
+    },
+    "graphics.neural_rendering.tone_strength": {
+      "label": "Tone strength",
+      "help": "How much the model changes lighting and color tone.",
+      "group": "look",
+      "section": "neural",
+      "scope": [
+        "general"
+      ],
+      "tier": 3,
+      "editableIn": [
+        "menu",
+        "session.paused",
+        "session.live"
+      ],
+      "preview": "live-visual",
+      "impact": [],
+      "disclosure": "advanced",
+      "role": "dependent",
+      "control": "slider",
+      "range": {
+        "min": 0,
+        "max": 1,
+        "step": 0.01
+      },
+      "engineSupport": "shipping",
+      "v2": {
+        "path": "graphics.neural_rendering.tone_strength",
+        "type": "number"
+      }
+    },
+    "graphics.neural_rendering.structure_strength": {
+      "label": "Structure strength",
+      "help": "How much the model changes surface detail.",
+      "group": "look",
+      "section": "neural",
+      "scope": [
+        "general"
+      ],
+      "tier": 3,
+      "editableIn": [
+        "menu",
+        "session.paused",
+        "session.live"
+      ],
+      "preview": "live-visual",
+      "impact": [],
+      "disclosure": "advanced",
+      "role": "dependent",
+      "control": "slider",
+      "range": {
+        "min": 0,
+        "max": 1,
+        "step": 0.01
+      },
+      "engineSupport": "shipping",
+      "v2": {
+        "path": "graphics.neural_rendering.structure_strength",
+        "type": "number"
+      }
+    },
+    "graphics.neural_rendering.skin_structure_strength": {
+      "label": "Skin structure strength",
+      "help": "Structure strength on skin, such as drivers and crew.",
+      "group": "look",
+      "section": "neural",
+      "scope": [
+        "general"
+      ],
+      "tier": 3,
+      "editableIn": [
+        "menu",
+        "session.paused",
+        "session.live"
+      ],
+      "preview": "live-visual",
+      "impact": [],
+      "disclosure": "expert",
+      "role": "dependent",
+      "control": "slider",
+      "range": {
+        "min": 0,
+        "max": 1,
+        "step": 0.01
+      },
+      "engineSupport": "shipping",
+      "v2": {
+        "path": "graphics.neural_rendering.skin_structure_strength",
+        "type": "number"
+      }
+    },
+    "graphics.neural_rendering.auto_mask": {
+      "label": "Automatic masking",
+      "help": "Lets the model pick out regions to treat separately.",
+      "group": "look",
+      "section": "neural",
+      "scope": [
+        "general"
+      ],
+      "tier": 3,
+      "editableIn": [
+        "menu",
+        "session.paused",
+        "session.live"
+      ],
+      "preview": "live-visual",
+      "impact": [],
+      "disclosure": "expert",
+      "role": "dependent",
+      "control": "toggle",
+      "engineSupport": "shipping",
+      "note": "Meaning unconfirmed.",
+      "v2": {
+        "path": "graphics.neural_rendering.auto_mask",
+        "type": "boolean"
+      }
+    },
+    "graphics.neural_rendering.style": {
+      "label": "Style",
+      "group": "look",
+      "section": "neural",
+      "scope": [
+        "general"
+      ],
+      "tier": 3,
+      "editableIn": [
+        "menu",
+        "session.paused",
+        "session.live"
+      ],
+      "preview": "live-visual",
+      "impact": [],
+      "disclosure": "advanced",
+      "role": "dependent",
+      "control": "segmented",
+      "options": [
+        {
+          "value": 0,
+          "label": "0"
+        },
+        {
+          "value": 1,
+          "label": "1"
+        },
+        {
+          "value": 2,
+          "label": "2"
+        },
+        {
+          "value": 3,
+          "label": "3"
+        }
+      ],
+      "engineSupport": "shipping",
+      "note": "Placeholder options; meaning unknown.",
+      "v2": {
+        "path": "graphics.neural_rendering.style",
+        "type": "integer"
+      }
+    },
+    "graphics.neural_rendering.preset": {
+      "label": "Model preset",
+      "group": "look",
+      "section": "neural",
+      "scope": [
+        "general"
+      ],
+      "tier": 2,
+      "editableIn": [
+        "menu",
+        "session.paused"
+      ],
+      "preview": "snapshot",
+      "impact": [
+        "gpu"
+      ],
+      "disclosure": "expert",
+      "role": "dependent",
+      "control": "segmented",
+      "options": [
+        {
+          "value": 0,
+          "label": "0"
+        },
+        {
+          "value": 1,
+          "label": "1"
+        },
+        {
+          "value": 2,
+          "label": "2"
+        },
+        {
+          "value": 3,
+          "label": "3"
+        }
+      ],
+      "engineSupport": "shipping",
+      "note": "Placeholder options; meaning unknown.",
+      "v2": {
+        "path": "graphics.neural_rendering.preset",
+        "type": "integer"
+      }
+    },
+    "graphics.neural_rendering.performance_mode": {
+      "label": "Neural rendering performance",
+      "help": "Trades neural rendering detail for speed.",
+      "group": "look",
+      "section": "neural",
+      "scope": [
+        "general"
+      ],
+      "tier": 2,
+      "editableIn": [
+        "menu",
+        "session.paused"
+      ],
+      "preview": "snapshot",
+      "impact": [
+        "gpu"
+      ],
+      "disclosure": "advanced",
+      "role": "dependent",
+      "control": "segmented",
+      "options": [
+        {
+          "value": "NeuralRenderingPerformance_UltraQuality",
+          "label": "Ultra Quality"
+        },
+        {
+          "value": "NeuralRenderingPerformance_Quality",
+          "label": "Quality"
+        },
+        {
+          "value": "NeuralRenderingPerformance_Balanced",
+          "label": "Balanced"
+        },
+        {
+          "value": "NeuralRenderingPerformance_Performance",
+          "label": "Performance"
+        }
+      ],
+      "engineSupport": "shipping",
+      "note": "Provisional list; only Ultra Quality is confirmed.",
+      "v2": {
+        "path": "graphics.neural_rendering.performance_mode",
         "type": "string"
       }
     },
@@ -4588,6 +4961,7 @@
     "graphics.can_use_fsr_frame_generation_2x",
     "graphics.can_use_fsr_frame_generation_3x",
     "graphics.can_use_fsr_frame_generation_4x",
+    "graphics.is_dlss_neural_rendering_available",
     "vr.can_use_eye_tracking"
   ]
 }

@@ -15,11 +15,11 @@ const bundle = {
   providers: load('schema/upscaling_providers.json'),
   insights: load('schema/insights_rules.json'),
 };
-const v2 = load('input/raw_settings_config.json');
+const v2 = load('input/raw-settings-0.11.0-beta.json');
 const rig = id => load(`fixtures/rigs/${id}.json`);
 
-function run(id, pending = [], context) {
-  const facts = rig(id);
+function run(id, pending = [], context, configOverrides) {
+  const facts = configOverrides ? { ...rig(id), configOverrides } : rig(id);
   const base = fromV2(v2, facts, bundle);
   return evaluate({ bundle, facts, base, pending, context, disclosure: 'expert' });
 }
@@ -105,12 +105,52 @@ test('R7: triple geometry only visible on the triple rig', () => {
 });
 
 test('R5: turning FG on forces Reflex and adds an implied ledger child', () => {
-  const vm = run('rtx5080-single', [{ path: 'graphics.upscaling.provider', value: 'dlss' }, { path: 'graphics.frame_generation.provider', value: 'dlss_fg' }]);
+  const vm = run('rtx5080-single', [{ path: 'graphics.upscaling.provider', value: 'dlss' }, { path: 'graphics.frame_generation.provider', value: 'dlss_fg' }], undefined, { 'graphics.reflex': 'Reflex_Off' });
   assert.equal(vm.cfg['graphics.latency.mode'], 'reflex');
   const fg = vm.ledger.entries.find(e => e.path === 'graphics.frame_generation.provider');
   assert.ok(fg.children.some(c => c.path === 'graphics.latency.mode' && c.to === 'reflex'));
   const lat = vm.fields['graphics.latency.mode'];
   assert.equal(lat.options.find(o => o.value === 'off').status, 'locked');
+});
+
+test('neural rendering: offered on RTX 50, parameters appear only when it is on', () => {
+  const off = run('rtx5080-single');
+  assert.equal(off.fields['graphics.neural_rendering.mode'].visible, true);
+  assert.equal(off.fields['graphics.neural_rendering.intensity'].visible, false);
+  const on = run('rtx5080-single', [{ path: 'graphics.neural_rendering.mode', value: 'NeuralRendering_Quality' }]);
+  assert.equal(on.fields['graphics.neural_rendering.intensity'].visible, true);
+  assert.equal(on.fields['graphics.neural_rendering.intensity'].state, 'editable');
+  assert.ok(on.est.gpuMs > off.est.gpuMs);
+  assert.ok(!on.insights.some(i => i.id === 'nr_multi_view_cost'));
+});
+
+test('neural rendering: other GPUs list it as unavailable with the RTX 50 reason', () => {
+  for (const id of ['rtx4070-vr-openxr', 'rtx4060-laptop-battery', 'rx6800-single', 'arc-b580-dualccd']) {
+    const vm = run(id);
+    const f = vm.fields['graphics.neural_rendering.mode'];
+    assert.equal(f.visible, false, id);
+    assert.equal(f.hiddenKind, 'hw', id);
+    assert.ok(vm.unavailable.some(u => u.path === 'graphics.neural_rendering.mode' && u.reason === 'Needs an RTX 50 series GPU'), id);
+    assert.ok(!vm.unavailable.some(u => u.path === 'graphics.neural_rendering.intensity'), id);
+  }
+});
+
+test('neural rendering: a saved On value is forced off on unsupported hardware', () => {
+  const vm = run('rtx4070-vr-openxr', [], undefined, { 'graphics.neural_rendering.mode': 'NeuralRendering_Quality' });
+  assert.equal(vm.cfg['graphics.neural_rendering.mode'], 'NeuralRendering_Off');
+});
+
+test('neural rendering: warns about its cost on triple screens and in VR', () => {
+  // No fixture pairs an RTX 50 card with triple screens or VR, so grant dlss_nr to those rigs here.
+  for (const [id, mode] of [['rx9070-triple', 'triple'], ['rtx4070-vr-openxr', 'vr']]) {
+    const r = rig(id);
+    const facts = { ...r, sdk: { ...r.sdk, dlss_nr: { supported: true } } };
+    const base = fromV2(v2, facts, bundle);
+    const pending = [{ path: 'display.mode', value: mode }, { path: 'graphics.neural_rendering.mode', value: 'NeuralRendering_Performance' }];
+    const vm = evaluate({ bundle, facts, base, pending, disclosure: 'expert' });
+    assert.equal(vm.der.scope, mode === 'vr' ? 'hmd' : 'triple', id);
+    assert.ok(vm.insights.some(i => i.id === 'nr_multi_view_cost'), id);
+  }
 });
 
 test('MSAA stays editable and keeps its saved value with an upscaler active', () => {

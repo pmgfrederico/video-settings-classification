@@ -12,7 +12,7 @@ export async function loadAll() {
     getJson('schema/video_settings.dependencies_Version3.json'),
     getJson('schema/upscaling_providers.json'),
     getJson('schema/insights_rules.json'),
-    getJson('input/raw_settings_config.json'),
+    getJson('input/raw-settings-0.11.0-beta.json'),
     getJson('fixtures/rigs/index.json'),
   ]);
   const rigs = Object.fromEntries(await Promise.all(rigIds.map(async id => [id, await getJson(`fixtures/rigs/${id}.json`)])));

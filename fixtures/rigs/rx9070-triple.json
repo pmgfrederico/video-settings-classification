@@ -17,6 +17,7 @@
   "sdk": {
     "dlss": { "supported": false },
     "dlss_g": { "supported": false },
+    "dlss_nr": { "supported": false },
     "reflex": { "supported": false },
     "fsr4": { "supported": true },
     "fsr31": { "supported": true },

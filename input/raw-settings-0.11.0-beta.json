@@ -1,0 +1,242 @@
+{
+ "major_version": 2,
+ "display": {
+  "window_width": 3840,
+  "window_height": 2160,
+  "v_sync": "Off",
+  "physics_late_latching": false,
+  "frame_rate_limit": {
+   "gameplay_frame_rate_limit": 100,
+   "occluded_frame_rate_limit": 60,
+   "menu_frame_rate_limit": true
+  },
+  "triple_screen": {
+   "width": 520,
+   "distance": 640,
+   "screen_angle": 45,
+   "bezel": 20
+  },
+  "panini": {
+   "distance": 0,
+   "vertical_compression": 0
+  },
+  "supersampling": "Supersampling_Off",
+  "is_fullscreen": true,
+  "child_width": 3840,
+  "child_height": 2160,
+  "is_maximized": false,
+  "is_triple": false,
+  "is_stereo": false,
+  "render_width": 3840,
+  "render_height": 2160,
+  "output_width": 3840,
+  "output_height": 2160,
+  "monitor": 1,
+  "aspect_ratio_x": 16,
+  "aspect_ratio_y": 9
+ },
+ "graphics": {
+  "overallGraphics": "videoOptionCustom",
+  "upscaling": {
+   "mode": "Upscaling_FSR",
+   "fsr_preset": "FSR_Quality",
+   "fsr_custom_val": 0,
+   "dlss_preset": "DLSS_Quality",
+   "dlss_custom_val": 0
+  },
+  "neural_rendering": {
+   "mode": "NeuralRendering_Off",
+   "intensity": 1,
+   "tone_strength": 1,
+   "structure_strength": 1,
+   "style": 0,
+   "preset": 2,
+   "auto_mask": false,
+   "skin_structure_strength": 1,
+   "performance_mode": "NeuralRenderingPerformance_UltraQuality"
+  },
+  "frame_generation": {
+   "mode": "FrameGeneration_Off",
+   "multiplier": "FrameGeneration_2x"
+  },
+  "reflex": "Reflex_On",
+  "msaa": "MSAA_4x",
+  "antialising": {
+   "filmicAntialiasing": {
+    "setting": "Type_Off"
+   },
+   "fxaa": {
+    "enable": false
+   }
+  },
+  "sharpening": {
+   "strength": 0.12
+  },
+  "viewDistance": {
+   "quality": "ViewDistanceQuality_High",
+   "presets": {
+    "low": {
+     "overallDistance": 2000,
+     "objectDistance": 800,
+     "treeDistance": 1000,
+     "vegetationDistance": 150,
+     "crowdDistance": 300,
+     "shadowDistance": 650
+    },
+    "medium": {
+     "overallDistance": 4000,
+     "objectDistance": 1500,
+     "treeDistance": 2000,
+     "vegetationDistance": 300,
+     "crowdDistance": 600,
+     "shadowDistance": 500
+    },
+    "high": {
+     "overallDistance": 8000,
+     "objectDistance": 2500,
+     "treeDistance": 3500,
+     "vegetationDistance": 500,
+     "crowdDistance": 1000,
+     "shadowDistance": 700
+    },
+    "ultra": {
+     "overallDistance": 16000,
+     "objectDistance": 5000,
+     "treeDistance": 6000,
+     "vegetationDistance": 1000,
+     "crowdDistance": 2000,
+     "shadowDistance": 1000
+    }
+   },
+   "overallDistance": 8000,
+   "objectDistance": 2500,
+   "treeDistance": 3500,
+   "vegetationDistance": 500,
+   "crowdDistance": 1000,
+   "shadowDistance": 700
+  },
+  "materialQuality": "MaterialQuality_High",
+  "levelOfDetail": {
+   "levelOfDetail": "LevelOfDetailQuality_High",
+   "experimentalStaticLevelOfDetail": false,
+   "staticLevelOfDetail": "StaticLevelOfDetailQuality_High",
+   "levelOfDetailCustomSettings": {
+    "mainLodDistanceScale": 1,
+    "mirrorLodDistanceScale": 1,
+    "cubemapLodDistanceScale": 1,
+    "shadowLodDistanceScale": 1,
+    "mainLodOutDistanceScale": 0,
+    "mirrorLodOutDistanceScale": 0,
+    "cubemapLodOutDistanceScale": 0,
+    "shadowLodOutDistanceScale": 0,
+    "carFixedLodInCubemapRendering": 0,
+    "carFixedLodInMirrorRendering": 0,
+    "carFixedLodInShadowRendering": 0
+   }
+  },
+  "vehicleLevelOfDetail": "VehicleLevelOfDetailQuality_High",
+  "car_visibility": {
+   "max_ahead_car": 20,
+   "max_behind_car": 10,
+   "skip_filtering_when_driving": false,
+   "filter_when_spectating": false
+  },
+  "textureQuality": "TextureQuality_High",
+  "anisotropicFiltering": {
+   "anisotropicFilteringQuality": "AnisotropicFilteringQuality_High",
+   "customSettings": {
+    "mainAnisotropicFiltering": 8,
+    "mainLowAnisotropicFiltering": 4,
+    "cubemapMirrorAnisotropicFiltering": 1,
+    "mainAnisotropicMipBias": 0,
+    "mainLowAnisotropicMipBias": 0
+   }
+  },
+  "texturePoolSize": "TexturePoolSize_High",
+  "shadow": {
+   "shadowQuality": "ShadowQuality_High",
+   "screenSpaceShadowQuality": "ScreenSpaceShadowQuality_FullRes",
+   "vehicleShadowQuality": "VehicleShadowQuality_High"
+  },
+  "vegetationWind": "VegetationWind_On",
+  "carReflection": {
+   "carReflectionQuality": "CarReflectionQuality_High",
+   "carReflectionCustomSettings": {
+    "vehicleCubemapResolution": 0,
+    "cockpitCubemapResolution": 0,
+    "vehicleCubemapFarPlane": 0,
+    "cockpitCubemapFarPlane": 0
+   }
+  },
+  "enviromentReflection": "EnvironmentReflectionQuality_High",
+  "clouds": {
+   "cloudsQuality": "CloudsQuality_High",
+   "cloudsCustomSettings": {
+    "resolution": 1024,
+    "renderingTimeslicedOverFramesNumber": 16
+   },
+   "cloudsRenderingMode": "CloudsRenderingMode_Performance"
+  },
+  "particles": {
+   "quality": "ParticlesQuality_High",
+   "essential": false
+  },
+  "grass": "GrassDensity_High",
+  "volumetricsQuality": "VolumetricsQuality_Medium",
+  "giUpdateFrequency": "GlobalIlluminationUpdateFrequency_High",
+  "ambientOcclusion": "AmbientOcclusionQuality_High",
+  "ambientOcclusionType": "AmbientOcclusionType_SSAO",
+  "veil": "Veil_Natural",
+  "depthOfField": "DepthOfFieldQuality_Off",
+  "motionBlur": {
+   "quality": "MotionBlurQuality_High",
+   "strength": 1.5,
+   "centralClarity": 1
+  },
+  "mirror": {
+   "mirror_mode": "Mirror_Single",
+   "mirror_resolution": "MirrorResolution_High",
+   "mirror_view_distance": "MirrorViewDistance_Medium",
+   "mirror_level_of_detail": "MirrorLevelOfDetailQuality_Medium",
+   "alternate_rendering": true,
+   "multi_mode": "Multi_Fixed",
+   "multi_mode_vr": "Multi_VR"
+  },
+  "post_processing_preset": "Natural 3",
+  "exposureBias": 0,
+  "exposureFusion": 0.3,
+  "photoLook": 0.8,
+  "is_dlss_available": false,
+  "is_fsr_available": true,
+  "is_dlss_frame_generation_available": false,
+  "dlss_frame_generation_max_multiplier": 1,
+  "is_reflex_available": false,
+  "is_fsr_frame_generation_available": true,
+  "can_use_dlss_frame_generation": false,
+  "can_use_dlss_frame_generation_2x": false,
+  "can_use_dlss_frame_generation_3x": false,
+  "can_use_dlss_frame_generation_4x": false,
+  "can_use_fsr_frame_generation": true,
+  "can_use_fsr_frame_generation_2x": true,
+  "can_use_fsr_frame_generation_3x": false,
+  "can_use_fsr_frame_generation_4x": false,
+  "is_dlss_neural_rendering_available": false,
+  "terrain": {
+   "groundQuality": "GroundQuality_Medium"
+  },
+  "num_dash_displays": "NumDashDisplays_MaxTwo"
+ },
+ "vr": {
+  "pixel_density": 100,
+  "foveated_rendering": "FoveatedRendering_Medium",
+  "world_scale": 1,
+  "prefer_framerate_over_latency": true,
+  "disable_hidden_area_mask": false,
+  "enable_spectator_view": false,
+  "eye_tracked_foveated_rendering": false,
+  "can_use_eye_tracking": false,
+  "sunglasses": "Sunglass_Off",
+  "render_to_intermediate_target": false,
+  "log_vr_pacing": false
+ }
+}

@@ -2,7 +2,7 @@
 
 This repo explores one idea: **a settings UI can be derived, not hand-designed.** Every setting is classified on a fixed set of facets. A small set of declarative rules turns *what the PC is* plus *what the player chose* into *what the UI shows*. The UI then renders the result and makes no decisions of its own.
 
-The test subject is the video settings of a DX12 racing game: 113 fields across display, upscaling (DLSS / FSR / XeSS), frame generation, latency, world detail, triple screens and VR. It is complex enough that ad-hoc UI logic breaks down.
+The test subject is the video settings of a DX12 racing game: 123 fields across display, upscaling (DLSS / FSR / XeSS), frame generation, latency, DLSS neural rendering, world detail, triple screens and VR. It is complex enough that ad-hoc UI logic breaks down.
 
 ## The approach
 
@@ -58,7 +58,7 @@ The main menu and the in-game pages use the WinUI 3 (Fluent) design system, with
 | [fixtures/rigs/](fixtures/rigs/) | Six sample PCs (RTX 5080, RTX 4060 laptop on battery, RTX 4070 + VR, RX 6800, RX 9070 triple-screen, Arc B580) used as facts. |
 | [mockups/](mockups/) | The three pages above, plus the engine (`engine.js`), the facet grouping (`facets.js`), shared renderers (`ui.js`), the main menu's page logic (`main-menu.js`), review comments (`comments.js`) and the WinUI 3 stylesheet (`fluent.css`). |
 | [tests/](tests/) | Scenario tests that check the rules against the rigs (`engine.test.mjs`), and tests for the review-comment log (`comments.test.mjs`). |
-| [input/](input/) | The original game config (v2), the first UI prototype and the WinUI 3 design reference. |
+| [input/](input/) | The game config (v2): `raw-settings-0.11.0-beta.json` is the saved config the mockups and tests load (it adds neural rendering and Photo look); `raw_settings_config.json` is the original. Also the first UI prototype and the WinUI 3 design reference. |
 
 ## Running it
 

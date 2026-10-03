@@ -83,6 +83,15 @@
       "action": { "type": "stage", "label": "Switch to {der:recommendedUpscalerLabel}", "changes": { "graphics.upscaling.provider": "{der:recommendedUpscaler}" } }
     },
     {
+      "id": "nr_multi_view_cost",
+      "severity": "warn",
+      "category": "gpu",
+      "when": { "all": [ { "ref": "cfg:graphics.neural_rendering.mode", "neq": "NeuralRendering_Off" }, { "ref": "der:scope", "in": ["hmd", "triple"] } ] },
+      "title": "Neural rendering is very demanding in VR and on triple screens",
+      "detail": "It processes the final output, and VR or three screens mean far more pixels. Expect a large frame-rate drop.",
+      "action": { "type": "focus", "label": "Go to Neural rendering", "path": "graphics.neural_rendering.mode" }
+    },
+    {
       "id": "dual_ccd_affinity",
       "severity": "warn",
       "category": "cpu",

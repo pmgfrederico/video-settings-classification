@@ -189,7 +189,7 @@ The header chip shows the worst severity (green / amber / red) and the count, an
 
 ## 7. Development approach
 
-**Phase 1 — Model (done in this package, needs engine-team review).** Facts manifest, provider matrix, UI schema v4 (113 fields × 12 facets), dependency rules v3, insight rules. Open items are in [01 §8](01-taxonomy-and-rules.md#8-schema-gaps-and-open-questions).
+**Phase 1 — Model (done in this package, needs engine-team review).** Facts manifest, provider matrix, UI schema v4 (123 fields × 12 facets), dependency rules v3, insight rules. Open items are in [01 §8](01-taxonomy-and-rules.md#8-schema-gaps-and-open-questions).
 
 **Phase 2 — Rules engine.** Port [mockups/engine.js](../mockups/engine.js) to the game's UI layer, or run it as is if the UI uses web tech. The contract is `evaluate(facts, appliedConfig, pending[], context) → { fields, ledger, insights, est }`. Keep it pure and data-driven, and keep the scenario tests ([tests/engine.test.mjs](../tests/engine.test.mjs)) as the regression suite. Add a fixture for every new hardware case.
 

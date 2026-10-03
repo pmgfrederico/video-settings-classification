@@ -68,6 +68,7 @@ const groups = [
     { id: 'cockpit', label: 'Cockpit displays' } ] },
   { id: 'look', label: 'Look', icon: 'tune', sections: [
     { id: 'grading', label: 'Post-process & exposure' },
+    { id: 'neural', label: 'Neural rendering' },
     { id: 'camera', label: 'Camera effects' },
     { id: 'vrcomfort', label: 'VR comfort' } ] },
 ];
@@ -291,7 +292,26 @@ add('graphics.post_processing_preset', { label: 'Post-process style', help: 'Col
   options: ['Default', 'Natural', 'Cinematic 1', 'Cinematic 2', 'Cinematic 3', 'Vivid'].map(v => ({ value: v, label: v })), note: 'Placeholder option list. The real presets come from the engine\'s post-process library.' });
 add('graphics.exposureBias', { label: 'Exposure', help: 'Overall brightness compensation in EV stops.', g: 'look', s: 'grading', sc: ['general'], t: 3, p: 'live-visual', i: [], d: 'basic', r: 'independent', control: 'slider', range: { min: -3, max: 3, step: 0.05, unit: 'EV' }, readouts: ['exposure'] });
 add('graphics.exposureFusion', { label: 'Exposure fusion', help: 'Local tone compression. Recovers detail in bright skies and dark cockpits.', g: 'look', s: 'grading', sc: ['general'], t: 3, p: 'live-visual', i: ['gpu'], d: 'advanced', r: 'independent', control: 'slider', range: { min: 0, max: 1, step: 0.01 } });
+add('graphics.photoLook', { label: 'Photo look', help: 'A lightweight filter that pushes the final image toward a photographic look. Much cheaper than neural rendering and runs on any GPU.', g: 'look', s: 'grading', sc: ['general'], t: 3, p: 'live-visual', i: ['gpu'], d: 'basic', r: 'independent', control: 'slider', range: { min: 0, max: 1, step: 0.01 },
+  note: 'New in 0.11.0-beta. Range assumed 0–1.' });
 add('graphics.veil', { label: 'Veiling glare', help: 'Simulates glare scattering in the eye or lens.', g: 'look', s: 'grading', sc: ['general'], t: 3, p: 'live-visual', i: [], d: 'basic', r: 'independent', control: 'segmented' });
+// Neural rendering (0.11.0-beta). Option lists, preset/style meanings and slider ranges are placeholders until the game's values are known.
+add('graphics.neural_rendering.mode', { label: 'Neural rendering', help: 'DLSS 5 neural rendering. An AI model reworks the final image for more lifelike lighting and materials. It runs on the final output, whatever upscaler is used, and costs a lot of GPU time.', g: 'look', s: 'neural', sc: ['general'], t: 2, p: 'snapshot', i: ['gpu', 'vram'], d: 'basic', r: 'controller', control: 'segmented',
+  gate: { hw: { ref: 'facts:sdk.dlss_nr.supported', eq: true }, hwReason: 'Needs an RTX 50 series GPU' },
+  cost: { gpu: { NeuralRendering_Off: 1, NeuralRendering_Performance: 1.15, NeuralRendering_Quality: 1.3 } },
+  v2: { path: 'graphics.neural_rendering.mode', type: 'string', capability: 'graphics.is_dlss_neural_rendering_available' },
+  dx12: 'Loads or unloads the Streamline sl.dlss_nr feature on the resident proxy swapchain. Assumed quick reload; confirm in game.',
+  note: 'Off / Performance / Quality is provisional. Cost multipliers are guesses.' });
+const nr = { g: 'look', s: 'neural', sc: ['general'], t: 3, p: 'live-visual', i: [], d: 'advanced', r: 'dependent', control: 'slider', range: { min: 0, max: 1, step: 0.01 } };
+add('graphics.neural_rendering.intensity', { ...nr, label: 'Neural rendering intensity', help: 'How strongly the neural result replaces the rendered image.', d: 'basic' });
+add('graphics.neural_rendering.tone_strength', { ...nr, label: 'Tone strength', help: 'How much the model changes lighting and color tone.' });
+add('graphics.neural_rendering.structure_strength', { ...nr, label: 'Structure strength', help: 'How much the model changes surface detail.' });
+add('graphics.neural_rendering.skin_structure_strength', { ...nr, label: 'Skin structure strength', help: 'Structure strength on skin, such as drivers and crew.', d: 'expert' });
+add('graphics.neural_rendering.auto_mask', { ...nr, label: 'Automatic masking', help: 'Lets the model pick out regions to treat separately.', d: 'expert', control: 'toggle', range: undefined, note: 'Meaning unconfirmed.' });
+add('graphics.neural_rendering.style', { ...nr, label: 'Style', d: 'advanced', control: 'segmented', range: undefined, note: 'Placeholder options; meaning unknown.' });
+add('graphics.neural_rendering.preset', { ...nr, label: 'Model preset', t: 2, p: 'snapshot', i: ['gpu'], d: 'expert', control: 'segmented', range: undefined, note: 'Placeholder options; meaning unknown.' });
+add('graphics.neural_rendering.performance_mode', { ...nr, label: 'Neural rendering performance', help: 'Trades neural rendering detail for speed.', t: 2, p: 'snapshot', i: ['gpu'], control: 'segmented', range: undefined, note: 'Provisional list; only Ultra Quality is confirmed.' });
+
 add('graphics.depthOfField', { label: 'Depth of field', help: 'Blurs things outside the focus distance (replays and photo mode).', g: 'look', s: 'camera', sc: ['general'], t: 3, p: 'live-visual', i: ['gpu'], d: 'basic', r: 'independent', control: 'segmented',
   cost: { gpu: { DepthOfFieldQuality_Off: 0.97, DepthOfFieldQuality_Low: 0.98, DepthOfFieldQuality_Medium: 0.99, DepthOfFieldQuality_High: 1, DepthOfFieldQuality_Ultra: 1.02 } } });
 add('graphics.motionBlur.quality', { label: 'Motion blur', g: 'look', s: 'camera', sc: ['general'], t: 3, p: 'live-visual', i: ['gpu'], d: 'basic', r: 'controller', control: 'segmented' });

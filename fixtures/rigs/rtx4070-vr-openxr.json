@@ -13,6 +13,7 @@
   "sdk": {
     "dlss": { "supported": true, "version": "310.x" },
     "dlss_g": { "supported": true, "maxMultiplier": 2 },
+    "dlss_nr": { "supported": false },
     "reflex": { "supported": true },
     "fsr4": { "supported": false },
     "fsr31": { "supported": true },

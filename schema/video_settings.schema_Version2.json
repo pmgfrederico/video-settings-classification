@@ -79,6 +79,21 @@
             "multiplier": { "type": "string", "enum": ["FrameGeneration_2x", "FrameGeneration_3x", "FrameGeneration_4x"] }
           }
         },
+        "neural_rendering": {
+          "type": "object",
+          "description": "Added in 0.11.0-beta: DLSS neural rendering (Streamline sl.dlss_nr). Enum lists, the meaning of preset/style and the slider ranges are placeholders until the game's values are known.",
+          "properties": {
+            "mode": { "type": "string", "enum": ["NeuralRendering_Off", "NeuralRendering_Performance", "NeuralRendering_Quality"], "description": "Provisional list; only NeuralRendering_Off is confirmed" },
+            "intensity": { "type": "number", "minimum": 0, "maximum": 1, "description": "Range assumed" },
+            "tone_strength": { "type": "number", "minimum": 0, "maximum": 1, "description": "Range assumed" },
+            "structure_strength": { "type": "number", "minimum": 0, "maximum": 1, "description": "Range assumed" },
+            "style": { "type": "integer", "enum": [0, 1, 2, 3], "description": "Meaning and count unknown" },
+            "preset": { "type": "integer", "enum": [0, 1, 2, 3], "description": "Meaning and count unknown" },
+            "auto_mask": { "type": "boolean" },
+            "skin_structure_strength": { "type": "number", "minimum": 0, "maximum": 1, "description": "Range assumed" },
+            "performance_mode": { "type": "string", "enum": ["NeuralRenderingPerformance_UltraQuality", "NeuralRenderingPerformance_Quality", "NeuralRenderingPerformance_Balanced", "NeuralRenderingPerformance_Performance"], "description": "Provisional list; only UltraQuality is confirmed" }
+          }
+        },
         "reflex": { "type": "string", "enum": ["Reflex_Off", "Reflex_On", "Reflex_OnPlusBoost"] },
         "msaa": { "type": "string", "enum": ["MSAA_Off", "MSAA_2x", "MSAA_4x", "MSAA_8x"] },
         "antialising": {
@@ -239,6 +254,7 @@
         "post_processing_preset": { "type": "string" },
         "exposureBias": { "type": "number", "minimum": -3, "maximum": 3 },
         "exposureFusion": { "type": "number", "minimum": 0, "maximum": 1 },
+        "photoLook": { "type": "number", "minimum": 0, "maximum": 1, "description": "Added in 0.11.0-beta: lightweight photo-realistic filter. Range assumed." },
         "is_dlss_available": { "type": "boolean", "readOnly": true },
         "is_fsr_available": { "type": "boolean", "readOnly": true },
         "is_dlss_frame_generation_available": { "type": "boolean", "readOnly": true },
@@ -253,6 +269,7 @@
         "can_use_fsr_frame_generation_2x": { "type": "boolean", "readOnly": true },
         "can_use_fsr_frame_generation_3x": { "type": "boolean", "readOnly": true },
         "can_use_fsr_frame_generation_4x": { "type": "boolean", "readOnly": true },
+        "is_dlss_neural_rendering_available": { "type": "boolean", "readOnly": true },
         "terrain": {
           "type": "object",
           "properties": { "groundQuality": { "type": "string", "enum": ["GroundQuality_Low", "GroundQuality_Medium", "GroundQuality_High"] } }
