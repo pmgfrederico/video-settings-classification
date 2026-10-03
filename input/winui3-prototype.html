@@ -1,0 +1,587 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>ApexSim Engine — Render Pipeline Settings</title>
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "fluent-bg": "#F3F3F3",
+            "fluent-card": "#FFFFFF",
+            "fluent-subcard": "#F8FAFC",
+            "fluent-hover": "#F0F3F8",
+            "fluent-border": "#E5E5E5",
+            "fluent-border-subtle": "#ECECEC",
+            "fluent-text": "#1A1A1A",
+            "fluent-secondary": "#5C5C5C",
+            "fluent-tertiary": "#8A8A8A",
+            "fluent-accent": "#005FB8",
+            "fluent-accent-hover": "#004F98",
+            "fluent-accent-subtle": "#EBF3FB",
+            "fluent-success": "#107C10",
+            "fluent-warning": "#B85C00",
+            "fluent-warning-bg": "#FFF9F5",
+            "fluent-warning-border": "#FED9CC",
+            "fluent-info-bg": "#F4F8FC",
+            "fluent-info-border": "#D2E3F8",
+          },
+          borderRadius: {
+            "win-card": "8px",
+            "win-ctrl": "4px",
+            "win-pill": "9999px"
+          },
+          fontFamily: {
+            sans: ["Inter", "-apple-system", "BlinkMacSystemFont", "Segoe UI Variable Display", "Segoe UI", "sans-serif"],
+            mono: ["JetBrains Mono", "Consolas", "monospace"],
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI Variable Text", "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased;
+      background-color: #F3F3F3;
+      color: #1A1A1A;
+    }
+    /* Fluent styled custom toggle switch */
+    .win-toggle input:checked ~ .win-toggle-track {
+      background-color: #005FB8;
+      border-color: #005FB8;
+    }
+    .win-toggle input:checked ~ .win-toggle-track .win-toggle-thumb {
+      transform: translateX(18px);
+      background-color: #FFFFFF;
+    }
+    /* Fluent range slider styling */
+    input[type=range].fluent-slider {
+      -webkit-appearance: none;
+      background: #D9D9D9;
+      height: 4px;
+      border-radius: 2px;
+      outline: none;
+    }
+    input[type=range].fluent-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #005FB8;
+      border: 3px solid #FFFFFF;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+      cursor: pointer;
+      transition: transform 0.1s ease;
+    }
+    input[type=range].fluent-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.15);
+    }
+    /* Subtle custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #D6D6D6;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #BFBFBF;
+    }
+  </style>
+</head>
+<body class="flex flex-col h-screen overflow-hidden select-none bg-fluent-bg text-fluent-text">
+<!-- ========================================================================= -->
+<!-- WINDOW TITLE BAR (WinUI 3 / Windows 11 Standard Chrome)                    -->
+<!-- ========================================================================= -->
+<header class="h-9 px-3 flex items-center justify-between bg-fluent-bg border-b border-fluent-border shrink-0 z-50">
+<div class="flex items-center gap-2.5 text-xs text-fluent-text font-medium">
+<div class="w-4 h-4 rounded bg-fluent-accent flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-[13px] leading-none">layers</span>
+</div>
+<span>ApexSim Engine — Render Pipeline Configuration Studio (Direct3D 12)</span>
+<span class="text-fluent-tertiary">|</span>
+<span class="text-[11px] text-fluent-secondary font-mono">dx12_master.ini</span>
+</div>
+<!-- Windows Window Buttons (Minimize, Maximize, Close) -->
+<div class="flex items-center -mr-3">
+<button aria-label="Minimize" class="w-11 h-9 flex items-center justify-center text-fluent-secondary hover:bg-black/5 active:bg-black/10 transition-colors">
+<span class="material-symbols-outlined text-[15px]">minimize</span>
+</button>
+<button aria-label="Maximize" class="w-11 h-9 flex items-center justify-center text-fluent-secondary hover:bg-black/5 active:bg-black/10 transition-colors">
+<span class="material-symbols-outlined text-[13px]">crop_square</span>
+</button>
+<button aria-label="Close" class="w-11 h-9 flex items-center justify-center text-fluent-secondary hover:bg-[#C42B1C] hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[15px]">close</span>
+</button>
+</div>
+</header>
+<!-- ========================================================================= -->
+<!-- MAIN APPLICATION SHELL (3-Column Windows 11 Fluent Workspace)              -->
+<!-- ========================================================================= -->
+<div class="flex flex-1 overflow-hidden">
+<!-- ----------------------------------------------------------------------- -->
+<!-- COLUMN 1: LEFT NAVIGATION RAIL (WinUI 3 NavigationView)                 -->
+<!-- ----------------------------------------------------------------------- -->
+<aside class="w-64 bg-fluent-bg/95 border-r border-fluent-border flex flex-col shrink-0">
+<!-- Search Box inside Nav -->
+<div class="p-3 pb-2">
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-2.5 text-[16px] text-fluent-tertiary pointer-events-none">search</span>
+<input class="w-full h-8 pl-8 pr-3 text-xs bg-white border border-fluent-border rounded-win-ctrl text-fluent-text placeholder-fluent-tertiary focus:outline-none focus:border-fluent-accent focus:ring-1 focus:ring-fluent-accent" placeholder="Search render settings" type="text">
+</div>
+</div>
+<!-- Navigation Hierarchy focused strictly on Render Pipeline -->
+<nav class="flex-1 overflow-y-auto px-2 py-1 space-y-0.5 text-xs font-normal">
+<div class="px-2 pt-2 pb-1 text-[11px] font-semibold uppercase tracking-wider text-fluent-tertiary">Direct3D 12 Engine</div>
+<!-- Item 1 (Active) -->
+<a class="relative flex items-center gap-2.5 px-3 py-2 rounded-win-ctrl font-medium bg-fluent-accent-subtle text-fluent-accent shadow-sm border border-transparent" href="#">
+<!-- Active Indicator Pill -->
+<div class="absolute left-0 top-1.5 bottom-1.5 w-[3px] bg-fluent-accent rounded-r-full"></div>
+<span class="material-symbols-outlined text-[18px]">developer_board</span>
+<span class="truncate">Overview &amp; API Backend</span>
+</a>
+<!-- Item 2 -->
+<a class="flex items-center gap-2.5 px-3 py-2 rounded-win-ctrl text-fluent-secondary hover:text-fluent-text hover:bg-black/5 transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">sync_saved_locally</span>
+<span class="truncate">Swapchain &amp; Buffering</span>
+</a>
+<!-- Item 3 -->
+<a class="flex items-center justify-between px-3 py-2 rounded-win-ctrl text-fluent-secondary hover:text-fluent-text hover:bg-black/5 transition-colors" href="#">
+<div class="flex items-center gap-2.5 truncate">
+<span class="material-symbols-outlined text-[18px]">auto_fix_high</span>
+<span class="truncate">Reconstruction &amp; Upscaling</span>
+</div>
+<span class="text-[9px] px-1.5 py-0.5 rounded bg-fluent-accent-subtle text-fluent-accent font-semibold">DLSS</span>
+</a>
+<!-- Item 4 -->
+<a class="flex items-center gap-2.5 px-3 py-2 rounded-win-ctrl text-fluent-secondary hover:text-fluent-text hover:bg-black/5 transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">memory</span>
+<span class="truncate">Shader Cache &amp; PSOs</span>
+</a>
+<!-- Item 5 -->
+<a class="flex items-center gap-2.5 px-3 py-2 rounded-win-ctrl text-fluent-secondary hover:text-fluent-text hover:bg-black/5 transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">speed</span>
+<span class="truncate">Frame Generation &amp; Reflex</span>
+</a>
+<!-- Item 6 -->
+<a class="flex items-center gap-2.5 px-3 py-2 rounded-win-ctrl text-fluent-secondary hover:text-fluent-text hover:bg-black/5 transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">pie_chart</span>
+<span class="truncate">VRAM Pool Allocations</span>
+</a>
+</nav>
+<!-- Bottom item: Diagnostics -->
+<div class="p-2 border-t border-fluent-border bg-fluent-bg">
+<a class="flex items-center gap-2.5 px-3 py-2 rounded-win-ctrl text-fluent-secondary hover:text-fluent-text hover:bg-black/5 transition-colors text-xs" href="#">
+<span class="material-symbols-outlined text-[18px]">query_stats</span>
+<span>Diagnostics &amp; GPU Telemetry</span>
+</a>
+</div>
+</aside>
+<!-- ----------------------------------------------------------------------- -->
+<!-- COLUMN 2: CENTER WORKSPACE (Clean Ergonomic Fluent Setting Cards)       -->
+<!-- ----------------------------------------------------------------------- -->
+<main class="flex-1 overflow-y-auto px-10 py-8 bg-fluent-bg">
+<div class="max-w-3xl mx-auto space-y-6">
+<!-- Page Header -->
+<div class="space-y-1.5">
+<div class="flex items-center justify-between">
+<h1 class="text-2xl font-semibold text-fluent-text tracking-tight">Render Pipeline</h1>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-win-pill bg-white border border-fluent-border text-xs font-mono text-fluent-secondary shadow-xs">
+<span class="w-2 h-2 rounded-full bg-fluent-success"></span>
+              DirectX 12 Agility SDK 1.613 • Feature Level 12_2
+            </span>
+</div>
+<p class="text-sm text-fluent-secondary leading-relaxed">
+            Configure Direct3D 12 hardware swapchains, temporal reconstruction, shader pipeline state objects, and low-level GPU dispatch buffers.
+          </p>
+</div>
+<!-- WinUI 3 InfoBar Component -->
+<div class="flex items-start gap-3 p-3.5 bg-fluent-info-bg border border-fluent-info-border rounded-win-card shadow-xs">
+<span class="material-symbols-outlined text-fluent-accent text-[20px] shrink-0 mt-0.5">info</span>
+<div class="flex-1 text-xs text-fluent-text leading-relaxed">
+<strong class="font-medium text-fluent-accent">Pipeline Notice:</strong>
+            Changes to Swapchain Presentation Model, Render Target Resolution, or Upscaler Engine require renderer reinitialization before taking effect on the display swapchain.
+          </div>
+<button class="text-fluent-tertiary hover:text-fluent-text text-sm p-0.5" title="Dismiss">
+<span class="material-symbols-outlined text-[16px]">close</span>
+</button>
+</div>
+<!-- ================= SETTING CARDS STACK ================= -->
+<div class="space-y-2.5">
+<!-- CARD 1: Graphics API Backend -->
+<div class="bg-fluent-card p-4 rounded-win-card border border-fluent-border shadow-xs hover:border-fluent-accent/40 transition-colors">
+<div class="flex items-center justify-between gap-4">
+<div class="flex items-start gap-3.5 min-w-0">
+<div class="w-9 h-9 rounded-win-ctrl bg-fluent-accent-subtle text-fluent-accent flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[20px]">layers</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h3 class="text-sm font-semibold text-fluent-text">Graphics API &amp; Renderer Backend</h3>
+<span class="px-2 py-0.5 rounded text-[10px] font-medium bg-fluent-warning-bg text-fluent-warning border border-fluent-warning-border">Requires Restart</span>
+</div>
+<p class="text-xs text-fluent-secondary mt-0.5">Selects the primary low-level command list dispatch architecture.</p>
+</div>
+</div>
+<!-- Control: ComboBox -->
+<div class="relative shrink-0">
+<select class="h-8 pl-3 pr-8 bg-fluent-card text-xs font-medium text-fluent-text border border-fluent-border rounded-win-ctrl hover:bg-fluent-hover focus:outline-none focus:border-fluent-accent focus:ring-1 focus:ring-fluent-accent cursor-pointer shadow-xs">
+<option selected="">DirectX 12 (D3D12 Ultimate)</option>
+<option>Vulkan 1.3 (VK_KHR_ray_tracing)</option>
+<option>DirectX 11 (Legacy Fallback)</option>
+</select>
+<span class="material-symbols-outlined text-fluent-secondary text-[16px] absolute right-2 top-2 pointer-events-none">expand_more</span>
+</div>
+</div>
+</div>
+<!-- CARD 2: Swapchain Presentation Model -->
+<div class="bg-fluent-card p-4 rounded-win-card border border-fluent-border shadow-xs hover:border-fluent-accent/40 transition-colors">
+<div class="flex items-center justify-between gap-4">
+<div class="flex items-start gap-3.5 min-w-0">
+<div class="w-9 h-9 rounded-win-ctrl bg-slate-100 text-fluent-text flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[20px]">sync_saved_locally</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h3 class="text-sm font-semibold text-fluent-text">Swapchain Presentation Model</h3>
+<span class="px-1.5 py-0.5 rounded text-[10px] font-mono text-fluent-accent bg-fluent-accent-subtle font-semibold">DXGI Flip Model</span>
+</div>
+<p class="text-xs text-fluent-secondary mt-0.5">Enables low-overhead DXGI DirectFlip with waitable object handle to bypass DWM compositing latency.</p>
+</div>
+</div>
+<!-- Control: WinUI 3 Toggle Switch -->
+<label class="win-toggle relative inline-flex items-center cursor-pointer shrink-0">
+<input checked="" class="sr-only" type="checkbox">
+<div class="win-toggle-track w-10 h-5 bg-fluent-border rounded-win-pill border border-fluent-border transition-colors duration-150 relative">
+<div class="win-toggle-thumb absolute top-0.5 left-0.5 w-3.5 h-3.5 bg-fluent-secondary rounded-win-pill transition-transform duration-150 shadow-xs"></div>
+</div>
+</label>
+</div>
+</div>
+<!-- CARD 3: Temporal Upscaling Architecture -->
+<div class="bg-fluent-card p-4 rounded-win-card border border-fluent-border shadow-xs hover:border-fluent-accent/40 transition-colors space-y-3.5">
+<div class="flex items-center justify-between gap-4">
+<div class="flex items-start gap-3.5 min-w-0">
+<div class="w-9 h-9 rounded-win-ctrl bg-fluent-accent-subtle text-fluent-accent flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[20px]">auto_fix_high</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h3 class="text-sm font-semibold text-fluent-text">Temporal Upscaling Architecture</h3>
+<span class="w-2 h-2 rounded-full bg-fluent-accent" title="Modified this session"></span>
+</div>
+<p class="text-xs text-fluent-secondary mt-0.5">AI-accelerated supersampling with sub-pixel jitter compensation.</p>
+</div>
+</div>
+<!-- Control: Quality Preset Dropdown -->
+<div class="relative shrink-0">
+<select class="h-8 pl-3 pr-8 bg-fluent-card text-xs font-medium text-fluent-text border border-fluent-border rounded-win-ctrl hover:bg-fluent-hover focus:outline-none focus:border-fluent-accent focus:ring-1 focus:ring-fluent-accent cursor-pointer shadow-xs">
+<option selected="">Quality (67% Canvas)</option>
+<option>Balanced (58% Canvas)</option>
+<option>Performance (50% Canvas)</option>
+<option>DLAA (100% Native Anti-Aliasing)</option>
+</select>
+<span class="material-symbols-outlined text-fluent-secondary text-[16px] absolute right-2 top-2 pointer-events-none">expand_more</span>
+</div>
+</div>
+<!-- WinUI Segmented Button Bar for Architecture Selection -->
+<div class="p-1 bg-fluent-subcard border border-fluent-border rounded-win-ctrl flex items-center gap-1">
+<button class="flex-1 py-1.5 px-3 rounded-win-ctrl text-xs font-medium text-fluent-secondary hover:text-fluent-text hover:bg-white/50 transition-colors" type="button">
+                Native (Off)
+              </button>
+<button class="flex-1 py-1.5 px-3 rounded-win-ctrl text-xs font-semibold bg-white text-fluent-accent shadow-xs border border-fluent-border transition-all" type="button">
+                NVIDIA DLSS 3.7
+              </button>
+<button class="flex-1 py-1.5 px-3 rounded-win-ctrl text-xs font-medium text-fluent-secondary hover:text-fluent-text hover:bg-white/50 transition-colors" type="button">
+                AMD FSR 3.1
+              </button>
+<button class="flex-1 py-1.5 px-3 rounded-win-ctrl text-xs font-medium text-fluent-secondary hover:text-fluent-text hover:bg-white/50 transition-colors" type="button">
+                Intel XeSS 1.3
+              </button>
+</div>
+</div>
+<!-- CARD 4: Frame Generation Dispatch & Reflex -->
+<div class="bg-fluent-card p-4 rounded-win-card border border-fluent-border shadow-xs hover:border-fluent-accent/40 transition-colors space-y-3">
+<div class="flex items-center justify-between gap-4">
+<div class="flex items-start gap-3.5 min-w-0">
+<div class="w-9 h-9 rounded-win-ctrl bg-slate-100 text-fluent-text flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[20px]">speed</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h3 class="text-sm font-semibold text-fluent-text">Frame Generation Dispatch</h3>
+<span class="w-2 h-2 rounded-full bg-fluent-accent" title="Modified this session"></span>
+</div>
+<p class="text-xs text-fluent-secondary mt-0.5">Hardware optical flow vector calculation interpolates alternate frames.</p>
+</div>
+</div>
+<!-- Main Toggle Switch -->
+<label class="win-toggle relative inline-flex items-center cursor-pointer shrink-0">
+<input checked="" class="sr-only" type="checkbox">
+<div class="win-toggle-track w-10 h-5 bg-fluent-border rounded-win-pill border border-fluent-border transition-colors duration-150 relative">
+<div class="win-toggle-thumb absolute top-0.5 left-0.5 w-3.5 h-3.5 bg-fluent-secondary rounded-win-pill transition-transform duration-150 shadow-xs"></div>
+</div>
+</label>
+</div>
+<!-- Sub-setting Box (Reflex Low Latency Boost) -->
+<div class="ml-12 p-3 bg-fluent-subcard border border-fluent-border-subtle rounded-win-ctrl flex items-center justify-between">
+<div>
+<div class="text-xs font-semibold text-fluent-text">NVIDIA Reflex Low Latency</div>
+<div class="text-[11px] text-fluent-secondary">Dynamically clears queue latency caused by frame generation</div>
+</div>
+<span class="px-2 py-0.5 rounded-win-ctrl bg-white border border-fluent-border text-xs font-semibold text-fluent-accent">
+                Enabled + Boost
+              </span>
+</div>
+</div>
+<!-- CARD 5: Pipeline State Object (PSO) Pre-Caching -->
+<div class="bg-fluent-card p-4 rounded-win-card border border-fluent-border shadow-xs hover:border-fluent-accent/40 transition-colors space-y-3">
+<div class="flex items-center justify-between gap-4">
+<div class="flex items-start gap-3.5 min-w-0">
+<div class="w-9 h-9 rounded-win-ctrl bg-slate-100 text-fluent-text flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[20px]">memory</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h3 class="text-sm font-semibold text-fluent-text">Pipeline State Object (PSO) Pre-Caching</h3>
+<span class="px-1.5 py-0.2 rounded text-[10px] bg-emerald-50 text-fluent-success border border-emerald-200 font-medium">Ready</span>
+</div>
+<p class="text-xs text-fluent-secondary mt-0.5">Compiles all microcode pipeline states ahead-of-time into the local D3D12 cache.</p>
+</div>
+</div>
+<!-- Toggle -->
+<label class="win-toggle relative inline-flex items-center cursor-pointer shrink-0">
+<input checked="" class="sr-only" type="checkbox">
+<div class="win-toggle-track w-10 h-5 bg-fluent-border rounded-win-pill border border-fluent-border transition-colors duration-150 relative">
+<div class="win-toggle-thumb absolute top-0.5 left-0.5 w-3.5 h-3.5 bg-fluent-secondary rounded-win-pill transition-transform duration-150 shadow-xs"></div>
+</div>
+</label>
+</div>
+<!-- Progress Meter & Cache Status -->
+<div class="ml-12 space-y-1.5">
+<div class="flex justify-between items-center text-xs">
+<span class="text-fluent-secondary font-medium">34,180 of 34,180 Shaders Pre-Compiled</span>
+<span class="text-fluent-success font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">check_circle</span> Zero In-Game Stutter
+                </span>
+</div>
+<div class="w-full h-1.5 bg-fluent-border rounded-full overflow-hidden">
+<div class="w-full h-full bg-fluent-accent rounded-full"></div>
+</div>
+</div>
+</div>
+<!-- CARD 6: Asynchronous Compute & Multi-Queue -->
+<div class="bg-fluent-card p-4 rounded-win-card border border-fluent-border shadow-xs hover:border-fluent-accent/40 transition-colors">
+<div class="flex items-center justify-between gap-4">
+<div class="flex items-start gap-3.5 min-w-0">
+<div class="w-9 h-9 rounded-win-ctrl bg-slate-100 text-fluent-text flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[20px]">account_tree</span>
+</div>
+<div>
+<h3 class="text-sm font-semibold text-fluent-text">Asynchronous Compute &amp; Multi-Queue</h3>
+<p class="text-xs text-fluent-secondary mt-0.5">Executes volumetric lighting, wet tire spray, and shadow passes concurrently on secondary compute queues.</p>
+</div>
+</div>
+<!-- Toggle -->
+<label class="win-toggle relative inline-flex items-center cursor-pointer shrink-0">
+<input checked="" class="sr-only" type="checkbox">
+<div class="win-toggle-track w-10 h-5 bg-fluent-border rounded-win-pill border border-fluent-border transition-colors duration-150 relative">
+<div class="win-toggle-thumb absolute top-0.5 left-0.5 w-3.5 h-3.5 bg-fluent-secondary rounded-win-pill transition-transform duration-150 shadow-xs"></div>
+</div>
+</label>
+</div>
+</div>
+<!-- CARD 7: VRAM Texture Pool Allocation -->
+<div class="bg-fluent-card p-4 rounded-win-card border border-fluent-border shadow-xs hover:border-fluent-accent/40 transition-colors space-y-3">
+<div class="flex items-center justify-between gap-4">
+<div class="flex items-start gap-3.5 min-w-0">
+<div class="w-9 h-9 rounded-win-ctrl bg-slate-100 text-fluent-text flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[20px]">pie_chart</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h3 class="text-sm font-semibold text-fluent-text">VRAM Dedicated Texture Pool Allocation</h3>
+<span class="w-2 h-2 rounded-full bg-fluent-accent" title="Modified this session"></span>
+</div>
+<p class="text-xs text-fluent-secondary mt-0.5">Maximum dedicated VRAM memory block reserved for mipmap streaming and render targets.</p>
+</div>
+</div>
+<!-- Metric Badge Pill -->
+<span class="px-2.5 py-1 rounded-win-pill bg-fluent-accent-subtle text-fluent-accent font-semibold text-xs font-mono shrink-0">
+                12.0 GB / 24 GB
+              </span>
+</div>
+<!-- Slider + Discrete Scale Indicators -->
+<div class="ml-12 space-y-2">
+<input class="fluent-slider w-full cursor-pointer" max="16" min="4" step="1" type="range" value="12">
+<div class="flex justify-between text-[11px] text-fluent-tertiary font-mono">
+<span>4 GB (Min)</span>
+<span>8 GB</span>
+<span class="text-fluent-accent font-semibold">12 GB (Allocated)</span>
+<span>16 GB (Max Pool)</span>
+</div>
+<!-- VRAM Headroom Bar -->
+<div class="p-2.5 bg-fluent-subcard border border-fluent-border-subtle rounded-win-ctrl flex items-center justify-between text-xs">
+<span class="text-fluent-secondary">RTX 4090 Dedicated Headroom Available:</span>
+<span class="text-fluent-text font-mono font-medium">12.0 GB remaining for OS &amp; background apps</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- ----------------------------------------------------------------------- -->
+<!-- COLUMN 3: RIGHT SIDE RAIL ("Touched in this Session" + Context Inspector)-->
+<!-- ----------------------------------------------------------------------- -->
+<aside class="w-80 bg-fluent-bg/95 border-l border-fluent-border flex flex-col shrink-0">
+<!-- Pane Header: Linear Audit Trail -->
+<div class="h-10 px-4 flex items-center justify-between border-b border-fluent-border bg-fluent-card">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-fluent-accent text-[17px]">history</span>
+<span class="text-xs font-semibold uppercase tracking-wider text-fluent-text">Touched in this Session</span>
+</div>
+<button class="text-xs font-medium text-fluent-accent hover:underline" type="button">Discard All</button>
+</div>
+<!-- Linear List of Touched Controls -->
+<div class="flex-1 overflow-y-auto p-3 space-y-2.5">
+<!-- Touched Item 1 -->
+<div class="p-3 bg-fluent-card border border-fluent-border rounded-win-card shadow-xs hover:border-fluent-accent/50 transition-all cursor-pointer group">
+<div class="flex items-start justify-between gap-1">
+<div class="min-w-0">
+<div class="text-xs font-semibold text-fluent-text truncate">Temporal Upscaling Architecture</div>
+<div class="text-[10px] font-mono text-fluent-tertiary">graphics.upscaling.mode</div>
+</div>
+<span class="px-1.5 py-0.5 rounded text-[9px] font-medium bg-fluent-warning-bg text-fluent-warning border border-fluent-warning-border shrink-0">Restart</span>
+</div>
+<div class="mt-2 flex items-center justify-between text-xs">
+<div class="flex items-center gap-1.5 font-mono text-[11px]">
+<span class="text-fluent-tertiary line-through">Native (Off)</span>
+<span class="text-fluent-secondary">→</span>
+<span class="font-semibold text-fluent-accent">DLSS 3.7</span>
+</div>
+<button class="text-[11px] text-fluent-secondary hover:text-[#C42B1C] flex items-center gap-0.5 transition-colors" type="button">
+<span>Revert</span>
+<span class="material-symbols-outlined text-[13px]">undo</span>
+</button>
+</div>
+</div>
+<!-- Touched Item 2 -->
+<div class="p-3 bg-fluent-card border border-fluent-border rounded-win-card shadow-xs hover:border-fluent-accent/50 transition-all cursor-pointer group">
+<div class="flex items-start justify-between gap-1">
+<div class="min-w-0">
+<div class="text-xs font-semibold text-fluent-text truncate">Optical Frame Generation</div>
+<div class="text-[10px] font-mono text-fluent-tertiary">graphics.dlss.framegen</div>
+</div>
+<span class="px-1.5 py-0.5 rounded text-[9px] font-medium bg-emerald-50 text-fluent-success border border-emerald-200 shrink-0">Live</span>
+</div>
+<div class="mt-2 flex items-center justify-between text-xs">
+<div class="flex items-center gap-1.5 font-mono text-[11px]">
+<span class="text-fluent-tertiary line-through">Disabled</span>
+<span class="text-fluent-secondary">→</span>
+<span class="font-semibold text-fluent-accent">Enabled</span>
+</div>
+<button class="text-[11px] text-fluent-secondary hover:text-[#C42B1C] flex items-center gap-0.5 transition-colors" type="button">
+<span>Revert</span>
+<span class="material-symbols-outlined text-[13px]">undo</span>
+</button>
+</div>
+</div>
+<!-- Touched Item 3 -->
+<div class="p-3 bg-fluent-card border border-fluent-border rounded-win-card shadow-xs hover:border-fluent-accent/50 transition-all cursor-pointer group">
+<div class="flex items-start justify-between gap-1">
+<div class="min-w-0">
+<div class="text-xs font-semibold text-fluent-text truncate">VRAM Texture Pool</div>
+<div class="text-[10px] font-mono text-fluent-tertiary">memory.vram.pool_size</div>
+</div>
+<span class="px-1.5 py-0.5 rounded text-[9px] font-medium bg-emerald-50 text-fluent-success border border-emerald-200 shrink-0">Live</span>
+</div>
+<div class="mt-2 flex items-center justify-between text-xs">
+<div class="flex items-center gap-1.5 font-mono text-[11px]">
+<span class="text-fluent-tertiary line-through">8 GB</span>
+<span class="text-fluent-secondary">→</span>
+<span class="font-semibold text-fluent-accent">12 GB</span>
+</div>
+<button class="text-[11px] text-fluent-secondary hover:text-[#C42B1C] flex items-center gap-0.5 transition-colors" type="button">
+<span>Revert</span>
+<span class="material-symbols-outlined text-[13px]">undo</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Bottom Context Inspector Card -->
+<div class="p-3 border-t border-fluent-border bg-fluent-card">
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-fluent-secondary text-[16px]">menu_book</span>
+<span class="text-[11px] font-semibold uppercase tracking-wider text-fluent-secondary">Context Inspector</span>
+</div>
+<span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-fluent-accent-subtle text-fluent-accent font-semibold">Active Selection</span>
+</div>
+<div class="p-3 bg-fluent-subcard border border-fluent-border-subtle rounded-win-card space-y-2 text-xs">
+<div class="font-semibold text-fluent-text">graphics.upscaling.mode</div>
+<p class="text-[11px] text-fluent-secondary leading-normal">
+            Instructs the Direct3D 12 render target pass to allocate half-precision jitter buffers for NVIDIA DLSS 3.7 CNN execution.
+          </p>
+<div class="pt-1.5 border-t border-fluent-border-subtle space-y-1 font-mono text-[11px]">
+<div class="flex justify-between py-0.5">
+<span class="text-fluent-secondary">Frametime Delta:</span>
+<span class="text-fluent-success font-semibold">-2.4 ms (~38% gain)</span>
+</div>
+<div class="flex justify-between py-0.5">
+<span class="text-fluent-secondary">VRAM Footprint:</span>
+<span class="text-fluent-text">+180 MB tensor workspace</span>
+</div>
+<div class="flex justify-between py-0.5">
+<span class="text-fluent-secondary">Pipeline Barrier:</span>
+<span class="text-fluent-warning font-semibold">Reinit D3D12 Device</span>
+</div>
+</div>
+</div>
+</div>
+</aside>
+</div>
+<!-- ========================================================================= -->
+<!-- FOOTER COMMAND BAR (Windows 11 Fluent Status & Action Bar)                 -->
+<!-- ========================================================================= -->
+<footer class="h-12 px-6 bg-fluent-card border-t border-fluent-border flex items-center justify-between shrink-0 z-50">
+<!-- Hardware Status Left -->
+<div class="flex items-center gap-3 text-xs text-fluent-secondary">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-fluent-success"></span>
+<span class="font-medium text-fluent-text">NVIDIA GeForce RTX 4090 (24GB)</span>
+<span class="text-fluent-tertiary">•</span>
+<span class="font-mono text-[11px]">Driver 555.85 WHQL</span>
+</div>
+<span class="text-fluent-border">|</span>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-fluent-warning text-[16px]">restart_alt</span>
+<span>1 Setting change requires renderer reinitialization</span>
+</div>
+</div>
+<!-- Actions Right -->
+<div class="flex items-center gap-2.5">
+<button class="h-8 px-3.5 bg-fluent-card hover:bg-fluent-hover text-fluent-text text-xs font-medium border border-fluent-border rounded-win-ctrl shadow-xs transition-colors" type="button">
+        Revert All
+      </button>
+<button class="h-8 px-3.5 bg-fluent-card hover:bg-fluent-hover text-fluent-text text-xs font-medium border border-fluent-border rounded-win-ctrl shadow-xs transition-colors" type="button">
+        Export .ini
+      </button>
+<button class="h-8 px-4 bg-fluent-accent hover:bg-fluent-accent-hover active:bg-[#004785] text-white text-xs font-semibold rounded-win-ctrl shadow-sm transition-colors flex items-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[16px]">check</span>
+<span>Apply Changes (1 Restart Required)</span>
+</button>
+</div>
+</footer>
+</body></html>

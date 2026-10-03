@@ -37,6 +37,8 @@ All three pages run the same engine against the same six sample PCs. Switch the 
 
 [mockups/main-menu.html](mockups/main-menu.html) shows the settings screen the rules produce: hardware-aware upscaler choices, locked fields that link to what controls them, a change ledger that lists implied changes, the cost of applying before you commit, and a Keep/Revert countdown for display changes. Use the Basic / Advanced / Expert switch to see progressive disclosure.
 
+The same page also comes in a WinUI 3 version: [winui/main-menu.html](winui/main-menu.html) shows it as a Windows 11 configurator app in the Fluent design system, with light and dark themes. It runs the same page logic ([mockups/main-menu.js](mockups/main-menu.js)) and the same renderers; only the markup and the stylesheet ([winui/fluent.css](winui/fluent.css)) differ.
+
 ### In-game: what can change while you play
 
 [mockups/in-game.html](mockups/in-game.html) shows the same rules applied to a running session (rule R8):
@@ -54,9 +56,10 @@ All three pages run the same engine against the same six sample PCs. Switch the 
 | [schema/](schema/) | The data the engine reads: UI schema v4 (fields × facets), dependency rules v3, the upscaling provider matrix, insight rules and the system-facts schema. Older versions are kept for reference. |
 | [tools/build-ui-schema.mjs](tools/build-ui-schema.mjs) | Generates the UI schema from one compact table, so facet defaults stay consistent. |
 | [fixtures/rigs/](fixtures/rigs/) | Six sample PCs (RTX 5080, RTX 4060 laptop on battery, RTX 4070 + VR, RX 6800, RX 9070 triple-screen, Arc B580) used as facts. |
-| [mockups/](mockups/) | The three pages above, plus the engine (`engine.js`), the facet grouping (`facets.js`) and shared renderers (`ui.js`). |
+| [mockups/](mockups/) | The three pages above, plus the engine (`engine.js`), the facet grouping (`facets.js`), shared renderers (`ui.js`) and the main menu's page logic (`main-menu.js`). |
+| [winui/](winui/) | The main menu restyled as a WinUI 3 app: page markup and a Fluent stylesheet over the same renderers. |
 | [tests/engine.test.mjs](tests/engine.test.mjs) | Scenario tests that check the rules against the rigs. |
-| [input/](input/) | The original game config (v2) and the first UI prototype. |
+| [input/](input/) | The original game config (v2), the first UI prototype and the WinUI 3 design reference. |
 
 ## Running it
 

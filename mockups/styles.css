@@ -135,6 +135,8 @@ select.sel { font: inherit; font-size: 12.5px; padding: 6px 10px; border: 1px so
 /* ---------- toast / modal ---------- */
 .toast { position: fixed; left: 50%; bottom: 84px; transform: translateX(-50%); background: #0F172A; color: #fff; padding: 9px 16px; border-radius: 8px; font-size: 12.5px; box-shadow: 0 8px 24px rgba(15,23,42,.25); display: flex; gap: 10px; align-items: center; z-index: 60; }
 .spinner { width: 14px; height: 14px; border: 2px solid rgba(255,255,255,.3); border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite; }
+/* Large spinner used by the rebuild dialog. */
+.spinner.lg { margin: 4px auto 12px; border-color: rgba(250,90,70,.25); border-top-color: var(--red); width: 26px; height: 26px; }
 @keyframes spin { to { transform: rotate(360deg); } }
 .overlay { position: fixed; inset: 0; background: rgba(15,23,42,.55); backdrop-filter: blur(2px); display: flex; align-items: center; justify-content: center; z-index: 70; }
 .modal { background: var(--panel); border-radius: 12px; padding: 22px 24px; width: min(480px, 92vw); box-shadow: 0 20px 50px rgba(15,23,42,.3); }
