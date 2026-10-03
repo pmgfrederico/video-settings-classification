@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Video Settings Playground</title>
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root { --bg: #F4F6FA; --panel: #FFFFFF; --border: #E2E8F0; --border-2: #CBD5E1; --text: #0F172A; --muted: #64748B; --red: #FA5A46; --info: #2563EB; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #0B1120; --panel: #111827; --border: #1F2937; --border-2: #334155; --text: #E2E8F0; --muted: #94A3B8; --info: #60A5FA; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; font-family: 'Inter', system-ui, sans-serif; color: var(--text); background: var(--bg); -webkit-font-smoothing: antialiased; }
+main { max-width: 760px; margin: 0 auto; padding: 48px 16px; }
+h1 { font-size: 24px; margin: 0 0 8px; }
+h1::before { content: ""; display: inline-block; width: 4px; height: 20px; background: var(--red); border-radius: 2px; margin-right: 10px; vertical-align: -2px; }
+p.lede { color: var(--muted); line-height: 1.55; margin: 0 0 32px; }
+ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+a.card { display: block; background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; color: inherit; text-decoration: none; transition: border-color .15s; }
+a.card:hover { border-color: var(--border-2); }
+a.card strong { display: block; color: var(--info); margin-bottom: 4px; }
+a.card span { color: var(--muted); font-size: 14px; line-height: 1.5; }
+footer { margin-top: 32px; font-size: 13px; color: var(--muted); }
+footer a { color: var(--info); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Video settings playground</h1>
+  <p class="lede">A settings UI derived from rules, not hand-designed. Every setting is classified on a fixed set of facets, and one deterministic engine turns the PC's hardware and the player's choices into what the screen shows. Every page runs the same engine against six sample PCs.</p>
+  <ul>
+    <li><a class="card" href="mockups/explorer.html"><strong>Facet explorer</strong><span>Every setting as a collapsible tree, grouped by the facets you pick. The quickest way to understand the classification.</span></a></li>
+    <li><a class="card" href="mockups/main-menu.html"><strong>Main menu mockup</strong><span>The settings screen the rules produce: hardware-aware choices, locked fields, a change ledger and Basic / Advanced / Expert detail levels.</span></a></li>
+    <li><a class="card" href="mockups/in-game.html"><strong>In-game mockup</strong><span>The same rules applied to a running session.</span></a></li>
+    <li><a class="card" href="sankey.html"><strong>Classification Sankey</strong><span>An earlier view of the classification: reset tier → scope → class → field.</span></a></li>
+  </ul>
+  <footer>Source and docs on <a href="https://github.com/pmgfrederico/video-settings-classification">GitHub</a>. Cost and performance figures are illustrative estimates.</footer>
+</main>
+</body>
+</html>
