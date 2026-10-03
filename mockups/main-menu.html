@@ -55,7 +55,12 @@
   .sec-h h2 { margin: 0; font-family: var(--racing); font-size: 14px; text-transform: uppercase; letter-spacing: .06em; display: flex; align-items: center; gap: 8px; }
   .sec-h h2::before { content: ''; width: 5px; height: 14px; background: var(--red); border-radius: 2px; }
   .sec-h .why { font-size: 11px; color: var(--muted); font-family: var(--mono); }
-  .cards { display: flex; flex-direction: column; gap: 10px; }
+  /* Cards flow into as many ~440px columns as the screen allows; wide controls take the full row. */
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 440px), 1fr)); gap: 10px; align-items: start; }
+  .cards .card.wide { grid-column: 1 / -1; }
+  /* Large monitors: scale the whole UI up instead of leaving 12px text on a 4K panel. */
+  @media (min-width: 2400px) and (min-height: 1300px) { body { zoom: 1.2; height: calc(100vh / 1.2); } }
+  @media (min-width: 3400px) and (min-height: 1900px) { body { zoom: 1.5; height: calc(100vh / 1.5); } }
   .more { font-size: 12px; color: var(--muted); padding: 6px 2px; }
   aside.right { width: 340px; flex-shrink: 0; border-left: 1px solid var(--border); background: rgba(255,255,255,.85); display: flex; flex-direction: column; min-height: 0; }
   .panel-h { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-bottom: 1px solid var(--border); background: var(--panel-2); font-family: var(--mono); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
@@ -101,7 +106,8 @@
   <label>Rig <select id="rig"></select></label>
   <span class="rigdesc" id="rigdesc"></span>
   <span>Detail</span><div class="seg" id="disc"></div>
-  <a href="in-game.html" id="toGame">Open in-game mockup →</a>
+  <a href="explorer.html" id="toExplorer">Facet explorer →</a>
+  <a href="in-game.html" id="toGame" style="margin-left:0">Open in-game mockup →</a>
 </div>
 <header>
   <div class="logo">Assetto Corsa<span>EVO</span></div>
@@ -174,6 +180,7 @@ function renderDev() {
   $('rigdesc').textContent = facts.description;
   $('disc').innerHTML = ['basic', 'advanced', 'expert'].map(d => `<button class="${d === S.disclosure ? 'on' : ''}" data-disc="${d}">${d}</button>`).join('');
   $('toGame').href = `in-game.html?rig=${S.rigId}`;
+  $('toExplorer').href = `explorer.html?rig=${S.rigId}&detail=${S.disclosure}`;
 }
 
 function renderHeader() {
@@ -437,6 +444,7 @@ $('health').onclick = () => { S.group = 'system'; S.search = ''; render(); };
 
 loadRig(S.rigId);
 render();
+if (params.get('field')) gotoField(params.get('field'));
 window.__mock = { get vm() { return vm; }, S, setValue, gotoField };
 </script>
 </body>

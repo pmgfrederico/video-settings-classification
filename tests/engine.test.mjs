@@ -5,6 +5,7 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { evaluate, fromV2, toV2 } from '../mockups/engine.js';
+import { buildTree, FACETS, PRESETS } from '../mockups/facets.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const load = p => JSON.parse(readFileSync(join(root, p), 'utf8'));
@@ -177,4 +178,26 @@ test('toV2 round-trips the provider abstraction', () => {
   assert.equal(out.graphics.upscaling.mode, 'Upscaling_DLSS');
   assert.equal(out.graphics.upscaling.dlss_preset, 'DLSS_Performance');
   assert.equal(fromV2(out, facts, bundle)['graphics.upscaling.mode'], 'performance');
+});
+
+test('explorer: every preset places each field exactly once', () => {
+  const vm = run('rx9070-triple');
+  const total = Object.keys(vm.fields).length;
+  const leaves = n => n.children ? n.children.flatMap(leaves) : [n];
+  for (const p of PRESETS) {
+    const tree = buildTree(vm, bundle, p.levels);
+    const paths = leaves(tree).map(l => l.path);
+    assert.equal(paths.length, total, p.id);
+    assert.equal(new Set(paths).size, total, p.id);
+    assert.equal(tree.children.reduce((a, c) => a + c.count, 0), total, p.id);
+  }
+  for (const k of Object.keys(FACETS)) assert.equal(leaves(buildTree(vm, bundle, [k])).length, total, k);
+});
+
+test('explorer: "why" branches name the controller (supersampling locked by the upscaler)', () => {
+  const tree = buildTree(run('rx6800-single'), bundle, ['status', 'cause']);
+  const branch = name => tree.children.find(c => c.name === name);
+  assert.ok(branch('Hidden'));
+  const locked = branch('Locked by dependency').children.find(c => c.name === 'Controlled by Upscaler');
+  assert.ok(locked.children.some(l => l.path === 'display.supersampling'));
 });

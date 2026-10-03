@@ -61,7 +61,7 @@ export function fmt(path, value, ctx) {
 export function renderCard(f, ctx) {
   const { bundle, vm, focus, disclosure = 'advanced' } = ctx;
   const disabled = !['editable'].includes(f.state);
-  const cls = ['card', `st-${f.state}`, f.pending ? 'is-pending' : '', !f.pending && f.implied ? 'is-implied' : '', focus === f.path ? 'is-focus' : ''].join(' ');
+  const cls = ['card', `st-${f.state}`, f.pending ? 'is-pending' : '', !f.pending && f.implied ? 'is-implied' : '', focus === f.path ? 'is-focus' : '', ['provider', 'chips', 'readout'].includes(f.control) ? 'wide' : ''].join(' ');
   const badges = [];
   if (f.pending) badges.push('<span class="badge b-pending">Pending</span>');
   else if (f.implied) badges.push(`<span class="badge b-implied" title="${esc(f.implied.cause.reason)}"><span class="ms">auto_mode</span>Auto</span>`);

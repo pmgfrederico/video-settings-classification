@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Video Settings — Facet Explorer</title>
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+  body { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+  .devbar { background: #0F172A; color: #CBD5E1; font-family: var(--mono); font-size: 11px; display: flex; align-items: center; gap: 14px; padding: 6px 16px; flex-shrink: 0; }
+  .devbar b { color: #fff; letter-spacing: .08em; }
+  .devbar select { font: inherit; background: #1E293B; color: #fff; border: 1px solid #334155; border-radius: 4px; padding: 3px 6px; }
+  .devbar .seg { background: #1E293B; border-color: #334155; padding: 2px; }
+  .devbar .seg button { color: #94A3B8; padding: 2px 8px; font-size: 11px; }
+  .devbar .seg button.on { background: #FA5A46; color: #fff; }
+  .devbar a { color: #93C5FD; margin-left: auto; }
+  header { flex-shrink: 0; background: rgba(255,255,255,.95); border-bottom: 1px solid var(--border); padding: 14px 22px 12px; display: flex; flex-direction: column; gap: 10px; }
+  .title { display: flex; align-items: baseline; gap: 14px; }
+  .title h1 { font-family: var(--racing); font-size: 22px; text-transform: uppercase; letter-spacing: .03em; margin: 0; }
+  .title p { margin: 0; color: var(--muted); font-size: 12px; }
+  .bar { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; }
+  .bar .lbl { font-family: var(--mono); font-size: 10px; font-weight: 600; color: var(--dim); text-transform: uppercase; letter-spacing: .08em; }
+  .presets { display: flex; flex-wrap: wrap; gap: 6px; }
+  .presets button { border: 1px solid var(--border); background: var(--panel); border-radius: 99px; padding: 5px 12px; font-size: 12px; color: var(--text-2); }
+  .presets button:hover { border-color: var(--border-2); }
+  .presets button.on { background: var(--red); border-color: var(--red); color: #fff; font-weight: 600; }
+  .levels { display: flex; align-items: center; gap: 6px; }
+  .levels select { font: inherit; font-size: 12px; padding: 5px 8px; border: 1px solid var(--border); border-radius: 6px; background: var(--panel); }
+  .levels .arrow { color: var(--dim); }
+  .btn-sm { border: 1px solid var(--border); background: var(--panel); border-radius: 6px; padding: 5px 10px; font-size: 12px; }
+  .btn-sm:hover { border-color: var(--border-2); }
+  .legend { display: flex; flex-wrap: wrap; gap: 10px; font-size: 11.5px; color: var(--text-2); }
+  .legend i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 5px; vertical-align: -1px; }
+  main { flex: 1; display: flex; min-height: 0; }
+  .canvas { flex: 1; overflow: auto; background: var(--bg); }
+  .canvas svg { display: block; font-family: var(--font); font-size: 12px; }
+  .canvas .node { cursor: pointer; }
+  .canvas .node text { paint-order: stroke; stroke: var(--bg); stroke-width: 4px; stroke-linejoin: round; fill: var(--text); }
+  .canvas .node.leaf text { fill: var(--text-2); }
+  .canvas .node.sel text { fill: var(--red); font-weight: 600; }
+  .canvas .node .cnt { fill: var(--muted); font-family: var(--mono); font-size: 10.5px; }
+  .canvas .link { fill: none; stroke: var(--border-2); stroke-width: 1.2px; }
+  aside { width: 340px; flex-shrink: 0; border-left: 1px solid var(--border); background: rgba(255,255,255,.9); overflow-y: auto; padding: 16px; }
+  aside h2 { font-size: 15px; margin: 0 0 4px; }
+  aside .sub { font-family: var(--mono); font-size: 11px; color: var(--muted); margin-bottom: 12px; word-break: break-all; }
+  aside .kv { display: grid; grid-template-columns: 110px 1fr; gap: 5px 10px; font-size: 12px; margin: 10px 0; }
+  aside .kv dt { color: var(--muted); }
+  aside .kv dd { margin: 0; }
+  aside .help { font-size: 12px; color: var(--text-2); line-height: 1.45; }
+  aside .reason { margin-top: 8px; }
+  aside ul { list-style: none; padding: 0; margin: 8px 0 0; font-size: 12px; }
+  aside li { padding: 4px 0; border-top: 1px solid var(--border); display: flex; gap: 6px; align-items: center; }
+  aside li button { background: none; border: 0; padding: 0; text-align: left; color: var(--text); }
+  aside li button:hover { color: var(--red); }
+  aside .open { display: inline-block; margin-top: 12px; font-weight: 600; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; display: inline-block; }
+  .empty { color: var(--muted); font-size: 12px; line-height: 1.5; }
+  .stack { display: flex; height: 8px; border-radius: 3px; overflow: hidden; margin: 6px 0 2px; background: var(--border); }
+  @media (min-width: 2400px) and (min-height: 1300px) { body { zoom: 1.2; height: calc(100vh / 1.2); } }
+  @media (min-width: 3400px) and (min-height: 1900px) { body { zoom: 1.5; height: calc(100vh / 1.5); } }
+</style>
+</head>
+<body>
+<div class="devbar">
+  <b>MOCKUP</b>
+  <label>Rig <select id="rig"></select></label>
+  <span>Detail</span><div class="seg" id="disc"></div>
+  <a href="main-menu.html" id="toMenu">← Back to main menu</a>
+</div>
+<header>
+  <div class="title"><h1>Facet explorer</h1><p>Every setting, grouped by the facets the rules engine evaluates for this PC. Click a branch to open it; click a setting for details.</p></div>
+  <div class="bar"><span class="lbl">Question</span><div class="presets" id="presets"></div></div>
+  <div class="bar">
+    <span class="lbl">Levels</span><div class="levels" id="levels"></div>
+    <button class="btn-sm" id="expand">Expand all</button><button class="btn-sm" id="collapse">Collapse</button>
+    <span class="lbl" style="margin-left:8px">Status</span><div class="legend" id="legend"></div>
+  </div>
+</header>
+<main>
+  <div class="canvas" id="canvas"></div>
+  <aside id="side"></aside>
+</main>
+
+<script type="module">
+import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@7/+esm';
+import { evaluate, fromV2 } from './engine.js';
+import { loadAll } from './data.js';
+import { FACETS, PRESETS, STATUS, statusOf, buildTree } from './facets.js';
+import { esc, tierBadge } from './ui.js';
+
+const STATUS_COLOR = { editable: '#059669', locked: '#64748B', blocked: '#B45309', readOnly: '#2563EB', derived: '#7C3AED', hidden: '#CBD5E1' };
+const MAX_LEVELS = 3;
+
+const { bundle, v2, rigs, rigIds } = await loadAll();
+const params = new URLSearchParams(location.search);
+const S = {
+  rigId: rigIds.includes(params.get('rig')) ? params.get('rig') : rigIds[0],
+  disclosure: ['basic', 'advanced', 'expert'].includes(params.get('detail')) ? params.get('detail') : 'advanced',
+  levels: (params.get('levels') ?? '').split(',').filter(k => FACETS[k]).slice(0, MAX_LEVELS),
+  selected: null,
+  expand: params.get('expand') === '1',
+};
+if (!S.levels.length) S.levels = [...PRESETS[0].levels];
+let vm, root;
+const $ = id => document.getElementById(id);
+
+function compute() {
+  const facts = rigs[S.rigId];
+  // Same load-time evaluation as the main menu, so R12 adjustments are part of the applied state.
+  const base = evaluate({ bundle, facts, base: fromV2(v2, facts, bundle) }).cfg;
+  vm = evaluate({ bundle, facts, base, context: { session: 'menu', online: false }, disclosure: S.disclosure });
+}
+
+function syncUrl() {
+  history.replaceState(null, '', `?rig=${S.rigId}&detail=${S.disclosure}&levels=${S.levels.join(',')}`);
+  $('toMenu').href = `main-menu.html?rig=${S.rigId}&detail=${S.disclosure}`;
+}
+
+// ---------- controls ----------
+function renderControls() {
+  $('rig').innerHTML = rigIds.map(id => `<option value="${id}" ${id === S.rigId ? 'selected' : ''}>${esc(rigs[id].label)}</option>`).join('');
+  $('disc').innerHTML = ['basic', 'advanced', 'expert'].map(d => `<button class="${d === S.disclosure ? 'on' : ''}" data-disc="${d}">${d}</button>`).join('');
+  const key = S.levels.join(',');
+  $('presets').innerHTML = PRESETS.map(p => `<button class="${p.levels.join(',') === key ? 'on' : ''}" data-preset="${p.id}">${esc(p.label)}</button>`).join('');
+  const opts = (sel, allowNone) => (allowNone ? '<option value="">(none)</option>' : '') +
+    Object.entries(FACETS).map(([k, f]) => `<option value="${k}" ${k === sel ? 'selected' : ''}>${esc(f.label)}</option>`).join('');
+  $('levels').innerHTML = Array.from({ length: MAX_LEVELS }, (_, i) =>
+    (i ? '<span class="arrow">→</span>' : '') + `<select data-level="${i}" ${i > S.levels.length ? 'disabled' : ''}>${opts(S.levels[i] ?? '', i > 0)}</select>`).join('') +
+    '<span class="arrow">→</span><span class="lbl" style="letter-spacing:.04em">Setting</span>';
+  $('legend').innerHTML = Object.entries(STATUS).map(([k, s]) => `<span><i style="background:${STATUS_COLOR[k]}"></i>${esc(s.label)}</span>`).join('');
+}
+
+// ---------- tree ----------
+const DX = 22, LABEL = 130, MARGIN = { top: 20, right: 260, bottom: 20, left: 24 };
+// Leaves under a node whether it is expanded or collapsed (d3's leaves() only follows visible children).
+function allLeaves(n) { const kids = n.children ?? n._children; return kids ? kids.flatMap(allLeaves) : [n]; }
+
+function rebuild(keepOpen = true) {
+  const prev = keepOpen && root ? new Set(root.descendants().filter(d => d.children && d.depth).map(idOf)) : null;
+  root = d3.hierarchy(buildTree(vm, bundle, S.levels));
+  // Default: every branch level open, settings folded away — unless ?expand=1 or the previous view had them open.
+  const isOpen = d => prev ? prev.has(idOf(d)) : S.expand || d.height > 1;
+  root.descendants().forEach(d => {
+    d._children = d.children;
+    if (d.depth && d.children && !isOpen(d)) d.children = null;
+  });
+  draw();
+}
+const idOf = d => d.ancestors().map(a => a.data.path ?? a.data.name).reverse().join('/');
+
+function stackSvg(node, w) {
+  // Status mix of a branch, as a small stacked bar next to its label.
+  const counts = {};
+  for (const l of allLeaves(node)) { const s = statusOf(l.data.field ?? {}); counts[s] = (counts[s] ?? 0) + 1; }
+  const total = d3.sum(Object.values(counts));
+  let x = 0;
+  return Object.keys(STATUS).filter(k => counts[k]).map(k => {
+    const width = counts[k] / total * w;
+    const r = `<rect x="${x}" y="-3.5" width="${width}" height="7" fill="${STATUS_COLOR[k]}"><title>${counts[k]} ${STATUS[k].label.toLowerCase()}</title></rect>`;
+    x += width;
+    return r;
+  }).join('');
+}
+
+function draw() {
+  const canvas = $('canvas');
+  const depth = S.levels.length + 1; // columns to the right of the root
+  const dy = Math.max(220, (canvas.clientWidth - LABEL - MARGIN.left - MARGIN.right) / depth);
+  d3.tree().nodeSize([DX, dy])(root);
+  let x0 = Infinity, x1 = -Infinity;
+  root.each(d => { x0 = Math.min(x0, d.x); x1 = Math.max(x1, d.x); });
+  const width = LABEL + MARGIN.left + dy * depth + MARGIN.right;
+  const height = x1 - x0 + MARGIN.top + MARGIN.bottom;
+
+  const svg = d3.create('svg').attr('width', width).attr('height', height)
+    .attr('viewBox', [-MARGIN.left - LABEL, x0 - MARGIN.top, width, height]);
+  const g = svg.append('g');
+  g.append('g').selectAll('path').data(root.links()).join('path').attr('class', 'link')
+    .attr('d', d3.linkHorizontal().x(d => d.y).y(d => d.x));
+
+  const node = g.append('g').selectAll('g').data(root.descendants()).join('g')
+    .attr('class', d => `node ${d.data.path ? 'leaf' : ''} ${S.selected === idOf(d) ? 'sel' : ''}`)
+    .attr('transform', d => `translate(${d.y},${d.x})`)
+    .on('click', (e, d) => {
+      if (d._children && d.depth) d.children = d.children ? null : d._children;
+      S.selected = idOf(d);
+      draw(); renderSide(d);
+    });
+
+  node.append('circle').attr('r', d => d.data.path ? 4 : 5)
+    .attr('fill', d => d.data.path ? STATUS_COLOR[statusOf(d.data.field)] : d._children && !d.children ? 'var(--red)' : 'var(--panel)')
+    .attr('stroke', d => d.data.path ? 'none' : 'var(--red)').attr('stroke-width', 1.5);
+
+  // Branch labels sit left of their node (their children are to the right); leaves label to the right.
+  const label = node.append('text').attr('dy', '0.32em')
+    .attr('x', d => d.data.path ? 9 : -10).attr('text-anchor', d => d.data.path ? 'start' : 'end');
+  label.append('tspan').text(d => d.data.name).attr('font-weight', d => d.data.path ? 400 : 600);
+  label.filter(d => !d.data.path).append('tspan').attr('class', 'cnt').text(d => `  ${d.data.count}`);
+
+  node.filter(d => !d.data.path && d.depth).append('g').attr('transform', 'translate(10,0)')
+    .html(d => stackSvg(d, 44));
+
+  canvas.replaceChildren(svg.node());
+}
+
+// ---------- side panel ----------
+function renderSide(d) {
+  const side = $('side');
+  if (!d) {
+    side.innerHTML = `<div class="empty"><b>${Object.keys(vm.fields).length} settings</b> on <b>${esc(rigs[S.rigId].label)}</b>.<br><br>Pick a question above, or choose the levels yourself. Branches show how many settings they hold and their status mix. Click a setting to see why it's in that branch.</div>`;
+    return;
+  }
+  if (d.data.path) {
+    const f = d.data.field, s = statusOf(f);
+    const crumbs = d.ancestors().slice(1, -1).reverse().map(a => `${esc(FACETS[a.data.facet].label)}: <b>${esc(a.data.name)}</b>`).join('<br>');
+    const facetRows = Object.entries(FACETS).map(([k, fc]) => `<dt>${esc(fc.label)}</dt><dd>${esc(fc.get(f, { vm, bundle }))}</dd>`).join('');
+    const open = `main-menu.html?rig=${S.rigId}&detail=${S.disclosure}&field=${encodeURIComponent(f.path)}`;
+    side.innerHTML = `<h2>${esc(f.label)}</h2><div class="sub">${esc(f.path)}</div>
+      <div><span class="dot" style="background:${STATUS_COLOR[s]}"></span> ${esc(STATUS[s].label)} ${tierBadge(f.tier)}</div>
+      ${f.reason ? `<div class="reason">${esc(f.reason)}</div>` : ''}
+      ${f.help ? `<p class="help">${esc(f.help)}</p>` : ''}
+      ${crumbs ? `<p class="help">${crumbs}</p>` : ''}
+      <dl class="kv">${facetRows}</dl>
+      ${f.visible ? `<a class="open" href="${open}">Open in the main menu →</a>` : '<p class="empty">Not shown in the main menu on this PC.</p>'}`;
+    return;
+  }
+  const leaves = allLeaves(d);
+  const facet = d.data.facet ? FACETS[d.data.facet].label : 'All settings';
+  side.innerHTML = `<h2>${esc(d.data.name)}</h2><div class="sub">${esc(facet)} · ${leaves.length} settings</div>
+    <svg width="100%" height="10" viewBox="0 -5 100 10" preserveAspectRatio="none">${stackSvg(d, 100)}</svg>
+    <ul>${leaves.map(l => `<li><span class="dot" style="background:${STATUS_COLOR[statusOf(l.data.field)]}"></span><button data-leaf="${esc(idOf(l))}">${esc(l.data.name)}</button></li>`).join('')}</ul>`;
+}
+
+function render(keepOpen) {
+  compute(); syncUrl(); renderControls(); rebuild(keepOpen);
+  const sel = S.selected && root.descendants().find(d => idOf(d) === S.selected);
+  renderSide(sel || null);
+}
+
+// ---------- events ----------
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-disc],[data-preset],[data-leaf],#expand,#collapse');
+  if (!t) return;
+  if (t.dataset.disc) { S.disclosure = t.dataset.disc; return render(true); }
+  if (t.dataset.preset) { S.levels = [...PRESETS.find(p => p.id === t.dataset.preset).levels]; S.selected = null; return render(false); }
+  if (t.dataset.leaf) {
+    // Reveal a setting listed in the side panel: open its ancestors and select it.
+    const target = root.descendants().find(d => idOf(d) === t.dataset.leaf);
+    target?.ancestors().forEach(a => { if (a._children) a.children = a._children; });
+    S.selected = t.dataset.leaf; draw(); renderSide(target);
+    return;
+  }
+  if (t.id === 'expand') { root.descendants().forEach(d => { if (d._children) d.children = d._children; }); return draw(); }
+  if (t.id === 'collapse') { root.descendants().forEach(d => { if (d.depth) d.children = null; }); return draw(); }
+});
+document.addEventListener('change', e => {
+  if (e.target.id === 'rig') { S.rigId = e.target.value; return render(true); }
+  if (e.target.dataset.level != null) {
+    const i = Number(e.target.dataset.level), v = e.target.value;
+    const next = [...S.levels];
+    if (v) next[i] = v; else next.length = i;
+    S.levels = next.filter((k, j) => k && next.indexOf(k) === j); // no repeated facet
+    S.selected = null;
+    render(false);
+  }
+});
+let resizeT;
+addEventListener('resize', () => { clearTimeout(resizeT); resizeT = setTimeout(draw, 120); });
+
+render(false);
+window.__explorer = { S, get vm() { return vm; }, get root() { return root; } };
+</script>
+</body>
+</html>
