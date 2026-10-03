@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ASSETTO CORSA EVO // Video Pipeline Configuration</title>
+<!-- Tailwind CSS CDN with forms & container queries -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;family=Rajdhani:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              red: '#FA5A46',
+              redHover: '#E04835',
+              crimson: '#E11D48',
+              slate: '#475569',
+              card: '#FFFFFF',
+              cardBorder: '#E2E8F0',
+              cardHover: '#CBD5E1'
+            },
+            light: {
+              bg: '#F4F6FA',
+              panel: '#FFFFFF',
+              border: '#E2E8F0',
+              inputBg: '#F8FAFC',
+              textPrimary: '#0F172A',
+              textSecondary: '#334155',
+              textMuted: '#64748B',
+              textDim: '#94A3B8'
+            }
+          },
+          fontFamily: {
+            racing: ['Rajdhani', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+            sans: ['Inter', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    /* Clean Minimal Scrollbars (Light Workstation) */
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(226, 232, 240, 0.6);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #CBD5E1;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94A3B8;
+    }
+
+    /* Modern Light Matte Motorsport Slider */
+    input[type=range] {
+      -webkit-appearance: none;
+      background: #E2E8F0;
+      border-radius: 9999px;
+      height: 4px;
+      cursor: pointer;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      height: 16px;
+      width: 16px;
+      border-radius: 50%;
+      background: #FFFFFF;
+      border: 2.5px solid #FA5A46;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+      transition: all 0.15s ease;
+    }
+    input[type=range]::-webkit-slider-thumb:hover {
+      background: #FA5A46;
+      transform: scale(1.08);
+    }
+
+    /* Toggle switch */
+    .toggle-checkbox:checked + .toggle-label {
+      background-color: #FA5A46;
+    }
+    .toggle-checkbox:checked + .toggle-label:after {
+      transform: translateX(100%);
+    }
+  </style>
+</head>
+<body class="bg-[#F4F6FA] text-light-textPrimary font-sans h-full overflow-hidden flex flex-col antialiased select-none relative">
+<!-- MOTORSPORT ENGINE BAY BACKGROUND WITH DELICATE TECHNICAL WORKSHOP WATERMARK OVERLAY -->
+<div class="fixed inset-0 z-0 overflow-hidden pointer-events-none"><img alt="High Performance Racing Engine Bay" class="w-full h-full object-cover object-center transform scale-105 filter contrast-125 brightness-95 opacity-30 mix-blend-multiply" src="https://lh3.googleusercontent.com/aida/AEtjO1WF4vvmGH3P9JuPOl66ZeyFqn4VgRh8HsVcOOtaz_vFIUF1KOmIXWjC4UODPetJvaqmzGDdquI7LeZrcyZ0bzL_Eyi6jSygHBHTe9jsWd3WVBRnoEf34hfdZ8hfaytVefaGL1D3vsmkox5hnEzCgjxbe8mx9fyKOJgiA9amFaB07ti339HLx0yvJygvlH2vsL1FgHhw8_y0mxFRo9XoxOXOJK5iEYYEG6ADWc1yLu02Fr1JHkxchA0T598"/><div class="absolute inset-0 bg-gradient-to-tr from-[#EAF0F8]/95 via-[#F1F4FA]/85 to-[#F8FAFC]/90 backdrop-blur-[1px]"></div><div class="absolute inset-0 opacity-[0.07] bg-[radial-gradient(#475569_1px,transparent_1px)] [background-size:24px_24px]"></div><div class="absolute top-20 right-96 pointer-events-none font-mono text-[9px] uppercase tracking-widest text-slate-400/60 hidden xl:flex flex-col gap-1"><div class="flex items-center gap-1.5"><span>+ CAD REF // 44.821-X</span><span class="w-8 h-[1px] bg-slate-300"></span></div><span>[ENGINE-BAY // TWIN-TURBO 4.0L V8]</span></div><div class="absolute bottom-24 left-72 pointer-events-none font-mono text-[9px] uppercase tracking-widest text-slate-400/60 hidden xl:flex items-center gap-2"><span class="w-2.5 h-2.5 border border-slate-400/60 flex items-center justify-center"><span class="w-1 h-1 bg-brand-red/70"></span></span><span>SECTION A-A // INTAKE MANIFOLD PLENUM</span><span class="w-16 h-[1px] bg-slate-300/80"></span></div></div>
+<!-- BEGIN: Studio Top Header -->
+<header class="relative z-20 h-16 border-b border-light-border px-8 flex items-center justify-between shrink-0 bg-white/90 backdrop-blur-md shadow-[0_1px_2px_rgba(0,0,0,0.03)]" data-purpose="global-header">
+<!-- Left: Authentic AC EVO Logo -->
+<div class="flex items-center gap-4">
+<div class="flex items-center tracking-tight">
+<span class="text-xl font-bold uppercase font-racing tracking-wide flex items-center gap-1.5 text-light-textPrimary">
+<span class="font-extrabold tracking-wider">ASSETTO CORSA</span>
+<span class="text-brand-red font-bold tracking-widest text-xl ml-1">EVO</span>
+</span>
+<span class="text-light-border mx-3 font-light text-base">/</span>
+<span class="text-light-textMuted font-semibold uppercase tracking-wider text-xs font-mono">
+        Video Settings
+      </span>
+</div>
+<div class="h-4 w-[1px] bg-light-border ml-2"></div>
+</div>
+<!-- Center placeholder spacer -->
+<div class="hidden md:block"></div>
+<!-- Right: Status Readouts & Filter -->
+<div class="flex items-center gap-4">
+<div class="relative w-56 hidden xl:block">
+<input class="w-full pl-8 pr-3 py-1.5 bg-light-inputBg border border-light-border rounded text-xs text-light-textPrimary placeholder-light-textDim focus:border-brand-red focus:bg-white focus:ring-0 font-mono transition-colors shadow-sm" placeholder="Filter settings..." type="text"/>
+<span class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-light-textDim text-xs font-mono">/</span>
+</div>
+<div class="px-3.5 py-1.5 bg-slate-100/90 border border-light-border rounded text-xs font-mono text-light-textMuted shadow-sm">
+      Preset: <span class="font-semibold text-light-textPrimary">Custom Ultra</span>
+</div>
+</div>
+</header>
+<!-- END: Studio Top Header -->
+<!-- MAIN WORKSPACE LAYOUT -->
+<main class="relative z-10 flex-1 flex overflow-hidden">
+<!-- LEFT SIDEBAR: Category Jump Navigation -->
+<aside class="w-64 border-r border-light-border bg-white/80 backdrop-blur-md flex flex-col shrink-0 overflow-y-auto" data-purpose="navigation-rail">
+<div class="p-5 space-y-7">
+<div>
+<div class="text-[10px] font-mono tracking-wider font-semibold text-light-textDim uppercase mb-3 flex items-center justify-between">
+<span>01 Display &amp; Setup</span>
+</div>
+<nav class="space-y-1.5">
+<a class="flex items-center justify-between px-3.5 py-2.5 text-xs font-semibold rounded bg-brand-red text-white shadow-sm" href="#section-display">
+<span>Monitor &amp; Resolution</span>
+<span class="w-1.5 h-1.5 rounded-full bg-white"></span>
+</a>
+<a class="flex items-center justify-between px-3.5 py-2.5 text-xs font-medium rounded text-light-textMuted hover:text-light-textPrimary hover:bg-slate-100 transition-colors" href="#section-triple">
+<span>Triple Screen</span>
+<span class="text-[10px] font-mono text-light-textDim">3-WAY</span>
+</a>
+</nav>
+</div>
+<div>
+<div class="text-[10px] font-mono tracking-wider font-semibold text-light-textDim uppercase mb-3">
+          02 Graphics &amp; Engine
+        </div>
+<nav class="space-y-1.5">
+<a class="block px-3.5 py-2 text-xs font-medium rounded text-light-textMuted hover:text-light-textPrimary hover:bg-slate-100 transition-colors" href="#section-telemetry">
+            GPU &amp; Adapter
+          </a>
+<a class="block px-3.5 py-2 text-xs font-medium rounded text-light-textMuted hover:text-light-textPrimary hover:bg-slate-100 transition-colors" href="#section-upscaling">
+            Upscaling
+          </a>
+<a class="block px-3.5 py-2 text-xs font-medium rounded text-light-textMuted hover:text-light-textPrimary hover:bg-slate-100 transition-colors" href="#section-framepacing">
+            Frame Pacing &amp; Sync
+          </a>
+<a class="block px-3.5 py-2 text-xs font-medium rounded text-light-textMuted hover:text-light-textPrimary hover:bg-slate-100 transition-colors" href="#section-antialiasing">
+            Anti-Aliasing
+          </a>
+</nav>
+</div>
+<div id="section-vr">
+<div class="text-[10px] font-mono tracking-wider font-semibold text-light-textDim uppercase mb-3">
+          03 Specialized Hardware
+        </div>
+<nav class="space-y-1.5">
+<div class="flex items-center justify-between px-3.5 py-2 text-xs font-medium rounded text-light-textDim bg-slate-50 border border-slate-200">
+<span>VR Headset Rig</span>
+<span class="text-[9px] font-mono text-light-textDim">STANDBY</span>
+</div>
+</nav>
+</div>
+<!-- GPU Health Status Card -->
+<div class="pt-4 border-t border-light-border">
+<div class="bg-slate-50/90 p-3.5 border border-light-border rounded-lg shadow-sm">
+<div class="flex items-center justify-between text-xs font-mono mb-2 text-light-textMuted">
+<span>GPU Temperature</span>
+<span class="font-bold text-light-textPrimary">52°C</span>
+</div>
+<div class="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden mb-2">
+<div class="bg-emerald-500 h-full w-[45%]"></div>
+</div>
+<div class="flex items-center justify-between text-[11px] font-mono text-light-textDim">
+<span>Frame Limit</span>
+<span class="text-light-textPrimary font-semibold">140 / 144 FPS</span>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<!-- CENTER VIEW: Spacious Settings Sections -->
+<div class="flex-1 overflow-y-auto px-12 py-8 space-y-7 scroll-smooth" data-purpose="settings-canvas"><!-- SUBSECTION: Graphics & Upscaling -->
+<section class="space-y-3.5" id="section-upscaling">
+<div class="flex items-center justify-between pb-2 border-b border-light-border/80 backdrop-blur-xs">
+<h2 class="text-xs font-bold uppercase tracking-wider font-racing text-light-textPrimary flex items-center gap-2">
+<span class="w-1.5 h-3.5 bg-brand-red rounded-sm"></span>
+          Upscaler Method
+        </h2>
+<div class="flex items-center gap-2 font-mono text-xs text-light-textDim">
+<span class="text-[10px] tracking-widest text-slate-400">// SHADER_STAGE:01</span>
+<span>DirectX 12</span>
+</div>
+</div>
+<div class="space-y-3">
+<div class="bg-white/85 backdrop-blur-md border border-slate-200/90 rounded-lg p-4 shadow-[0_1px_3px_rgba(0,0,0,0.03)] flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all">
+<div>
+<div class="text-sm font-semibold text-light-textPrimary">Upscaler Method</div>
+<div class="text-xs text-light-textMuted mt-0.5">Super-resolution technique</div>
+</div>
+<div class="inline-flex bg-slate-100/90 p-1 border border-slate-200 rounded-md backdrop-blur-xs">
+<button class="px-3.5 py-1.5 text-xs font-medium rounded text-light-textMuted hover:text-light-textPrimary transition-colors">Off</button>
+<button class="px-3.5 py-1.5 text-xs font-medium rounded text-light-textMuted hover:text-light-textPrimary transition-colors">AMD FSR 3.1</button>
+<button class="px-3.5 py-1.5 text-xs font-semibold rounded bg-brand-red text-white shadow-sm transition-colors">NVIDIA DLSS</button>
+<button class="px-3.5 py-1.5 text-xs font-medium rounded text-light-textMuted hover:text-light-textPrimary transition-colors">Intel XeSS</button>
+</div>
+</div>
+<div class="bg-white/85 backdrop-blur-md border border-slate-200/90 rounded-lg p-4 shadow-[0_1px_3px_rgba(0,0,0,0.03)] flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all">
+<div>
+<div class="text-sm font-semibold text-light-textPrimary">Render Scale Quality</div>
+<div class="text-xs text-light-textMuted mt-0.5">Internal framebuffer resolution</div>
+</div>
+<div class="flex items-center gap-3">
+<span class="text-xs font-mono text-light-textMuted">Quality (67%)</span>
+<div class="font-mono text-xs px-3.5 py-1.5 bg-brand-red/10 border border-brand-red/30 rounded text-brand-red font-semibold backdrop-blur-xs">
+              2560 × 1440 → 3840 × 2160
+            </div>
+</div>
+</div>
+</div>
+</section>
+<!-- SUBSECTION: Frame Pacing -->
+<section class="space-y-3.5" id="section-framepacing">
+<div class="flex items-center justify-between pb-2 border-b border-light-border/80 backdrop-blur-xs">
+<h2 class="text-xs font-bold uppercase tracking-wider font-racing text-light-textPrimary flex items-center gap-2">
+<span class="w-1.5 h-3.5 bg-brand-red rounded-sm"></span>
+          Frame Pacing &amp; Sync
+        </h2>
+<div class="flex items-center gap-2 font-mono text-xs text-light-textDim">
+<span class="text-[10px] tracking-widest text-slate-400">// REFRESH_TARGET</span>
+<span>Max Limit: 288 FPS</span>
+</div>
+</div>
+<div class="space-y-3">
+<!-- Frame Rate Cap -->
+<div class="bg-white/85 backdrop-blur-md border border-slate-200/90 rounded-lg p-4 shadow-[0_1px_3px_rgba(0,0,0,0.03)] flex flex-col sm:flex-row sm:items-center justify-between gap-5 transition-all">
+<div>
+<div class="text-sm font-semibold text-light-textPrimary">Frame Rate Limit</div>
+<div class="text-xs text-light-textMuted mt-0.5">Maximum render framerate</div>
+</div>
+<div class="flex items-center gap-4 w-full sm:w-72">
+<input class="w-full" max="288" min="30" type="range" value="140"/>
+<div class="font-mono text-xs font-semibold px-2.5 py-1.5 bg-slate-100 border border-slate-200 rounded text-light-textPrimary w-20 text-center shadow-sm">
+              140 FPS
+            </div>
+</div>
+</div>
+<!-- Vertical Sync -->
+<div class="bg-white/85 backdrop-blur-md border border-slate-200/90 rounded-lg p-4 shadow-[0_1px_3px_rgba(0,0,0,0.03)] flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all">
+<div>
+<div class="text-sm font-semibold text-light-textPrimary">Vertical Synchronization</div>
+<div class="text-xs text-light-textMuted mt-0.5">V-Sync mode</div>
+</div>
+<div class="inline-flex bg-slate-100/90 p-1 border border-slate-200 rounded-md backdrop-blur-xs">
+<button class="px-3.5 py-1.5 text-xs font-medium rounded text-light-textMuted hover:text-light-textPrimary transition-colors">Off</button>
+<button class="px-3.5 py-1.5 text-xs font-semibold rounded bg-brand-red text-white shadow-sm transition-colors">Adaptive</button>
+<button class="px-3.5 py-1.5 text-xs font-medium rounded text-light-textMuted hover:text-light-textPrimary transition-colors">On</button>
+</div>
+</div>
+<!-- Low Latency -->
+<div class="bg-white/85 backdrop-blur-md border border-slate-200/90 rounded-lg p-4 shadow-[0_1px_3px_rgba(0,0,0,0.03)] flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all">
+<div>
+<div class="text-sm font-semibold text-light-textPrimary">Low Latency Mode</div>
+<div class="text-xs text-light-textMuted mt-0.5">CPU/GPU pipeline queue timing</div>
+</div>
+<div class="inline-flex bg-slate-100/90 p-1 border border-slate-200 rounded-md backdrop-blur-xs">
+<button class="px-3.5 py-1.5 text-xs font-medium rounded text-light-textMuted hover:text-light-textPrimary transition-colors">Off</button>
+<button class="px-3.5 py-1.5 text-xs font-medium rounded text-light-textMuted hover:text-light-textPrimary transition-colors">AMD Anti-Lag</button>
+<button class="px-3.5 py-1.5 text-xs font-semibold rounded bg-brand-red text-white shadow-sm transition-colors">NVIDIA Reflex + Boost</button>
+</div>
+</div>
+</div>
+</section>
+<!-- SUBSECTION: Anti-Aliasing -->
+<section class="space-y-3.5" id="section-antialiasing">
+<div class="flex items-center justify-between pb-2 border-b border-light-border/80 backdrop-blur-xs">
+<h2 class="text-xs font-bold uppercase tracking-wider font-racing text-light-textPrimary flex items-center gap-2">
+<span class="w-1.5 h-3.5 bg-brand-red rounded-sm"></span>
+          Anti-Aliasing
+        </h2>
+<span class="text-xs font-mono text-emerald-600 font-medium">Active</span>
+</div>
+<div class="space-y-3">
+<!-- SSAA -->
+<div class="bg-white/85 backdrop-blur-md border border-slate-200/90 rounded-lg p-4 shadow-[0_1px_3px_rgba(0,0,0,0.03)] flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all">
+<div>
+<div class="text-sm font-semibold text-light-textPrimary">Supersampling (SSAA)</div>
+<div class="text-xs text-light-textMuted mt-0.5">Internal framebuffer resolution multiplier</div>
+</div>
+<div class="inline-flex bg-slate-100/90 p-1 border border-slate-200 rounded-md backdrop-blur-xs">
+<button class="px-3.5 py-1.5 text-xs font-medium rounded text-light-textMuted hover:text-light-textPrimary transition-colors">Off</button>
+<button class="px-3.5 py-1.5 text-xs font-medium rounded text-light-textMuted hover:text-light-textPrimary transition-colors">125%</button>
+<button class="px-3.5 py-1.5 text-xs font-semibold rounded bg-brand-red text-white shadow-sm transition-colors">150%</button>
+<button class="px-3.5 py-1.5 text-xs font-medium rounded text-light-textMuted hover:text-light-textPrimary transition-colors">175%</button>
+<button class="px-3.5 py-1.5 text-xs font-medium rounded text-light-textMuted hover:text-light-textPrimary transition-colors">200%</button>
+</div>
+</div>
+<!-- MSAA -->
+<div class="bg-white/85 backdrop-blur-md border border-slate-200/90 rounded-lg p-4 shadow-[0_1px_3px_rgba(0,0,0,0.03)] flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all">
+<div>
+<div class="text-sm font-semibold text-light-textPrimary">Multi-Sample AA (MSAA)</div>
+<div class="text-xs text-light-textMuted mt-0.5">Geometry edge sub-sampling</div>
+</div>
+<div class="inline-flex bg-slate-100/90 p-1 border border-slate-200 rounded-md backdrop-blur-xs">
+<button class="px-3.5 py-1.5 text-xs font-medium rounded text-light-textMuted hover:text-light-textPrimary transition-colors">Off</button>
+<button class="px-3.5 py-1.5 text-xs font-medium rounded text-light-textMuted hover:text-light-textPrimary transition-colors">2x</button>
+<button class="px-3.5 py-1.5 text-xs font-semibold rounded bg-brand-red text-white shadow-sm transition-colors">4x</button>
+<button class="px-3.5 py-1.5 text-xs font-medium rounded text-light-textMuted hover:text-light-textPrimary transition-colors">8x</button>
+</div>
+</div>
+</div>
+</section>
+<div class="h-6"></div></div>
+<!-- RIGHT SIDEBAR: Clean Session Activity & Inspector -->
+<aside class="w-80 border-l border-light-border bg-white/80 backdrop-blur-md flex flex-col shrink-0 overflow-hidden" data-purpose="activity-inspector-rail">
+<!-- Upper: Session Changes -->
+<div class="flex-1 flex flex-col border-b border-light-border overflow-hidden">
+<div class="p-4 border-b border-light-border bg-slate-50/80 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="text-xs font-mono font-semibold uppercase tracking-wider text-light-textPrimary">Session Activity</span>
+<span class="px-1.5 py-0.5 text-[10px] font-mono bg-brand-red text-white rounded font-medium">
+            4 Changed
+          </span>
+</div>
+<button class="text-xs text-light-textDim hover:text-light-textPrimary font-mono transition-colors">Reset</button>
+</div>
+<div class="flex-1 overflow-y-auto p-4 space-y-2.5">
+<!-- Item 1 -->
+<div class="p-3 bg-white border border-light-border rounded-lg shadow-sm">
+<div class="flex items-center justify-between mb-1">
+<span class="text-xs font-semibold text-light-textPrimary">Supersampling (SSAA)</span>
+<span class="text-[10px] font-mono text-brand-red font-medium">+2.4 ms</span>
+</div>
+<div class="text-xs font-mono text-light-textMuted flex items-center justify-between">
+<span>Off → <span class="text-light-textPrimary font-semibold">150%</span></span>
+<button class="text-light-textDim hover:text-light-textPrimary text-xs transition-colors">↺</button>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="p-3 bg-white border border-light-border rounded-lg shadow-sm">
+<div class="flex items-center justify-between mb-1">
+<span class="text-xs font-semibold text-light-textPrimary">Frame Rate Limit</span>
+<span class="text-[10px] font-mono text-emerald-600 font-medium">Sync</span>
+</div>
+<div class="text-xs font-mono text-light-textMuted flex items-center justify-between">
+<span>100 → <span class="text-light-textPrimary font-semibold">140 FPS</span></span>
+<button class="text-light-textDim hover:text-light-textPrimary text-xs transition-colors">↺</button>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="p-3 bg-white border border-light-border rounded-lg shadow-sm">
+<div class="flex items-center justify-between mb-1">
+<span class="text-xs font-semibold text-light-textPrimary">Low Latency Mode</span>
+<span class="text-[10px] font-mono text-brand-red font-medium">-4.1 ms</span>
+</div>
+<div class="text-xs font-mono text-light-textMuted flex items-center justify-between">
+<span>Off → <span class="text-light-textPrimary font-semibold">Reflex Boost</span></span>
+<button class="text-light-textDim hover:text-light-textPrimary text-xs transition-colors">↺</button>
+</div>
+</div>
+<!-- Item 4 -->
+<div class="p-3 bg-white border border-light-border rounded-lg shadow-sm">
+<div class="flex items-center justify-between mb-1">
+<span class="text-xs font-semibold text-light-textPrimary">Perspective Correction</span>
+<span class="text-[10px] font-mono text-light-textDim">Geometry</span>
+</div>
+<div class="text-xs font-mono text-light-textMuted flex items-center justify-between">
+<span>0.00 → <span class="text-light-textPrimary font-semibold">0.15</span></span>
+<button class="text-light-textDim hover:text-light-textPrimary text-xs transition-colors">↺</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Lower: Setting Inspector -->
+<div class="p-4 space-y-3.5 bg-slate-50/70 overflow-y-auto">
+<div class="flex items-center justify-between">
+<span class="text-[11px] font-mono uppercase tracking-wider text-light-textDim">Inspector Focus</span>
+<span class="text-[10px] font-mono text-light-textPrimary bg-white border border-light-border px-2 py-0.5 rounded shadow-xs font-semibold">SSAA</span>
+</div>
+<div class="p-3 bg-white border border-light-border rounded-lg shadow-sm space-y-1">
+<div class="text-xs font-semibold text-light-textPrimary">Supersampling AA (150%)</div>
+<p class="text-xs text-light-textMuted leading-relaxed">
+          Renders 5760 × 3240 internal buffer with Lanczos filter.
+        </p>
+</div>
+<div class="grid grid-cols-2 gap-3 text-xs font-mono">
+<div class="p-3 bg-white border border-light-border rounded-lg shadow-sm">
+<div class="text-[10px] text-light-textDim uppercase">GPU Frametime</div>
+<div class="text-sm font-semibold text-light-textPrimary mt-1">+2.1 ms</div>
+</div>
+<div class="p-3 bg-white border border-light-border rounded-lg shadow-sm">
+<div class="text-[10px] text-light-textDim uppercase">VRAM Usage</div>
+<div class="text-sm font-semibold text-brand-red mt-1">+1.18 GB</div>
+</div>
+</div>
+</div>
+</aside>
+</main>
+<!-- BOTTOM COMMAND BAR -->
+<footer class="relative z-20 h-16 border-t border-light-border bg-white/95 px-8 flex items-center justify-between shrink-0 backdrop-blur-md shadow-[0_-1px_3px_rgba(0,0,0,0.02)]" data-purpose="bottom-command-bar">
+<!-- Left Commands -->
+<div class="flex items-center gap-6">
+<button class="text-xs font-semibold uppercase tracking-wider text-light-textMuted hover:text-light-textPrimary transition-colors">
+      BACK
+    </button>
+<button class="text-xs font-semibold uppercase tracking-wider text-light-textMuted hover:text-light-textPrimary transition-colors">
+      APPLY
+    </button>
+<button class="text-xs font-semibold uppercase tracking-wider text-light-textMuted hover:text-light-textPrimary transition-colors">
+      CANCEL
+    </button>
+<div class="h-4 w-[1px] bg-light-border"></div>
+<div class="hidden lg:flex items-center gap-4 text-xs font-mono text-light-textMuted">
+<span>RTX 4090 24GB</span>
+<span>•</span>
+<span>VRAM: 9.4 / 24.0 GB</span>
+<span>•</span>
+<span>3840 × 2160 @ 144Hz</span>
+</div>
+</div>
+<!-- Right Actions -->
+<div class="flex items-center gap-3">
+<button class="px-4 py-2 text-xs font-mono uppercase tracking-wider text-light-textSecondary hover:text-light-textPrimary bg-white border border-light-border hover:bg-slate-50 rounded shadow-sm transition-colors">
+      Export .ini
+    </button>
+<button class="px-5 py-2 text-xs font-semibold uppercase tracking-wider bg-brand-red hover:bg-brand-redHover text-white rounded shadow-sm transition-colors flex items-center gap-2">
+<span>Apply Changes</span>
+<span class="px-1.5 py-0.5 bg-black/20 rounded text-[10px] font-mono">4</span>
+</button>
+</div>
+</footer>
+<script>
+  // Keyboard shortcut for filter input
+  document.addEventListener('keydown', (e) => {
+    if (e.key === '/' && document.activeElement.tagName !== 'INPUT') {
+      e.preventDefault();
+      const searchInput = document.querySelector('input[type="text"]');
+      if (searchInput) searchInput.focus();
+    }
+  });
+
+  // Dynamic slider values
+  const sliders = document.querySelectorAll('input[type="range"]');
+  sliders.forEach(slider => {
+    slider.addEventListener('input', (e) => {
+      const valueBox = e.target.parentElement.querySelector('div.font-mono');
+      if (valueBox) {
+        const unit = e.target.max > 10 ? ' FPS' : '';
+        valueBox.textContent = e.target.value + unit;
+      }
+    });
+  });
+</script>
+</body></html>

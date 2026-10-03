@@ -1,0 +1,140 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "SystemFacts",
+  "description": "Layer 1 of the taxonomy: detected, read-only facts about the machine. Produced at boot and re-produced on device events (display change, HMD connect/disconnect, driver update, power source change). Capabilities (layer 2) are derived from these by the rules engine; the v2 config's is_*_available / can_use_* flags become outputs of that derivation. See docs/01-taxonomy-and-rules.md.",
+  "type": "object",
+  "required": ["id", "gpu", "display", "cpu", "os", "sdk"],
+  "properties": {
+    "id": { "type": "string" },
+    "label": { "type": "string" },
+    "description": { "type": "string" },
+    "gpu": {
+      "type": "object",
+      "required": ["vendor", "name", "vramGB"],
+      "properties": {
+        "vendor": { "enum": ["nvidia", "amd", "intel"] },
+        "name": { "type": "string" },
+        "arch": { "type": "string", "description": "e.g. Blackwell, Ada, RDNA4, RDNA2, Xe2" },
+        "vramGB": { "type": "number" },
+        "driver": { "type": "string" },
+        "dxr": { "type": "string", "enum": ["none", "1.0", "1.1"], "description": "DirectX Raytracing tier; gates RTAO" },
+        "mobile": { "type": "boolean" }
+      }
+    },
+    "display": {
+      "type": "object",
+      "required": ["monitors"],
+      "properties": {
+        "monitors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "name", "width", "height", "refreshHz"],
+            "properties": {
+              "id": { "type": "integer" },
+              "name": { "type": "string" },
+              "width": { "type": "integer" },
+              "height": { "type": "integer" },
+              "refreshHz": { "type": "number" },
+              "vrr": { "type": "boolean", "description": "G-SYNC / FreeSync / Adaptive-Sync capable and enabled in the driver" },
+              "hdr": { "type": "boolean", "description": "HDR-capable and HDR enabled in Windows" },
+              "primary": { "type": "boolean" }
+            }
+          }
+        },
+        "tripleSurface": {
+          "enum": ["none", "native", "spanned"],
+          "description": "native = engine drives 3 outputs (child windows); spanned = NVIDIA Surround / AMD Eyefinity single surface"
+        }
+      }
+    },
+    "vr": {
+      "type": "object",
+      "properties": {
+        "connected": { "type": "boolean" },
+        "runtime": { "type": "string", "description": "Active OpenXR runtime, e.g. SteamVR, Meta (Oculus), Virtual Desktop, Pimax" },
+        "hmd": { "type": "string" },
+        "perEyeWidth": { "type": "integer", "description": "Runtime-recommended per-eye width at 100% pixel density" },
+        "perEyeHeight": { "type": "integer" },
+        "refreshHz": { "type": "number" },
+        "eyeTracking": { "type": "boolean" }
+      }
+    },
+    "cpu": {
+      "type": "object",
+      "required": ["name", "cores", "threads"],
+      "properties": {
+        "name": { "type": "string" },
+        "vendor": { "enum": ["amd", "intel"] },
+        "cores": { "type": "integer" },
+        "threads": { "type": "integer" },
+        "smt": { "type": "boolean" },
+        "ccds": { "type": "integer", "description": "AMD chiplet count; 2 = dual-CCD (cross-CCD latency matters)" },
+        "x3dCcd": { "type": ["integer", "null"], "description": "Index of the CCD with 3D V-Cache, if any" },
+        "hybrid": {
+          "type": ["object", "null"],
+          "properties": { "pCores": { "type": "integer" }, "eCores": { "type": "integer" } }
+        },
+        "gameThreadsOnCacheCcd": { "type": ["boolean", "null"], "description": "Whether the game's main threads are currently scheduled on the V-Cache CCD (from affinity sampling)" }
+      }
+    },
+    "os": {
+      "type": "object",
+      "properties": {
+        "build": { "type": "string" },
+        "hags": { "type": "boolean", "description": "Hardware-accelerated GPU scheduling. Required for DLSS Frame Generation." },
+        "autoHdr": { "type": "boolean", "description": "Windows Auto HDR applies to this title" },
+        "gameMode": { "type": "boolean" },
+        "vrrGlobal": { "type": "boolean", "description": "Windows 'Variable refresh rate' toggle (affects DX11/legacy paths)" },
+        "windowedOptimizations": { "type": "boolean", "description": "'Optimizations for windowed games': flip-model presentation for borderless" },
+        "powerSource": { "enum": ["ac", "battery"] },
+        "powerPlan": { "type": "string" },
+        "chipsetDriverCoreParking": { "type": ["boolean", "null"], "description": "AMD 3D V-Cache Performance Optimizer / core-parking service active (dual-CCD X3D)" }
+      }
+    },
+    "sdk": {
+      "type": "object",
+      "description": "Feature support as reported by the engine's SDK queries (Streamline slIsFeatureSupported, FidelityFX, XeSS). This is hardware/driver capability only; OS gates such as HAGS are evaluated separately so the UI can tell 'impossible' (R1) apart from 'fixable' (R2).",
+      "properties": {
+        "dlss": { "$ref": "#/definitions/feature" },
+        "dlss_g": { "$ref": "#/definitions/feature" },
+        "reflex": { "$ref": "#/definitions/feature" },
+        "fsr4": { "$ref": "#/definitions/feature" },
+        "fsr31": { "$ref": "#/definitions/feature" },
+        "fsr_fg": { "$ref": "#/definitions/feature" },
+        "antilag2": { "$ref": "#/definitions/feature" },
+        "xess": { "$ref": "#/definitions/feature" },
+        "xess_fg": { "$ref": "#/definitions/feature" },
+        "xell": { "$ref": "#/definitions/feature" }
+      }
+    },
+    "telemetry": {
+      "type": "object",
+      "description": "Baseline performance samples used for estimates and the health panel. In the mockups these values are simulated.",
+      "properties": {
+        "gpuMsPerMP": { "type": "number", "description": "GPU ms per rendered megapixel at the 'High' quality reference" },
+        "gpuFixedMs": { "type": "number" },
+        "cpuMs": { "type": "number", "description": "CPU frame time at the 'High' reference (view distance High, 10 cars ahead)" },
+        "gpuTempC": { "type": "number" },
+        "gpuUtil": { "type": "number" },
+        "baseVramGB": { "type": "number", "description": "VRAM used before textures and render targets" }
+      }
+    },
+    "configOverrides": {
+      "type": "object",
+      "description": "Mockup-only: v2 config paths that differ for this rig's saved config (e.g. display.is_triple).",
+      "additionalProperties": true
+    }
+  },
+  "definitions": {
+    "feature": {
+      "type": "object",
+      "properties": {
+        "supported": { "type": "boolean" },
+        "maxMultiplier": { "type": "integer", "description": "Frame generation only: highest multiplier the hardware/driver supports" },
+        "path": { "type": "string", "description": "XeSS only: 'xmx' (Arc) or 'dp4a' (fallback)" },
+        "version": { "type": "string" }
+      }
+    }
+  }
+}

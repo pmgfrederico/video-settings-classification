@@ -1,0 +1,187 @@
+{
+  "$comment": "Concept -> provider -> mode matrix (taxonomy facet F12, rule R14). Scales are per-axis render scales relative to output resolution. 'requires' / 'blockedBy' use the condition language described in docs/01-taxonomy-and-rules.md §5. Engine-reported SDK support (facts.sdk.*) is the source of truth; vendor/arch notes are informative. engineSupport: 'shipping' = present in today's config (schema v2), 'proposed' = added by the v4 provider abstraction.",
+  "version": 1,
+  "concepts": {
+    "upscaling": {
+      "label": "Upscaling",
+      "question": "Render at a lower resolution and reconstruct to your output resolution?",
+      "field": "graphics.upscaling.provider"
+    },
+    "frameGeneration": {
+      "label": "Frame Generation",
+      "question": "Insert generated frames between rendered ones for higher presented FPS?",
+      "field": "graphics.frame_generation.provider"
+    },
+    "latency": {
+      "label": "Latency Reduction",
+      "question": "Shorten the CPU→GPU render queue to reduce input-to-photon latency?",
+      "field": "graphics.latency.mode"
+    }
+  },
+  "upscaling": [
+    {
+      "id": "off",
+      "label": "Off",
+      "vendor": "native",
+      "engineSupport": "shipping",
+      "family": "none",
+      "summary": "Native rendering, no reconstruction.",
+      "modes": []
+    },
+    {
+      "id": "dlss",
+      "label": "NVIDIA DLSS",
+      "short": "DLSS",
+      "vendor": "nvidia",
+      "family": "dlss",
+      "engineSupport": "shipping",
+      "requires": { "ref": "facts:sdk.dlss.supported", "eq": true },
+      "summary": "ML super resolution on RTX Tensor cores (Streamline sl.dlss).",
+      "costMsAt4K": 0.9,
+      "modes": [
+        { "id": "dlaa", "label": "DLAA", "scale": 1.0, "engineSupport": "proposed", "note": "Native-resolution anti-aliasing" },
+        { "id": "quality", "label": "Quality", "scale": 0.6667, "v2": "DLSS_Quality" },
+        { "id": "balanced", "label": "Balanced", "scale": 0.58, "v2": "DLSS_Balanced" },
+        { "id": "performance", "label": "Performance", "scale": 0.5, "v2": "DLSS_Performance" },
+        { "id": "ultra_performance", "label": "Ultra Performance", "scale": 0.3333, "v2": "DLSS_UltraPerformance" },
+        { "id": "custom", "label": "Custom", "scale": null, "v2": "DLSS_Custom", "disclosure": "advanced" }
+      ],
+      "params": [
+        {
+          "field": "graphics.upscaling.dlss_model",
+          "disclosure": "expert",
+          "note": "Model/preset selection (driver default, transformer, legacy CNN). Only meaningful for DLSS."
+        }
+      ],
+      "v2": { "mode": "Upscaling_DLSS", "presetField": "graphics.upscaling.dlss_preset", "customField": "graphics.upscaling.dlss_custom_val" }
+    },
+    {
+      "id": "fsr4",
+      "label": "AMD FSR 4",
+      "short": "FSR 4",
+      "vendor": "amd",
+      "family": "fsr",
+      "engineSupport": "shipping",
+      "requires": { "ref": "facts:sdk.fsr4.supported", "eq": true },
+      "summary": "ML upscaler; needs RDNA 4 (RX 9000 series) hardware.",
+      "costMsAt4K": 1.0,
+      "modes": [
+        { "id": "native_aa", "label": "Native AA", "scale": 1.0, "engineSupport": "proposed" },
+        { "id": "ultra_quality", "label": "Ultra Quality", "scale": 0.77, "v2": "FSR_UltraQuality", "note": "Engine-specific ratio carried over from the v2 config; not an AMD-named FSR 4 preset" },
+        { "id": "quality", "label": "Quality", "scale": 0.6667, "v2": "FSR_Quality" },
+        { "id": "balanced", "label": "Balanced", "scale": 0.5882, "v2": "FSR_Balanced" },
+        { "id": "performance", "label": "Performance", "scale": 0.5, "v2": "FSR_Performance" },
+        { "id": "ultra_performance", "label": "Ultra Performance", "scale": 0.3333, "engineSupport": "proposed" },
+        { "id": "custom", "label": "Custom", "scale": null, "v2": "FSR_Custom", "disclosure": "advanced" }
+      ],
+      "v2": { "mode": "Upscaling_FSR", "presetField": "graphics.upscaling.fsr_preset", "customField": "graphics.upscaling.fsr_custom_val" }
+    },
+    {
+      "id": "fsr31",
+      "label": "AMD FSR 3.1",
+      "short": "FSR 3.1",
+      "vendor": "amd",
+      "family": "fsr",
+      "engineSupport": "proposed",
+      "requires": { "ref": "facts:sdk.fsr31.supported", "eq": true },
+      "summary": "Analytical (non-ML) upscaler that runs on any modern DX12 GPU.",
+      "crossVendorNote": "Runs everywhere; softer and less stable in motion than ML upscalers.",
+      "costMsAt4K": 0.6,
+      "modes": [
+        { "id": "native_aa", "label": "Native AA", "scale": 1.0 },
+        { "id": "ultra_quality", "label": "Ultra Quality", "scale": 0.77, "v2": "FSR_UltraQuality", "note": "Engine-specific ratio carried over from the v2 config" },
+        { "id": "quality", "label": "Quality", "scale": 0.6667, "v2": "FSR_Quality" },
+        { "id": "balanced", "label": "Balanced", "scale": 0.5882, "v2": "FSR_Balanced" },
+        { "id": "performance", "label": "Performance", "scale": 0.5, "v2": "FSR_Performance" },
+        { "id": "ultra_performance", "label": "Ultra Performance", "scale": 0.3333 },
+        { "id": "custom", "label": "Custom", "scale": null, "v2": "FSR_Custom", "disclosure": "advanced" }
+      ],
+      "v2": { "mode": "Upscaling_FSR", "presetField": "graphics.upscaling.fsr_preset", "customField": "graphics.upscaling.fsr_custom_val" }
+    },
+    {
+      "id": "xess",
+      "label": "Intel XeSS",
+      "short": "XeSS",
+      "vendor": "intel",
+      "family": "xess",
+      "engineSupport": "proposed",
+      "requires": { "ref": "facts:sdk.xess.supported", "eq": true },
+      "summary": "ML upscaler. Uses XMX matrix units on Intel Arc and a slower DP4a path on other GPUs.",
+      "crossVendorNote": "Uses the DP4a fallback on this GPU, which is slower and lower quality than the XMX path on Arc.",
+      "costMsAt4K": 0.9,
+      "costMsAt4KDp4a": 1.6,
+      "modes": [
+        { "id": "native_aa", "label": "Native AA", "scale": 1.0 },
+        { "id": "ultra_quality_plus", "label": "Ultra Quality Plus", "scale": 0.77 },
+        { "id": "ultra_quality", "label": "Ultra Quality", "scale": 0.6667, "note": "Same render scale as DLSS/FSR 'Quality'. XeSS names are shifted one step." },
+        { "id": "quality", "label": "Quality", "scale": 0.5882 },
+        { "id": "balanced", "label": "Balanced", "scale": 0.5 },
+        { "id": "performance", "label": "Performance", "scale": 0.4348 },
+        { "id": "ultra_performance", "label": "Ultra Performance", "scale": 0.3333 },
+        { "id": "custom", "label": "Custom", "scale": null, "disclosure": "advanced" }
+      ]
+    }
+  ],
+  "frameGeneration": [
+    { "id": "off", "label": "Off", "vendor": "native", "engineSupport": "shipping", "family": "none" },
+    {
+      "id": "dlss_fg",
+      "label": "DLSS Frame Generation",
+      "short": "DLSS FG",
+      "vendor": "nvidia",
+      "family": "dlss",
+      "engineSupport": "shipping",
+      "requires": { "ref": "facts:sdk.dlss_g.supported", "eq": true },
+      "blockedBy": [
+        {
+          "when": { "ref": "facts:os.hags", "eq": false },
+          "reason": "Needs Hardware-accelerated GPU scheduling (HAGS), which is off in Windows.",
+          "fix": { "label": "Open Windows graphics settings", "url": "ms-settings:display-advancedgraphics", "note": "Turn on HAGS, then restart the PC." }
+        }
+      ],
+      "maxMultiplierRef": "facts:sdk.dlss_g.maxMultiplier",
+      "couplesTo": { "field": "graphics.latency.mode", "allowed": ["reflex", "reflex_boost"], "force": "reflex", "kind": "force" },
+      "summary": "RTX 40 series: 2x. RTX 50 series: multi-frame generation up to the engine-reported maximum.",
+      "v2": { "mode": "FrameGeneration_DLSS" }
+    },
+    {
+      "id": "fsr_fg",
+      "label": "AMD FSR Frame Generation",
+      "short": "FSR FG",
+      "vendor": "amd",
+      "family": "fsr",
+      "engineSupport": "shipping",
+      "requires": { "ref": "facts:sdk.fsr_fg.supported", "eq": true },
+      "maxMultiplierRef": "facts:sdk.fsr_fg.maxMultiplier",
+      "couplesTo": { "field": "graphics.latency.mode", "allowed": ["antilag2"], "kind": "suggest" },
+      "summary": "Works on most modern GPUs. Pairs with Anti-Lag 2 where available.",
+      "v2": { "mode": "FrameGeneration_FSR" }
+    },
+    {
+      "id": "xess_fg",
+      "label": "Intel XeSS Frame Generation",
+      "short": "XeSS FG",
+      "vendor": "intel",
+      "family": "xess",
+      "engineSupport": "proposed",
+      "requires": { "ref": "facts:sdk.xess_fg.supported", "eq": true },
+      "maxMultiplierRef": "facts:sdk.xess_fg.maxMultiplier",
+      "couplesTo": { "field": "graphics.latency.mode", "allowed": ["xell"], "force": "xell", "kind": "force" },
+      "summary": "XeSS 2 frame generation. Always runs with XeLL.",
+      "v2": null
+    }
+  ],
+  "latency": [
+    { "id": "off", "label": "Off", "vendor": "native", "engineSupport": "shipping", "queueFactor": 2.5 },
+    { "id": "reflex", "label": "NVIDIA Reflex", "short": "Reflex", "vendor": "nvidia", "engineSupport": "shipping", "requires": { "ref": "facts:sdk.reflex.supported", "eq": true }, "queueFactor": 1.4, "v2": "Reflex_On" },
+    { "id": "reflex_boost", "label": "Reflex + Boost", "short": "Reflex+Boost", "vendor": "nvidia", "engineSupport": "shipping", "requires": { "ref": "facts:sdk.reflex.supported", "eq": true }, "queueFactor": 1.3, "v2": "Reflex_OnPlusBoost", "note": "Keeps GPU clocks high when CPU-bound. Uses more power." },
+    { "id": "antilag2", "label": "AMD Anti-Lag 2", "short": "Anti-Lag 2", "vendor": "amd", "engineSupport": "proposed", "requires": { "ref": "facts:sdk.antilag2.supported", "eq": true }, "queueFactor": 1.45 },
+    { "id": "xell", "label": "Intel XeLL", "short": "XeLL", "vendor": "intel", "engineSupport": "proposed", "requires": { "ref": "facts:sdk.xell.supported", "eq": true }, "queueFactor": 1.45 }
+  ],
+  "recommendation": {
+    "$comment": "First provider in the vendor's list whose 'requires' passes is tagged Recommended. Every other available provider is tagged 'Also works' and shows its crossVendorNote.",
+    "upscaling": { "nvidia": ["dlss"], "amd": ["fsr4", "fsr31"], "intel": ["xess"] },
+    "frameGeneration": { "nvidia": ["dlss_fg"], "amd": ["fsr_fg"], "intel": ["xess_fg"] },
+    "latency": { "nvidia": ["reflex"], "amd": ["antilag2"], "intel": ["xell"] }
+  }
+}

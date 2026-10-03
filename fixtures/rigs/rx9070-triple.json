@@ -1,0 +1,31 @@
+{
+  "id": "rx9070-triple",
+  "label": "RX 9070 XT · triple 1440p 165 Hz",
+  "description": "RDNA 4 desktop driving three 1440p monitors. Has FSR 4 and Anti-Lag 2 but no DLSS.",
+  "gpu": { "vendor": "amd", "name": "Radeon RX 9070 XT", "arch": "RDNA4", "vramGB": 16, "driver": "Adrenalin 25.x", "dxr": "1.1", "mobile": false },
+  "display": {
+    "monitors": [
+      { "id": 1, "name": "Samsung G6 (left)", "width": 2560, "height": 1440, "refreshHz": 165, "vrr": true, "hdr": false, "primary": false },
+      { "id": 2, "name": "Samsung G6 (center)", "width": 2560, "height": 1440, "refreshHz": 165, "vrr": true, "hdr": false, "primary": true },
+      { "id": 3, "name": "Samsung G6 (right)", "width": 2560, "height": 1440, "refreshHz": 165, "vrr": true, "hdr": false, "primary": false }
+    ],
+    "tripleSurface": "native"
+  },
+  "vr": { "connected": false },
+  "cpu": { "name": "Ryzen 7 7800X3D", "vendor": "amd", "cores": 8, "threads": 16, "smt": true, "ccds": 1, "x3dCcd": 0, "hybrid": null, "gameThreadsOnCacheCcd": true },
+  "os": { "build": "26100", "hags": true, "autoHdr": false, "gameMode": true, "vrrGlobal": true, "windowedOptimizations": true, "powerSource": "ac", "powerPlan": "Balanced", "chipsetDriverCoreParking": null },
+  "sdk": {
+    "dlss": { "supported": false },
+    "dlss_g": { "supported": false },
+    "reflex": { "supported": false },
+    "fsr4": { "supported": true },
+    "fsr31": { "supported": true },
+    "fsr_fg": { "supported": true, "maxMultiplier": 2 },
+    "antilag2": { "supported": true },
+    "xess": { "supported": true, "path": "dp4a" },
+    "xess_fg": { "supported": false },
+    "xell": { "supported": false }
+  },
+  "telemetry": { "gpuMsPerMP": 1.3, "gpuFixedMs": 1.0, "cpuMs": 7.4, "gpuTempC": 71, "gpuUtil": 98, "baseVramGB": 2.8 },
+  "configOverrides": { "display.is_triple": true }
+}

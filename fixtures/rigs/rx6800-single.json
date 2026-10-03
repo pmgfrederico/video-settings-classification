@@ -1,0 +1,27 @@
+{
+  "id": "rx6800-single",
+  "label": "RX 6800 · single 1440p 144 Hz",
+  "description": "Older AMD desktop (RDNA 2). FSR 4 is not available, so FSR 3.1 and XeSS DP4a are the upscaling options. It is often CPU-bound.",
+  "gpu": { "vendor": "amd", "name": "Radeon RX 6800", "arch": "RDNA2", "vramGB": 16, "driver": "Adrenalin 25.x", "dxr": "1.1", "mobile": false },
+  "display": {
+    "monitors": [ { "id": 1, "name": "Dell S2721DGF", "width": 2560, "height": 1440, "refreshHz": 144, "vrr": true, "hdr": false, "primary": true } ],
+    "tripleSurface": "none"
+  },
+  "vr": { "connected": false },
+  "cpu": { "name": "Ryzen 7 5800X", "vendor": "amd", "cores": 8, "threads": 16, "smt": true, "ccds": 1, "x3dCcd": null, "hybrid": null, "gameThreadsOnCacheCcd": null },
+  "os": { "build": "22631", "hags": false, "autoHdr": false, "gameMode": true, "vrrGlobal": true, "windowedOptimizations": false, "powerSource": "ac", "powerPlan": "Balanced", "chipsetDriverCoreParking": null },
+  "sdk": {
+    "dlss": { "supported": false },
+    "dlss_g": { "supported": false },
+    "reflex": { "supported": false },
+    "fsr4": { "supported": false },
+    "fsr31": { "supported": true },
+    "fsr_fg": { "supported": true, "maxMultiplier": 2 },
+    "antilag2": { "supported": false },
+    "xess": { "supported": true, "path": "dp4a" },
+    "xess_fg": { "supported": false },
+    "xell": { "supported": false }
+  },
+  "telemetry": { "gpuMsPerMP": 2.4, "gpuFixedMs": 1.2, "cpuMs": 9.6, "gpuTempC": 74, "gpuUtil": 81, "baseVramGB": 2.2 },
+  "configOverrides": {}
+}

@@ -1,0 +1,27 @@
+{
+  "id": "rtx4070-vr-openxr",
+  "label": "RTX 4070 · Quest 3 (OpenXR) · HAGS off",
+  "description": "Mid-range NVIDIA desktop with a VR headset. HAGS is off in Windows, so DLSS Frame Generation is blocked but fixable (R2). Hybrid Intel CPU.",
+  "gpu": { "vendor": "nvidia", "name": "GeForce RTX 4070", "arch": "Ada", "vramGB": 12, "driver": "581.xx", "dxr": "1.1", "mobile": false },
+  "display": {
+    "monitors": [ { "id": 1, "name": "ASUS VG27AQ", "width": 2560, "height": 1440, "refreshHz": 165, "vrr": true, "hdr": false, "primary": true } ],
+    "tripleSurface": "none"
+  },
+  "vr": { "connected": true, "runtime": "Meta Quest Link (OpenXR)", "hmd": "Meta Quest 3", "perEyeWidth": 2064, "perEyeHeight": 2208, "refreshHz": 90, "eyeTracking": false },
+  "cpu": { "name": "Core i7-13700K", "vendor": "intel", "cores": 16, "threads": 24, "smt": true, "ccds": 1, "x3dCcd": null, "hybrid": { "pCores": 8, "eCores": 8 }, "gameThreadsOnCacheCcd": null },
+  "os": { "build": "26100", "hags": false, "autoHdr": false, "gameMode": true, "vrrGlobal": true, "windowedOptimizations": true, "powerSource": "ac", "powerPlan": "High performance", "chipsetDriverCoreParking": null },
+  "sdk": {
+    "dlss": { "supported": true, "version": "310.x" },
+    "dlss_g": { "supported": true, "maxMultiplier": 2 },
+    "reflex": { "supported": true },
+    "fsr4": { "supported": false },
+    "fsr31": { "supported": true },
+    "fsr_fg": { "supported": true, "maxMultiplier": 2 },
+    "antilag2": { "supported": false },
+    "xess": { "supported": true, "path": "dp4a" },
+    "xess_fg": { "supported": false },
+    "xell": { "supported": false }
+  },
+  "telemetry": { "gpuMsPerMP": 1.75, "gpuFixedMs": 1.0, "cpuMs": 6.4, "gpuTempC": 69, "gpuUtil": 96, "baseVramGB": 2.4 },
+  "configOverrides": { "graphics.upscaling.mode": "Upscaling_DLSS" }
+}

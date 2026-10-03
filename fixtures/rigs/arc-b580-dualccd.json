@@ -1,0 +1,27 @@
+{
+  "id": "arc-b580-dualccd",
+  "label": "Arc B580 · Ryzen 9 9950X3D (dual-CCD)",
+  "description": "Intel Arc desktop. XeSS runs on the XMX path, with XeSS FG and XeLL. The dual-CCD X3D CPU has its game threads drifting onto the non-cache CCD.",
+  "gpu": { "vendor": "intel", "name": "Arc B580", "arch": "Xe2 (Battlemage)", "vramGB": 12, "driver": "32.0.101.x", "dxr": "1.1", "mobile": false },
+  "display": {
+    "monitors": [ { "id": 1, "name": "AOC Q27G3XMN", "width": 2560, "height": 1440, "refreshHz": 180, "vrr": true, "hdr": true, "primary": true } ],
+    "tripleSurface": "none"
+  },
+  "vr": { "connected": false },
+  "cpu": { "name": "Ryzen 9 9950X3D", "vendor": "amd", "cores": 16, "threads": 32, "smt": true, "ccds": 2, "x3dCcd": 0, "hybrid": null, "gameThreadsOnCacheCcd": false },
+  "os": { "build": "26100", "hags": true, "autoHdr": false, "gameMode": false, "vrrGlobal": true, "windowedOptimizations": true, "powerSource": "ac", "powerPlan": "Balanced", "chipsetDriverCoreParking": false },
+  "sdk": {
+    "dlss": { "supported": false },
+    "dlss_g": { "supported": false },
+    "reflex": { "supported": false },
+    "fsr4": { "supported": false },
+    "fsr31": { "supported": true },
+    "fsr_fg": { "supported": true, "maxMultiplier": 2 },
+    "antilag2": { "supported": false },
+    "xess": { "supported": true, "path": "xmx" },
+    "xess_fg": { "supported": true, "maxMultiplier": 2 },
+    "xell": { "supported": true }
+  },
+  "telemetry": { "gpuMsPerMP": 2.7, "gpuFixedMs": 1.1, "cpuMs": 6.1, "gpuTempC": 72, "gpuUtil": 95, "baseVramGB": 2.3 },
+  "configOverrides": {}
+}

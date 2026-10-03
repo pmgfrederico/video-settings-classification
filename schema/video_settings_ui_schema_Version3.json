@@ -1,0 +1,37 @@
+{
+  "graphics.upscaling.mode": {
+    "uiCategory": "graphics", "displayScope": "general",
+    "resetTier": 2, "requiresReinit": false, "livePreview": false, "editableAt": "menu",
+    "dx12": "Streamline proxy swapchain persists; switching Off/FSR4/DLSS unloads one sl feature (sl.dlss / sl.fsr) and loads another, then re-tags color/depth/MV/exposure resources at the new feature's expected resolution via slSetTag. No swapchain recreation.",
+    "note": "downgraded from Tier 1 vs. non-Streamline NGX/FFX raw integration"
+  },
+  "graphics.upscaling.fsr_preset": {
+    "uiCategory": "graphics", "displayScope": "general",
+    "resetTier": 2, "requiresReinit": false, "livePreview": false, "editableAt": "menu",
+    "dx12": "FSR4 quality preset changes internal render resolution scale -> resizes tagged input resources within the already-loaded sl.fsr feature context"
+  },
+  "graphics.upscaling.dlss_preset": {
+    "uiCategory": "graphics", "displayScope": "general",
+    "resetTier": 2, "requiresReinit": false, "livePreview": false, "editableAt": "menu",
+    "dx12": "DLSS 4.5 preset change reconfigures render-resolution scale within the loaded sl.dlss feature, no full context teardown"
+  },
+
+  "graphics.frame_generation.mode": {
+    "uiCategory": "graphics", "displayScope": "general",
+    "resetTier": 2, "requiresReinit": false, "livePreview": false, "editableAt": "menu",
+    "dx12": "DLSS-G / FSR4 frame generation load/unload as sl features through the same resident proxy swapchain. Allocates/frees interpolated-frame buffers and enables Reflex marker insertion, but presentation path itself (the proxy) is already in place from init.",
+    "note": "downgraded from Tier 1; still the most expensive Tier-2 operation since it also forces graphics.reflex on"
+  },
+  "graphics.frame_generation.multiplier": {
+    "uiCategory": "graphics", "displayScope": "general",
+    "resetTier": 2, "requiresReinit": false, "livePreview": false, "editableAt": "menu",
+    "dx12": "DLSS 4.5 multi-frame-gen (2x/3x/4x) changes the count of interpolated frame buffers allocated within the existing FG feature — resource count change, not a new feature load"
+  },
+
+  "graphics.reflex": {
+    "uiCategory": "graphics", "displayScope": "general",
+    "resetTier": 2, "requiresReinit": false, "livePreview": false, "editableAt": "menu",
+    "dx12": "sl.reflex is a Streamline plugin sharing the same proxy; toggling enables/disables low-latency marker insertion (slSetFeatureLoaded / slReflexSetMarker) rather than reinitializing an NVAPI pipeline from scratch",
+    "note": "downgraded from Tier 1; forced to On automatically whenever frame_generation.mode != Off (cross-field rule still applies)"
+  }
+}

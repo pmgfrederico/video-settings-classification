@@ -1,0 +1,146 @@
+{
+  "$comment": "Health and advisory rules (UX §B4, level 3 'Insights'). Each rule is evaluated over facts:, cfg: (effective config including pending), der: (derived), est: (performance estimates) and ctx:. Severity is info, warn, or critical. An action can be 'stage' (adds changes to the ledger as a user change), 'link' (an OS deep link), or 'focus' (jumps to a setting). Text templates interpolate {ref} values.",
+  "version": 1,
+  "rules": [
+    {
+      "id": "hags_blocks_dlss_fg",
+      "severity": "warn",
+      "category": "os",
+      "when": { "all": [ { "ref": "facts:sdk.dlss_g.supported", "eq": true }, { "ref": "facts:os.hags", "eq": false } ] },
+      "title": "DLSS Frame Generation is blocked by a Windows setting",
+      "detail": "Hardware-accelerated GPU scheduling (HAGS) is off. Your {facts:gpu.name} supports DLSS Frame Generation, but it needs HAGS.",
+      "action": { "type": "link", "label": "Open graphics settings", "url": "ms-settings:display-advancedgraphics", "note": "Restart required" }
+    },
+    {
+      "id": "vram_over_budget",
+      "severity": "critical",
+      "category": "vram",
+      "when": { "ref": "est:vramRatio", "gt": 0.92 },
+      "title": "Estimated VRAM use is over budget",
+      "detail": "About {est:vramGB} GB of {facts:gpu.vramGB} GB. Expect stutter from texture streaming.",
+      "action": { "type": "stage", "label": "Lower textures to High", "changes": { "graphics.textureQuality": "TextureQuality_High" } }
+    },
+    {
+      "id": "cpu_bound",
+      "severity": "info",
+      "category": "cpu",
+      "when": { "ref": "est:bound", "eq": "cpu" },
+      "title": "Frame rate is limited by the CPU",
+      "detail": "CPU {est:cpuMs} ms vs GPU {est:gpuMs} ms per frame. Lowering GPU settings won't raise FPS. View distance and cars drawn ahead will.",
+      "action": { "type": "focus", "label": "Go to View distance", "path": "graphics.viewDistance.quality" }
+    },
+    {
+      "id": "cap_above_refresh_with_vsync",
+      "severity": "info",
+      "category": "pacing",
+      "when": { "all": [ { "ref": "cfg:display.v_sync", "eq": "On" }, { "ref": "der:capOverRefresh", "eq": true } ] },
+      "title": "Frame cap is above the refresh rate",
+      "detail": "V-Sync limits output to {der:refreshHz} Hz anyway. Set the cap a little below the refresh rate for lower latency.",
+      "action": { "type": "stage", "label": "Cap at {der:suggestedCap} fps", "changes": { "display.frame_rate_limit.gameplay_frame_rate_limit": "{der:suggestedCap}" } }
+    },
+    {
+      "id": "vrr_cap_suggestion",
+      "severity": "info",
+      "category": "pacing",
+      "when": { "all": [ { "ref": "der:vrr", "eq": true }, { "ref": "cfg:display.v_sync", "eq": "Off" }, { "ref": "der:capOverRefresh", "eq": true } ] },
+      "title": "Cap below the refresh rate to stay inside VRR",
+      "detail": "Your display supports VRR at up to {der:refreshHz} Hz. Above that, frames tear.",
+      "action": { "type": "stage", "label": "Cap at {der:suggestedCap} fps", "changes": { "display.frame_rate_limit.gameplay_frame_rate_limit": "{der:suggestedCap}" } }
+    },
+    {
+      "id": "fg_without_vrr",
+      "severity": "warn",
+      "category": "pacing",
+      "when": { "all": [ { "ref": "cfg:graphics.frame_generation.provider", "neq": "off" }, { "ref": "der:vrr", "eq": false } ] },
+      "title": "Frame generation without VRR may judder",
+      "detail": "Generated frames pace best on a G-SYNC/FreeSync display."
+    },
+    {
+      "id": "fg_low_base_fps",
+      "severity": "warn",
+      "category": "latency",
+      "when": { "all": [ { "ref": "cfg:graphics.frame_generation.provider", "neq": "off" }, { "ref": "est:renderedFps", "lt": 55 } ] },
+      "title": "Rendered frame rate is too low for frame generation",
+      "detail": "About {est:renderedFps} fps is rendered before frame generation. Latency will feel high. Aim for 60 fps or more before generating frames.",
+      "action": { "type": "focus", "label": "Go to Upscaling mode", "path": "graphics.upscaling.mode" }
+    },
+    {
+      "id": "fsr_fg_suggest_antilag",
+      "severity": "info",
+      "category": "latency",
+      "when": { "all": [ { "ref": "cfg:graphics.frame_generation.provider", "eq": "fsr_fg" }, { "ref": "facts:sdk.antilag2.supported", "eq": true }, { "ref": "cfg:graphics.latency.mode", "neq": "antilag2" } ] },
+      "title": "Turn on Anti-Lag 2 with FSR Frame Generation",
+      "detail": "It offsets most of the latency that frame generation adds.",
+      "action": { "type": "stage", "label": "Turn on Anti-Lag 2", "changes": { "graphics.latency.mode": "antilag2" } }
+    },
+    {
+      "id": "better_upscaler_available",
+      "severity": "info",
+      "category": "upscaling",
+      "when": { "all": [ { "ref": "der:recommendedUpscaler", "neq": null }, { "ref": "cfg:graphics.upscaling.provider", "neq": "off" }, { "ref": "der:usingRecommendedUpscaler", "eq": false } ] },
+      "title": "{der:recommendedUpscalerLabel} is available on this GPU",
+      "detail": "At the same render resolution it usually gives a sharper, more stable image than {der:activeUpscalerLabel}.",
+      "action": { "type": "stage", "label": "Switch to {der:recommendedUpscalerLabel}", "changes": { "graphics.upscaling.provider": "{der:recommendedUpscaler}" } }
+    },
+    {
+      "id": "dual_ccd_affinity",
+      "severity": "warn",
+      "category": "cpu",
+      "when": { "all": [ { "ref": "facts:cpu.ccds", "eq": 2 }, { "ref": "facts:cpu.x3dCcd", "neq": null }, { "ref": "facts:cpu.gameThreadsOnCacheCcd", "eq": false } ] },
+      "title": "Game threads are running on the CCD without 3D V-Cache",
+      "detail": "On the {facts:cpu.name}, only CCD {facts:cpu.x3dCcd} has the extra cache. Turn on Windows Game Mode and make sure the AMD chipset driver's core-parking service is running so the game is scheduled on the cache CCD.",
+      "action": { "type": "link", "label": "Open Game Mode settings", "url": "ms-settings:gaming-gamemode" }
+    },
+    {
+      "id": "hybrid_cpu_game_mode",
+      "severity": "info",
+      "category": "cpu",
+      "when": { "all": [ { "ref": "facts:cpu.hybrid", "neq": null }, { "ref": "facts:os.gameMode", "eq": false } ] },
+      "title": "Game Mode is off on a hybrid CPU",
+      "detail": "Game Mode helps Windows keep the game's main threads on P-cores."
+    },
+    {
+      "id": "on_battery",
+      "severity": "warn",
+      "category": "power",
+      "when": { "ref": "facts:os.powerSource", "eq": "battery" },
+      "title": "Running on battery",
+      "detail": "GPU and CPU power are limited, so performance will be far below these estimates. Plug in for consistent frame times."
+    },
+    {
+      "id": "gpu_thermal",
+      "severity": "warn",
+      "category": "thermal",
+      "when": { "ref": "facts:telemetry.gpuTempC", "gte": 83 },
+      "title": "GPU is near its thermal limit ({facts:telemetry.gpuTempC} °C)",
+      "detail": "Clocks may throttle and cause frame-time spikes. A frame cap reduces heat."
+    },
+    {
+      "id": "auto_hdr_active",
+      "severity": "info",
+      "category": "os",
+      "when": { "all": [ { "ref": "facts:os.autoHdr", "eq": true }, { "ref": "der:hdrDisplay", "eq": true } ] },
+      "title": "Windows Auto HDR is changing this game's output",
+      "detail": "The game renders SDR, and Windows converts it to HDR. Exposure and post-process previews may look different on the desktop. The game has no native HDR setting yet (schema gap).",
+      "action": { "type": "link", "label": "Open HDR settings", "url": "ms-settings:display-hdr" }
+    },
+    {
+      "id": "borderless_without_flip",
+      "severity": "info",
+      "category": "os",
+      "when": { "all": [ { "ref": "cfg:display.window_mode", "eq": "borderless" }, { "ref": "facts:os.windowedOptimizations", "eq": false } ] },
+      "title": "Borderless mode without windowed-game optimizations",
+      "detail": "Windows composites borderless games, which adds latency. Turn on 'Optimizations for windowed games'.",
+      "action": { "type": "link", "label": "Open graphics settings", "url": "ms-settings:display-advancedgraphics" }
+    },
+    {
+      "id": "triple_angle_mismatch",
+      "severity": "info",
+      "category": "geometry",
+      "when": { "all": [ { "ref": "cfg:display.mode", "eq": "triple" }, { "ref": "der:tripleAngleDelta", "gt": 5 } ] },
+      "title": "Side screen angle doesn't match your geometry",
+      "detail": "For {cfg:display.triple_screen.width} mm screens at {cfg:display.triple_screen.distance} mm, the angle should be about {der:tripleRecommendedAngle}°. The side screens will look distorted otherwise.",
+      "action": { "type": "stage", "label": "Set {der:tripleRecommendedAngle}°", "changes": { "display.triple_screen.screen_angle": "{der:tripleRecommendedAngle}" } }
+    }
+  ]
+}

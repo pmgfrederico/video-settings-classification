@@ -1,0 +1,24 @@
+{
+  "id": "upscaler_mode_streamline",
+  "controller": "graphics.upscaling.mode",
+  "resetSeverityOverride": 2,
+  "cases": [
+    {
+      "equals": "Upscaling_FSR",
+      "effects": [
+        { "action": "show", "targets": ["graphics.upscaling.fsr_preset"] },
+        { "action": "hide", "targets": ["graphics.upscaling.dlss_preset", "graphics.upscaling.dlss_custom_val"] },
+        { "action": "enable", "targets": ["graphics.frame_generation.mode"], "requires": { "graphics.is_fsr_frame_generation_available": true }, "note": "FSR4 frame gen via Streamline or native FFX path" }
+      ]
+    },
+    {
+      "equals": "Upscaling_DLSS",
+      "effects": [
+        { "action": "show", "targets": ["graphics.upscaling.dlss_preset"] },
+        { "action": "hide", "targets": ["graphics.upscaling.fsr_preset", "graphics.upscaling.fsr_custom_val"] },
+        { "action": "enable", "targets": ["graphics.frame_generation.mode"], "requires": { "graphics.is_dlss_frame_generation_available": true }, "note": "DLSS 4.5 multi-frame-gen, up to graphics.dlss_frame_generation_max_multiplier" }
+      ]
+    }
+  ],
+  "note": "No longer Tier 1 — UI should show a brief non-blocking spinner/toast ('Reconfiguring upscaler...') instead of a modal 'Renderer will restart' warning."
+}

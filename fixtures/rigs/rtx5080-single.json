@@ -1,0 +1,27 @@
+{
+  "id": "rtx5080-single",
+  "label": "RTX 5080 · single 4K 144 Hz",
+  "description": "High-end NVIDIA desktop. DLSS, multi-frame generation, and Reflex are all available. Windows Auto HDR is on.",
+  "gpu": { "vendor": "nvidia", "name": "GeForce RTX 5080", "arch": "Blackwell", "vramGB": 16, "driver": "581.xx", "dxr": "1.1", "mobile": false },
+  "display": {
+    "monitors": [ { "id": 1, "name": "LG 32GS95UE", "width": 3840, "height": 2160, "refreshHz": 144, "vrr": true, "hdr": true, "primary": true } ],
+    "tripleSurface": "none"
+  },
+  "vr": { "connected": false },
+  "cpu": { "name": "Ryzen 7 9800X3D", "vendor": "amd", "cores": 8, "threads": 16, "smt": true, "ccds": 1, "x3dCcd": 0, "hybrid": null, "gameThreadsOnCacheCcd": true },
+  "os": { "build": "26100", "hags": true, "autoHdr": true, "gameMode": true, "vrrGlobal": true, "windowedOptimizations": true, "powerSource": "ac", "powerPlan": "Balanced", "chipsetDriverCoreParking": null },
+  "sdk": {
+    "dlss": { "supported": true, "version": "310.x" },
+    "dlss_g": { "supported": true, "maxMultiplier": 4 },
+    "reflex": { "supported": true },
+    "fsr4": { "supported": false },
+    "fsr31": { "supported": true },
+    "fsr_fg": { "supported": true, "maxMultiplier": 2 },
+    "antilag2": { "supported": false },
+    "xess": { "supported": true, "path": "dp4a" },
+    "xess_fg": { "supported": false },
+    "xell": { "supported": false }
+  },
+  "telemetry": { "gpuMsPerMP": 1.15, "gpuFixedMs": 0.8, "cpuMs": 5.2, "gpuTempC": 64, "gpuUtil": 97, "baseVramGB": 2.4 },
+  "configOverrides": {}
+}

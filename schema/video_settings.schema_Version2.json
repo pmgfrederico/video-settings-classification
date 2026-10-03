@@ -1,0 +1,281 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "VideoSettings",
+  "type": "object",
+  "properties": {
+    "major_version": { "type": "integer", "const": 2 },
+    "display": {
+      "type": "object",
+      "properties": {
+        "window_width": { "type": "integer", "minimum": 640 },
+        "window_height": { "type": "integer", "minimum": 480 },
+        "v_sync": { "type": "string", "enum": ["Off", "On", "Adaptive"] },
+        "physics_late_latching": { "type": "boolean" },
+        "frame_rate_limit": {
+          "type": "object",
+          "properties": {
+            "gameplay_frame_rate_limit": { "type": "integer", "minimum": 30, "maximum": 500 },
+            "occluded_frame_rate_limit": { "type": "integer", "minimum": 10, "maximum": 500 },
+            "menu_frame_rate_limit": { "type": "boolean" }
+          }
+        },
+        "triple_screen": {
+          "type": "object",
+          "properties": {
+            "width": { "type": "number", "minimum": 0 },
+            "distance": { "type": "number", "minimum": 0 },
+            "screen_angle": { "type": "number", "minimum": 0, "maximum": 90 },
+            "bezel": { "type": "number", "minimum": 0 }
+          }
+        },
+        "panini": {
+          "type": "object",
+          "properties": {
+            "distance": { "type": "number", "minimum": 0, "maximum": 1 },
+            "vertical_compression": { "type": "number", "minimum": 0, "maximum": 1 }
+          }
+        },
+        "supersampling": {
+          "type": "string",
+          "enum": ["Supersampling_Off", "Supersampling_1x5", "Supersampling_2x", "Supersampling_4x"]
+        },
+        "is_fullscreen": { "type": "boolean" },
+        "child_width": { "type": "integer", "minimum": 640 },
+        "child_height": { "type": "integer", "minimum": 480 },
+        "is_maximized": { "type": "boolean" },
+        "is_triple": { "type": "boolean" },
+        "is_stereo": { "type": "boolean" },
+        "render_width": { "type": "integer", "minimum": 320 },
+        "render_height": { "type": "integer", "minimum": 240 },
+        "output_width": { "type": "integer", "minimum": 320 },
+        "output_height": { "type": "integer", "minimum": 240 },
+        "monitor": { "type": "integer", "minimum": 0 },
+        "aspect_ratio_x": { "type": "integer", "minimum": 1 },
+        "aspect_ratio_y": { "type": "integer", "minimum": 1 }
+      },
+      "required": ["window_width", "window_height", "v_sync", "is_fullscreen"]
+    },
+    "graphics": {
+      "type": "object",
+      "properties": {
+        "overallGraphics": {
+          "type": "string",
+          "enum": ["videoOptionLow", "videoOptionMedium", "videoOptionHigh", "videoOptionUltra", "videoOptionCustom"]
+        },
+        "upscaling": {
+          "type": "object",
+          "properties": {
+            "mode": { "type": "string", "enum": ["Upscaling_Off", "Upscaling_FSR", "Upscaling_DLSS"] },
+            "fsr_preset": { "type": "string", "enum": ["FSR_UltraQuality", "FSR_Quality", "FSR_Balanced", "FSR_Performance", "FSR_Custom"] },
+            "fsr_custom_val": { "type": "number", "minimum": 0, "maximum": 1 },
+            "dlss_preset": { "type": "string", "enum": ["DLSS_Quality", "DLSS_Balanced", "DLSS_Performance", "DLSS_UltraPerformance", "DLSS_Custom"] },
+            "dlss_custom_val": { "type": "number", "minimum": 0, "maximum": 1 }
+          }
+        },
+        "frame_generation": {
+          "type": "object",
+          "properties": {
+            "mode": { "type": "string", "enum": ["FrameGeneration_Off", "FrameGeneration_FSR", "FrameGeneration_DLSS"] },
+            "multiplier": { "type": "string", "enum": ["FrameGeneration_2x", "FrameGeneration_3x", "FrameGeneration_4x"] }
+          }
+        },
+        "reflex": { "type": "string", "enum": ["Reflex_Off", "Reflex_On", "Reflex_OnPlusBoost"] },
+        "msaa": { "type": "string", "enum": ["MSAA_Off", "MSAA_2x", "MSAA_4x", "MSAA_8x"] },
+        "antialising": {
+          "type": "object",
+          "properties": {
+            "filmicAntialiasing": {
+              "type": "object",
+              "properties": { "setting": { "type": "string", "enum": ["Type_Off", "Type_Soft", "Type_Sharp"] } }
+            },
+            "fxaa": {
+              "type": "object",
+              "properties": { "enable": { "type": "boolean" } }
+            }
+          }
+        },
+        "sharpening": {
+          "type": "object",
+          "properties": { "strength": { "type": "number", "minimum": 0, "maximum": 1 } }
+        },
+        "viewDistance": {
+          "type": "object",
+          "properties": {
+            "quality": { "type": "string", "enum": ["ViewDistanceQuality_Low", "ViewDistanceQuality_Medium", "ViewDistanceQuality_High", "ViewDistanceQuality_Ultra", "ViewDistanceQuality_Custom"] },
+            "overallDistance": { "type": "integer", "minimum": 500, "maximum": 20000 },
+            "objectDistance": { "type": "integer", "minimum": 200, "maximum": 6000 },
+            "treeDistance": { "type": "integer", "minimum": 200, "maximum": 8000 },
+            "vegetationDistance": { "type": "integer", "minimum": 50, "maximum": 1500 },
+            "crowdDistance": { "type": "integer", "minimum": 100, "maximum": 3000 },
+            "shadowDistance": { "type": "integer", "minimum": 100, "maximum": 1500 }
+          }
+        },
+        "materialQuality": { "type": "string", "enum": ["MaterialQuality_Low", "MaterialQuality_Medium", "MaterialQuality_High", "MaterialQuality_Ultra"] },
+        "levelOfDetail": {
+          "type": "object",
+          "properties": {
+            "levelOfDetail": { "type": "string", "enum": ["LevelOfDetailQuality_Low", "LevelOfDetailQuality_Medium", "LevelOfDetailQuality_High", "LevelOfDetailQuality_Ultra"] },
+            "experimentalStaticLevelOfDetail": { "type": "boolean" },
+            "staticLevelOfDetail": { "type": "string", "enum": ["StaticLevelOfDetailQuality_Low", "StaticLevelOfDetailQuality_Medium", "StaticLevelOfDetailQuality_High"] },
+            "levelOfDetailCustomSettings": {
+              "type": "object",
+              "properties": {
+                "mainLodDistanceScale": { "type": "number", "minimum": 0, "maximum": 4 },
+                "mirrorLodDistanceScale": { "type": "number", "minimum": 0, "maximum": 4 },
+                "cubemapLodDistanceScale": { "type": "number", "minimum": 0, "maximum": 4 },
+                "shadowLodDistanceScale": { "type": "number", "minimum": 0, "maximum": 4 },
+                "mainLodOutDistanceScale": { "type": "number", "minimum": 0, "maximum": 4 },
+                "mirrorLodOutDistanceScale": { "type": "number", "minimum": 0, "maximum": 4 },
+                "cubemapLodOutDistanceScale": { "type": "number", "minimum": 0, "maximum": 4 },
+                "shadowLodOutDistanceScale": { "type": "number", "minimum": 0, "maximum": 4 },
+                "carFixedLodInCubemapRendering": { "type": "integer", "minimum": 0, "maximum": 5 },
+                "carFixedLodInMirrorRendering": { "type": "integer", "minimum": 0, "maximum": 5 },
+                "carFixedLodInShadowRendering": { "type": "integer", "minimum": 0, "maximum": 5 }
+              }
+            }
+          }
+        },
+        "vehicleLevelOfDetail": { "type": "string", "enum": ["VehicleLevelOfDetailQuality_Low", "VehicleLevelOfDetailQuality_Medium", "VehicleLevelOfDetailQuality_High"] },
+        "car_visibility": {
+          "type": "object",
+          "properties": {
+            "max_ahead_car": { "type": "integer", "minimum": 0, "maximum": 40 },
+            "max_behind_car": { "type": "integer", "minimum": 0, "maximum": 40 },
+            "skip_filtering_when_driving": { "type": "boolean" },
+            "filter_when_spectating": { "type": "boolean" }
+          }
+        },
+        "textureQuality": { "type": "string", "enum": ["TextureQuality_Low", "TextureQuality_Medium", "TextureQuality_High", "TextureQuality_Ultra"] },
+        "anisotropicFiltering": {
+          "type": "object",
+          "properties": {
+            "anisotropicFilteringQuality": { "type": "string", "enum": ["AnisotropicFilteringQuality_Low", "AnisotropicFilteringQuality_Medium", "AnisotropicFilteringQuality_High", "AnisotropicFilteringQuality_Custom"] },
+            "customSettings": {
+              "type": "object",
+              "properties": {
+                "mainAnisotropicFiltering": { "type": "integer", "enum": [1, 2, 4, 8, 16] },
+                "mainLowAnisotropicFiltering": { "type": "integer", "enum": [1, 2, 4, 8, 16] },
+                "cubemapMirrorAnisotropicFiltering": { "type": "integer", "enum": [1, 2, 4, 8, 16] },
+                "mainAnisotropicMipBias": { "type": "number", "minimum": -2, "maximum": 2 },
+                "mainLowAnisotropicMipBias": { "type": "number", "minimum": -2, "maximum": 2 }
+              }
+            }
+          }
+        },
+        "texturePoolSize": { "type": "string", "enum": ["TexturePoolSize_Low", "TexturePoolSize_Medium", "TexturePoolSize_High", "TexturePoolSize_Ultra"] },
+        "shadow": {
+          "type": "object",
+          "properties": {
+            "shadowQuality": { "type": "string", "enum": ["ShadowQuality_Low", "ShadowQuality_Medium", "ShadowQuality_High", "ShadowQuality_Ultra"] },
+            "screenSpaceShadowQuality": { "type": "string", "enum": ["ScreenSpaceShadowQuality_Off", "ScreenSpaceShadowQuality_HalfRes", "ScreenSpaceShadowQuality_FullRes"] },
+            "vehicleShadowQuality": { "type": "string", "enum": ["VehicleShadowQuality_Low", "VehicleShadowQuality_Medium", "VehicleShadowQuality_High"] }
+          }
+        },
+        "vegetationWind": { "type": "string", "enum": ["VegetationWind_Off", "VegetationWind_On"] },
+        "carReflection": {
+          "type": "object",
+          "properties": {
+            "carReflectionQuality": { "type": "string", "enum": ["CarReflectionQuality_Off", "CarReflectionQuality_Low", "CarReflectionQuality_Medium", "CarReflectionQuality_High", "CarReflectionQuality_Custom"] },
+            "carReflectionCustomSettings": {
+              "type": "object",
+              "properties": {
+                "vehicleCubemapResolution": { "type": "integer", "enum": [128, 256, 512, 1024] },
+                "cockpitCubemapResolution": { "type": "integer", "enum": [128, 256, 512, 1024] },
+                "vehicleCubemapFarPlane": { "type": "number", "minimum": 1 },
+                "cockpitCubemapFarPlane": { "type": "number", "minimum": 1 }
+              }
+            }
+          }
+        },
+        "enviromentReflection": { "type": "string", "enum": ["EnvironmentReflectionQuality_Off", "EnvironmentReflectionQuality_Low", "EnvironmentReflectionQuality_Medium", "EnvironmentReflectionQuality_High"] },
+        "clouds": {
+          "type": "object",
+          "properties": {
+            "cloudsQuality": { "type": "string", "enum": ["CloudsQuality_Low", "CloudsQuality_Medium", "CloudsQuality_High", "CloudsQuality_Custom"] },
+            "cloudsCustomSettings": {
+              "type": "object",
+              "properties": {
+                "resolution": { "type": "integer", "enum": [256, 512, 1024, 2048] },
+                "renderingTimeslicedOverFramesNumber": { "type": "integer", "minimum": 1, "maximum": 32 }
+              }
+            },
+            "cloudsRenderingMode": { "type": "string", "enum": ["CloudsRenderingMode_Quality", "CloudsRenderingMode_Performance"] }
+          }
+        },
+        "particles": {
+          "type": "object",
+          "properties": {
+            "quality": { "type": "string", "enum": ["ParticlesQuality_Low", "ParticlesQuality_Medium", "ParticlesQuality_High"] },
+            "essential": { "type": "boolean" }
+          }
+        },
+        "grass": { "type": "string", "enum": ["GrassDensity_Off", "GrassDensity_Low", "GrassDensity_Medium", "GrassDensity_High"] },
+        "volumetricsQuality": { "type": "string", "enum": ["VolumetricsQuality_Off", "VolumetricsQuality_Low", "VolumetricsQuality_Medium", "VolumetricsQuality_High"] },
+        "giUpdateFrequency": { "type": "string", "enum": ["GlobalIlluminationUpdateFrequency_Low", "GlobalIlluminationUpdateFrequency_Medium", "GlobalIlluminationUpdateFrequency_High"] },
+        "ambientOcclusion": { "type": "string", "enum": ["AmbientOcclusionQuality_Off", "AmbientOcclusionQuality_Low", "AmbientOcclusionQuality_Medium", "AmbientOcclusionQuality_High"] },
+        "ambientOcclusionType": { "type": "string", "enum": ["AmbientOcclusionType_SSAO", "AmbientOcclusionType_RTAO"] },
+        "veil": { "type": "string", "enum": ["Veil_Off", "Veil_Soft", "Veil_Hard"] },
+        "depthOfField": { "type": "string", "enum": ["DepthOfFieldQuality_Off", "DepthOfFieldQuality_Low", "DepthOfFieldQuality_Medium", "DepthOfFieldQuality_High", "DepthOfFieldQuality_Ultra"] },
+        "motionBlur": {
+          "type": "object",
+          "properties": {
+            "quality": { "type": "string", "enum": ["MotionBlurQuality_Off", "MotionBlurQuality_Low", "MotionBlurQuality_Medium", "MotionBlurQuality_High", "MotionBlurQuality_Ultra"] },
+            "strength": { "type": "number", "minimum": 0, "maximum": 2 },
+            "centralClarity": { "type": "number", "minimum": 0, "maximum": 1 }
+          }
+        },
+        "mirror": {
+          "type": "object",
+          "properties": {
+            "mirror_mode": { "type": "string", "enum": ["Mirror_Off", "Mirror_Single", "Mirror_Multi"] },
+            "mirror_resolution": { "type": "string", "enum": ["MirrorResolution_Low", "MirrorResolution_Medium", "MirrorResolution_High"] },
+            "mirror_view_distance": { "type": "string", "enum": ["MirrorViewDistance_Low", "MirrorViewDistance_Medium", "MirrorViewDistance_High", "MirrorViewDistance_Ultra"] },
+            "mirror_level_of_detail": { "type": "string", "enum": ["MirrorLevelOfDetailQuality_Low", "MirrorLevelOfDetailQuality_Medium", "MirrorLevelOfDetailQuality_High"] },
+            "alternate_rendering": { "type": "boolean" },
+            "multi_mode": { "type": "string", "enum": ["Multi_Fixed", "Multi_Dynamic"] },
+            "multi_mode_vr": { "type": "string", "enum": ["Multi_VR", "Multi_VR_Off"] }
+          }
+        },
+        "post_processing_preset": { "type": "string" },
+        "exposureBias": { "type": "number", "minimum": -3, "maximum": 3 },
+        "exposureFusion": { "type": "number", "minimum": 0, "maximum": 1 },
+        "is_dlss_available": { "type": "boolean", "readOnly": true },
+        "is_fsr_available": { "type": "boolean", "readOnly": true },
+        "is_dlss_frame_generation_available": { "type": "boolean", "readOnly": true },
+        "dlss_frame_generation_max_multiplier": { "type": "integer", "readOnly": true },
+        "is_reflex_available": { "type": "boolean", "readOnly": true },
+        "is_fsr_frame_generation_available": { "type": "boolean", "readOnly": true },
+        "can_use_dlss_frame_generation": { "type": "boolean", "readOnly": true },
+        "can_use_dlss_frame_generation_2x": { "type": "boolean", "readOnly": true },
+        "can_use_dlss_frame_generation_3x": { "type": "boolean", "readOnly": true },
+        "can_use_dlss_frame_generation_4x": { "type": "boolean", "readOnly": true },
+        "can_use_fsr_frame_generation": { "type": "boolean", "readOnly": true },
+        "can_use_fsr_frame_generation_2x": { "type": "boolean", "readOnly": true },
+        "can_use_fsr_frame_generation_3x": { "type": "boolean", "readOnly": true },
+        "can_use_fsr_frame_generation_4x": { "type": "boolean", "readOnly": true },
+        "terrain": {
+          "type": "object",
+          "properties": { "groundQuality": { "type": "string", "enum": ["GroundQuality_Low", "GroundQuality_Medium", "GroundQuality_High"] } }
+        },
+        "num_dash_displays": { "type": "string", "enum": ["NumDashDisplays_None", "NumDashDisplays_MaxOne", "NumDashDisplays_MaxTwo"] }
+      }
+    },
+    "vr": {
+      "type": "object",
+      "properties": {
+        "pixel_density": { "type": "integer", "minimum": 50, "maximum": 200 },
+        "foveated_rendering": { "type": "string", "enum": ["FoveatedRendering_Off", "FoveatedRendering_Low", "FoveatedRendering_Medium", "FoveatedRendering_High"] },
+        "world_scale": { "type": "number", "minimum": 0.5, "maximum": 2 },
+        "prefer_framerate_over_latency": { "type": "boolean" },
+        "disable_hidden_area_mask": { "type": "boolean" },
+        "enable_spectator_view": { "type": "boolean" },
+        "eye_tracked_foveated_rendering": { "type": "boolean" },
+        "can_use_eye_tracking": { "type": "boolean", "readOnly": true },
+        "sunglasses": { "type": "string", "enum": ["Sunglass_Off", "Sunglass_Light", "Sunglass_Dark"] },
+        "render_to_intermediate_target": { "type": "boolean" },
+        "log_vr_pacing": { "type": "boolean" }
+      }
+    }
+  },
+  "required": ["major_version", "display", "graphics"]
+}

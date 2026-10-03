@@ -1,0 +1,27 @@
+{
+  "id": "rtx4060-laptop-battery",
+  "label": "RTX 4060 Laptop · on battery · 8 GB",
+  "description": "Gaming laptop running on battery. 8 GB of VRAM makes Ultra textures overflow, and the hybrid Intel CPU is power-limited.",
+  "gpu": { "vendor": "nvidia", "name": "GeForce RTX 4060 Laptop GPU", "arch": "Ada", "vramGB": 8, "driver": "581.xx", "dxr": "1.1", "mobile": true },
+  "display": {
+    "monitors": [ { "id": 1, "name": "Built-in display", "width": 2560, "height": 1600, "refreshHz": 240, "vrr": true, "hdr": false, "primary": true } ],
+    "tripleSurface": "none"
+  },
+  "vr": { "connected": false },
+  "cpu": { "name": "Core i9-14900HX", "vendor": "intel", "cores": 24, "threads": 32, "smt": true, "ccds": 1, "x3dCcd": null, "hybrid": { "pCores": 8, "eCores": 16 }, "gameThreadsOnCacheCcd": null },
+  "os": { "build": "26100", "hags": true, "autoHdr": false, "gameMode": true, "vrrGlobal": true, "windowedOptimizations": true, "powerSource": "battery", "powerPlan": "Balanced", "chipsetDriverCoreParking": null },
+  "sdk": {
+    "dlss": { "supported": true, "version": "310.x" },
+    "dlss_g": { "supported": true, "maxMultiplier": 2 },
+    "reflex": { "supported": true },
+    "fsr4": { "supported": false },
+    "fsr31": { "supported": true },
+    "fsr_fg": { "supported": true, "maxMultiplier": 2 },
+    "antilag2": { "supported": false },
+    "xess": { "supported": true, "path": "dp4a" },
+    "xess_fg": { "supported": false },
+    "xell": { "supported": false }
+  },
+  "telemetry": { "gpuMsPerMP": 3.6, "gpuFixedMs": 1.4, "cpuMs": 8.8, "gpuTempC": 84, "gpuUtil": 99, "baseVramGB": 2.1 },
+  "configOverrides": {}
+}

@@ -1,0 +1,242 @@
+{
+  "$comment": "Declarative dependency rules (facets F3/F4, rules R3-R6, R12). Paths are v4 logical paths from video_settings_ui_schema_Version4.json. Conditions use the ref language from docs/01-taxonomy-and-rules.md §5: refs are prefixed cfg: (effective config), facts: (system facts), der: (derived values), ctx: (session context). Effect actions: hide (quiet = conditional disclosure, not 'unavailable'), lock (disable and point to the controller), force (set an effective value and lock it; an 'unlessIn' list keeps already-compatible values), excludeOptions (option-level gating; kind 'hw' hides the option, 'dependency' shows it disabled with the reason). Any value forced or made invalid becomes an implied change in the ledger (R5, R12).",
+  "version": 3,
+  "rules": [
+    {
+      "id": "upscaler_excludes_supersampling",
+      "rule": "R3",
+      "controller": "graphics.upscaling.provider",
+      "when": { "ref": "cfg:graphics.upscaling.provider", "neq": "off" },
+      "effects": [ { "action": "force", "targets": ["display.supersampling"], "value": "Supersampling_Off", "reason": "Supersampling is off while an upscaler is active" } ]
+    },
+    {
+      "id": "upscaler_children_when_off",
+      "rule": "R3",
+      "controller": "graphics.upscaling.provider",
+      "when": { "ref": "cfg:graphics.upscaling.provider", "eq": "off" },
+      "effects": [ { "action": "hide", "quiet": true, "targets": ["graphics.upscaling.mode", "graphics.upscaling.custom_scale", "graphics.upscaling.dlss_model"] } ]
+    },
+    {
+      "id": "custom_scale_only_for_custom_mode",
+      "rule": "R3",
+      "controller": "graphics.upscaling.mode",
+      "when": { "ref": "cfg:graphics.upscaling.mode", "neq": "custom" },
+      "effects": [ { "action": "hide", "quiet": true, "targets": ["graphics.upscaling.custom_scale"] } ]
+    },
+    {
+      "id": "dlss_model_only_for_dlss",
+      "rule": "R14",
+      "controller": "graphics.upscaling.provider",
+      "when": { "ref": "cfg:graphics.upscaling.provider", "neq": "dlss" },
+      "effects": [ { "action": "hide", "quiet": true, "targets": ["graphics.upscaling.dlss_model"] } ]
+    },
+    {
+      "id": "fg_needs_upscaler",
+      "rule": "R3",
+      "controller": "graphics.upscaling.provider",
+      "when": { "ref": "cfg:graphics.upscaling.provider", "eq": "off" },
+      "effects": [ { "action": "force", "targets": ["graphics.frame_generation.provider"], "value": "off", "reason": "Turn on an upscaler first. DLAA and Native AA modes keep native resolution." } ]
+    },
+    {
+      "id": "fg_family_dlss",
+      "rule": "R4",
+      "controller": "graphics.upscaling.provider",
+      "engineConstraint": true,
+      "note": "The current engine integration (dependencies v2) only enables FG together with the same vendor's upscaler. Remove these three rules if the engine adds support for mixing vendors.",
+      "when": { "ref": "der:upscalerFamily", "neq": "dlss" },
+      "effects": [ { "action": "excludeOptions", "kind": "dependency", "targets": ["graphics.frame_generation.provider"], "options": ["dlss_fg"], "reason": "Needs DLSS as the upscaler" } ]
+    },
+    {
+      "id": "fg_family_fsr",
+      "rule": "R4",
+      "controller": "graphics.upscaling.provider",
+      "engineConstraint": true,
+      "when": { "ref": "der:upscalerFamily", "neq": "fsr" },
+      "effects": [ { "action": "excludeOptions", "kind": "dependency", "targets": ["graphics.frame_generation.provider"], "options": ["fsr_fg"], "reason": "Needs FSR as the upscaler" } ]
+    },
+    {
+      "id": "fg_family_xess",
+      "rule": "R4",
+      "controller": "graphics.upscaling.provider",
+      "engineConstraint": true,
+      "when": { "ref": "der:upscalerFamily", "neq": "xess" },
+      "effects": [ { "action": "excludeOptions", "kind": "dependency", "targets": ["graphics.frame_generation.provider"], "options": ["xess_fg"], "reason": "Needs XeSS as the upscaler" } ]
+    },
+    {
+      "id": "fg_not_in_vr",
+      "rule": "R7",
+      "controller": "display.mode",
+      "when": { "ref": "cfg:display.mode", "eq": "vr" },
+      "effects": [ { "action": "force", "targets": ["graphics.frame_generation.provider"], "value": "off", "reason": "Frame generation isn't supported in VR. The headset runtime's own reprojection does this job." } ]
+    },
+    {
+      "id": "fg_multiplier_when_off",
+      "rule": "R3",
+      "controller": "graphics.frame_generation.provider",
+      "when": { "ref": "cfg:graphics.frame_generation.provider", "eq": "off" },
+      "effects": [ { "action": "hide", "quiet": true, "targets": ["graphics.frame_generation.multiplier"] } ]
+    },
+    {
+      "id": "fg_multiplier_3x_hw",
+      "rule": "R4",
+      "controller": "graphics.frame_generation.provider",
+      "when": { "ref": "der:fgMaxMultiplier", "lt": 3 },
+      "effects": [ { "action": "excludeOptions", "kind": "hw", "targets": ["graphics.frame_generation.multiplier"], "options": ["FrameGeneration_3x"], "reason": "This GPU/provider supports up to {der:fgMaxMultiplier}x" } ]
+    },
+    {
+      "id": "fg_multiplier_4x_hw",
+      "rule": "R4",
+      "controller": "graphics.frame_generation.provider",
+      "when": { "ref": "der:fgMaxMultiplier", "lt": 4 },
+      "effects": [ { "action": "excludeOptions", "kind": "hw", "targets": ["graphics.frame_generation.multiplier"], "options": ["FrameGeneration_4x"], "reason": "This GPU/provider supports up to {der:fgMaxMultiplier}x" } ]
+    },
+    {
+      "id": "dlss_fg_forces_reflex",
+      "rule": "R5",
+      "controller": "graphics.frame_generation.provider",
+      "when": { "ref": "cfg:graphics.frame_generation.provider", "eq": "dlss_fg" },
+      "effects": [
+        { "action": "excludeOptions", "kind": "dependency", "targets": ["graphics.latency.mode"], "options": ["off", "antilag2", "xell"], "reason": "DLSS Frame Generation requires Reflex" },
+        { "action": "force", "targets": ["graphics.latency.mode"], "value": "reflex", "unlessIn": ["reflex", "reflex_boost"], "lock": false, "reason": "DLSS Frame Generation requires Reflex" }
+      ]
+    },
+    {
+      "id": "xess_fg_forces_xell",
+      "rule": "R5",
+      "controller": "graphics.frame_generation.provider",
+      "when": { "ref": "cfg:graphics.frame_generation.provider", "eq": "xess_fg" },
+      "effects": [ { "action": "force", "targets": ["graphics.latency.mode"], "value": "xell", "reason": "XeSS Frame Generation always runs with XeLL" } ]
+    },
+    {
+      "id": "eye_tracked_needs_foveation",
+      "rule": "R3",
+      "controller": "vr.foveated_rendering",
+      "when": { "ref": "cfg:vr.foveated_rendering", "eq": "FoveatedRendering_Off" },
+      "effects": [ { "action": "lock", "targets": ["vr.eye_tracked_foveated_rendering"], "reason": "Turn on foveated rendering first" } ]
+    },
+    {
+      "id": "static_lod_level",
+      "rule": "R3",
+      "controller": "graphics.levelOfDetail.experimentalStaticLevelOfDetail",
+      "when": { "ref": "cfg:graphics.levelOfDetail.experimentalStaticLevelOfDetail", "neq": true },
+      "effects": [ { "action": "hide", "quiet": true, "targets": ["graphics.levelOfDetail.staticLevelOfDetail"] } ]
+    },
+    {
+      "id": "mirrors_off",
+      "rule": "R3",
+      "controller": "graphics.mirror.mirror_mode",
+      "when": { "ref": "cfg:graphics.mirror.mirror_mode", "eq": "Mirror_Off" },
+      "effects": [ { "action": "lock", "targets": ["graphics.mirror.mirror_resolution", "graphics.mirror.mirror_view_distance", "graphics.mirror.mirror_level_of_detail", "graphics.mirror.alternate_rendering"], "reason": "Mirrors are off" } ]
+    },
+    {
+      "id": "multi_mirror_modes",
+      "rule": "R3",
+      "controller": "graphics.mirror.mirror_mode",
+      "when": { "ref": "cfg:graphics.mirror.mirror_mode", "neq": "Mirror_Multi" },
+      "effects": [ { "action": "hide", "quiet": true, "targets": ["graphics.mirror.multi_mode", "graphics.mirror.multi_mode_vr"] } ]
+    },
+    {
+      "id": "motion_blur_off",
+      "rule": "R3",
+      "controller": "graphics.motionBlur.quality",
+      "when": { "ref": "cfg:graphics.motionBlur.quality", "eq": "MotionBlurQuality_Off" },
+      "effects": [ { "action": "lock", "targets": ["graphics.motionBlur.strength", "graphics.motionBlur.centralClarity"], "reason": "Motion blur is off" } ]
+    },
+    {
+      "id": "ao_off",
+      "rule": "R3",
+      "controller": "graphics.ambientOcclusion",
+      "when": { "ref": "cfg:graphics.ambientOcclusion", "eq": "AmbientOcclusionQuality_Off" },
+      "effects": [ { "action": "lock", "targets": ["graphics.ambientOcclusionType"], "reason": "Ambient occlusion is off" } ]
+    },
+    {
+      "id": "panini_off",
+      "rule": "R3",
+      "controller": "display.panini.distance",
+      "when": { "ref": "cfg:display.panini.distance", "eq": 0 },
+      "effects": [ { "action": "lock", "targets": ["display.panini.vertical_compression"], "reason": "Panini projection is off (0)" } ]
+    }
+  ],
+  "presetGroups": [
+    {
+      "parent": "graphics.overallGraphics",
+      "customValue": "videoOptionCustom",
+      "note": "Illustrative preset tables. Replace with the engine's real values.",
+      "presets": {
+        "videoOptionLow": {
+          "graphics.textureQuality": "TextureQuality_Medium", "graphics.materialQuality": "MaterialQuality_Low",
+          "graphics.viewDistance.quality": "ViewDistanceQuality_Low", "graphics.levelOfDetail.levelOfDetail": "LevelOfDetailQuality_Low",
+          "graphics.shadow.shadowQuality": "ShadowQuality_Low", "graphics.ambientOcclusion": "AmbientOcclusionQuality_Low",
+          "graphics.enviromentReflection": "EnvironmentReflectionQuality_Low", "graphics.clouds.cloudsQuality": "CloudsQuality_Low",
+          "graphics.volumetricsQuality": "VolumetricsQuality_Off", "graphics.grass": "GrassDensity_Low",
+          "graphics.particles.quality": "ParticlesQuality_Low", "graphics.terrain.groundQuality": "GroundQuality_Low",
+          "graphics.carReflection.carReflectionQuality": "CarReflectionQuality_Low"
+        },
+        "videoOptionMedium": {
+          "graphics.textureQuality": "TextureQuality_High", "graphics.materialQuality": "MaterialQuality_Medium",
+          "graphics.viewDistance.quality": "ViewDistanceQuality_Medium", "graphics.levelOfDetail.levelOfDetail": "LevelOfDetailQuality_Medium",
+          "graphics.shadow.shadowQuality": "ShadowQuality_Medium", "graphics.ambientOcclusion": "AmbientOcclusionQuality_Medium",
+          "graphics.enviromentReflection": "EnvironmentReflectionQuality_Medium", "graphics.clouds.cloudsQuality": "CloudsQuality_Medium",
+          "graphics.volumetricsQuality": "VolumetricsQuality_Low", "graphics.grass": "GrassDensity_Medium",
+          "graphics.particles.quality": "ParticlesQuality_Medium", "graphics.terrain.groundQuality": "GroundQuality_Medium",
+          "graphics.carReflection.carReflectionQuality": "CarReflectionQuality_Medium"
+        },
+        "videoOptionHigh": {
+          "graphics.textureQuality": "TextureQuality_High", "graphics.materialQuality": "MaterialQuality_High",
+          "graphics.viewDistance.quality": "ViewDistanceQuality_High", "graphics.levelOfDetail.levelOfDetail": "LevelOfDetailQuality_High",
+          "graphics.shadow.shadowQuality": "ShadowQuality_High", "graphics.ambientOcclusion": "AmbientOcclusionQuality_High",
+          "graphics.enviromentReflection": "EnvironmentReflectionQuality_High", "graphics.clouds.cloudsQuality": "CloudsQuality_High",
+          "graphics.volumetricsQuality": "VolumetricsQuality_Medium", "graphics.grass": "GrassDensity_High",
+          "graphics.particles.quality": "ParticlesQuality_High", "graphics.terrain.groundQuality": "GroundQuality_High",
+          "graphics.carReflection.carReflectionQuality": "CarReflectionQuality_High"
+        },
+        "videoOptionUltra": {
+          "graphics.textureQuality": "TextureQuality_Ultra", "graphics.materialQuality": "MaterialQuality_Ultra",
+          "graphics.viewDistance.quality": "ViewDistanceQuality_Ultra", "graphics.levelOfDetail.levelOfDetail": "LevelOfDetailQuality_Ultra",
+          "graphics.shadow.shadowQuality": "ShadowQuality_Ultra", "graphics.ambientOcclusion": "AmbientOcclusionQuality_High",
+          "graphics.enviromentReflection": "EnvironmentReflectionQuality_High", "graphics.clouds.cloudsQuality": "CloudsQuality_High",
+          "graphics.volumetricsQuality": "VolumetricsQuality_High", "graphics.grass": "GrassDensity_High",
+          "graphics.particles.quality": "ParticlesQuality_High", "graphics.terrain.groundQuality": "GroundQuality_High",
+          "graphics.carReflection.carReflectionQuality": "CarReflectionQuality_High"
+        }
+      }
+    },
+    {
+      "parent": "graphics.viewDistance.quality",
+      "customValue": "ViewDistanceQuality_Custom",
+      "note": "Values taken from graphics.viewDistance.presets in input/raw_settings_config.json",
+      "presets": {
+        "ViewDistanceQuality_Low": { "graphics.viewDistance.overallDistance": 2000, "graphics.viewDistance.objectDistance": 800, "graphics.viewDistance.treeDistance": 1000, "graphics.viewDistance.vegetationDistance": 150, "graphics.viewDistance.crowdDistance": 300, "graphics.viewDistance.shadowDistance": 650 },
+        "ViewDistanceQuality_Medium": { "graphics.viewDistance.overallDistance": 4000, "graphics.viewDistance.objectDistance": 1500, "graphics.viewDistance.treeDistance": 2000, "graphics.viewDistance.vegetationDistance": 300, "graphics.viewDistance.crowdDistance": 600, "graphics.viewDistance.shadowDistance": 500 },
+        "ViewDistanceQuality_High": { "graphics.viewDistance.overallDistance": 8000, "graphics.viewDistance.objectDistance": 2500, "graphics.viewDistance.treeDistance": 3500, "graphics.viewDistance.vegetationDistance": 500, "graphics.viewDistance.crowdDistance": 1000, "graphics.viewDistance.shadowDistance": 700 },
+        "ViewDistanceQuality_Ultra": { "graphics.viewDistance.overallDistance": 16000, "graphics.viewDistance.objectDistance": 5000, "graphics.viewDistance.treeDistance": 6000, "graphics.viewDistance.vegetationDistance": 1000, "graphics.viewDistance.crowdDistance": 2000, "graphics.viewDistance.shadowDistance": 1000 }
+      }
+    },
+    {
+      "parent": "graphics.anisotropicFiltering.anisotropicFilteringQuality",
+      "customValue": "AnisotropicFilteringQuality_Custom",
+      "note": "The High row matches the saved config. Low and Medium are illustrative.",
+      "presets": {
+        "AnisotropicFilteringQuality_Low": { "graphics.anisotropicFiltering.customSettings.mainAnisotropicFiltering": 2, "graphics.anisotropicFiltering.customSettings.mainLowAnisotropicFiltering": 1, "graphics.anisotropicFiltering.customSettings.cubemapMirrorAnisotropicFiltering": 1 },
+        "AnisotropicFilteringQuality_Medium": { "graphics.anisotropicFiltering.customSettings.mainAnisotropicFiltering": 4, "graphics.anisotropicFiltering.customSettings.mainLowAnisotropicFiltering": 2, "graphics.anisotropicFiltering.customSettings.cubemapMirrorAnisotropicFiltering": 1 },
+        "AnisotropicFilteringQuality_High": { "graphics.anisotropicFiltering.customSettings.mainAnisotropicFiltering": 8, "graphics.anisotropicFiltering.customSettings.mainLowAnisotropicFiltering": 4, "graphics.anisotropicFiltering.customSettings.cubemapMirrorAnisotropicFiltering": 1 }
+      }
+    },
+    {
+      "parent": "graphics.clouds.cloudsQuality",
+      "customValue": "CloudsQuality_Custom",
+      "note": "The High row matches the saved config. Low and Medium are illustrative.",
+      "presets": {
+        "CloudsQuality_Low": { "graphics.clouds.cloudsCustomSettings.resolution": 256, "graphics.clouds.cloudsCustomSettings.renderingTimeslicedOverFramesNumber": 32 },
+        "CloudsQuality_Medium": { "graphics.clouds.cloudsCustomSettings.resolution": 512, "graphics.clouds.cloudsCustomSettings.renderingTimeslicedOverFramesNumber": 16 },
+        "CloudsQuality_High": { "graphics.clouds.cloudsCustomSettings.resolution": 1024, "graphics.clouds.cloudsCustomSettings.renderingTimeslicedOverFramesNumber": 16 }
+      }
+    },
+    {
+      "parent": "graphics.carReflection.carReflectionQuality",
+      "customValue": "CarReflectionQuality_Custom",
+      "note": "No preset tables are known (the saved custom values are 0). Children only switch the parent to Custom.",
+      "presets": {}
+    }
+  ]
+}
