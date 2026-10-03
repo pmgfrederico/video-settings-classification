@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "video-settings.schema.json",
+  "title": "Video settings payload (structural validation)",
+  "description": "Conservative structural schema based on the supplied major_version 2 payload. It intentionally does not invent enum members or numeric bounds where the source payload does not establish them. Some strings in the original pasted payload were truncated, so validate against the game's authoritative config definitions before treating this as complete.",
+  "type": "object",
+  "required": ["major_version", "display", "graphics", "vr"],
+  "properties": {
+    "major_version": {"const": 2},
+    "display": {"$ref": "#/$defs/object"},
+    "graphics": {"$ref": "#/$defs/object"},
+    "vr": {"$ref": "#/$defs/object"}
+  },
+  "$defs": {
+    "scalar": {"type": ["string", "number", "integer", "boolean", "null"]},
+    "value": {
+      "anyOf": [
+        {"$ref": "#/$defs/scalar"},
+        {"$ref": "#/$defs/object"},
+        {"type": "array", "items": {"$ref": "#/$defs/value"}}
+      ]
+    },
+    "object": {
+      "type": "object",
+      "additionalProperties": {"$ref": "#/$defs/value"}
+    }
+  },
+  "additionalProperties": false
+}

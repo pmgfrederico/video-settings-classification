@@ -1,0 +1,3 @@
+{
+  "_notice": "The original settings payload was provided inline in the conversation, not as a file. Several values were truncated mid-string (including anisotropicFilteringQuality and screenSpaceShadowQuality), so it is not reproduced here as valid JSON. Use the original conversation payload as the source and repair those truncations from the game's authoritative config before validation."
+}
