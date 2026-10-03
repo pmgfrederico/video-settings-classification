@@ -1,0 +1,758 @@
+<!DOCTYPE html><html class="h-full" lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>ASSETTO CORSA EVO // Video Pipeline Configuration</title>
+<!-- Tailwind CSS CDN with forms & container queries -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;family=Rajdhani:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              red: '#E11D48',
+              redHover: '#BE123C',
+              slate: '#1E2638',
+              card: 'rgba(23, 29, 43, 0.72)',
+              cardBorder: 'rgba(255, 255, 255, 0.08)',
+              cardHover: 'rgba(255, 255, 255, 0.14)'
+            },
+            matte: {
+              white: '#F1F5F9',
+              muted: '#94A3B8',
+              dim: '#64748B',
+              dark: '#0B0F17'
+            }
+          },
+          fontFamily: {
+            racing: ['Rajdhani', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+            sans: ['Inter', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    /* Clean Minimal Scrollbars */
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(15, 20, 28, 0.4);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 2px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+
+    /* Modern Matte Motorsport Slider - Clean & Precise, No Glow */
+    input[type=range] {
+      -webkit-appearance: none;
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 9999px;
+      height: 4px;
+      cursor: pointer;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      height: 14px;
+      width: 14px;
+      border-radius: 50%;
+      background: #F1F5F9;
+      border: 2px solid #E11D48;
+      box-shadow: none;
+      transition: background-color 0.15s ease;
+    }
+    input[type=range]::-webkit-slider-thumb:hover {
+      background: #E11D48;
+    }
+
+    /* Toggle switch */
+    .toggle-checkbox:checked + .toggle-label {
+      background-color: #E11D48;
+    }
+    .toggle-checkbox:checked + .toggle-label:after {
+      transform: translateX(100%);
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-matte-white font-sans h-full overflow-hidden flex flex-col antialiased select-none relative">
+<!-- MOTORSPORT ENGINE BAY BACKGROUND WITH BALANCED MATTE OVERLAY -->
+<div class="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+<img alt="High Performance Racing Engine Bay" class="w-full h-full object-cover object-center transform scale-100 filter contrast-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBf_fN6qEmYI4GIbTog5_50vBEtnJCEqK3A5pz7V8nfrbdaAyLlpQNo1EuPcF_p4L2yzeMO4Hv-mvlqCcwDSrd3gP0HtqmuKrgoTkmsukjkVUtHy5Nh3kC6qli7i4l1CgTXJusKAyiKykhMx8XWKp_vXMk-cmGlqNv_mJb1AmgOqGRhmpsf44sUqqH6oBVWW_VEIh1xvDc5K8ITyghCTGwnbabXGDBN5evhZa_Iv0FRauuCPTnNypHTdw">
+<!-- Brightened neutral dark studio overlay allowing engine details to remain clear -->
+<div class="absolute inset-0 bg-[#12161E]/80 backdrop-blur-[1.5px]"></div>
+</div>
+<!-- BEGIN: Studio Top Header -->
+<header class="relative z-20 h-16 border-b border-white/10 px-8 flex items-center justify-between shrink-0 bg-[#0F141E]/80 backdrop-blur-md" data-purpose="global-header">
+<!-- Left: Authentic AC EVO Logo -->
+<div class="flex items-center gap-4">
+<div class="flex items-center tracking-tight">
+<span class="text-xl font-bold uppercase font-racing tracking-wide flex items-center gap-1.5 text-matte-white">
+<span class="font-extrabold tracking-wider">ASSETTO CORSA</span>
+<span class="text-brand-red font-bold tracking-widest text-xl ml-1">EVO</span>
+</span>
+<span class="text-white/20 mx-3 font-light text-base">/</span>
+<span class="text-matte-muted font-semibold uppercase tracking-wider text-xs font-mono">
+        Video Settings
+      </span>
+</div>
+<div class="h-4 w-[1px] bg-white/10 ml-2"></div>
+
+</div>
+<!-- Center: Segmented Navigation Tabs [ DISPLAY | GRAPHICS | VR ] -->
+<nav class="flex items-center bg-[#0B0F17]/90 p-1 border border-white/10 rounded">
+
+
+
+</nav>
+<!-- Right: Status Readouts & Filter -->
+<div class="flex items-center gap-4">
+<div class="relative w-56 hidden xl:block">
+<input class="w-full pl-8 pr-3 py-1 bg-black/40 border border-white/10 rounded text-xs text-matte-white placeholder-matte-dim focus:border-brand-red focus:ring-0 font-mono transition-colors" placeholder="Filter settings..." type="text">
+<span class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-matte-dim text-xs font-mono">/</span>
+</div>
+
+<div class="px-3 py-1 bg-white/5 border border-white/10 rounded text-xs font-mono text-matte-muted">
+      Preset: <span class="font-semibold text-matte-white">Custom Ultra</span>
+</div>
+</div>
+</header>
+<!-- END: Studio Top Header -->
+<!-- Overview Telemetry Strip -->
+<section class="relative z-20 bg-[#0E131C]/70 border-b border-white/10 px-8 py-3 backdrop-blur-sm">
+<div class="grid grid-cols-3 gap-5 max-w-5xl mx-auto">
+<!-- Monitor Block -->
+
+<!-- Aspect Ratio Block -->
+
+<!-- Resolution Block -->
+
+</div>
+</section>
+<!-- MAIN WORKSPACE LAYOUT -->
+<main class="relative z-10 flex-1 flex overflow-hidden">
+<!-- LEFT SIDEBAR: Category Jump Navigation -->
+<aside class="w-64 border-r border-white/10 bg-[#0D121B]/75 backdrop-blur-md flex flex-col shrink-0 overflow-y-auto" data-purpose="navigation-rail">
+<div class="p-5 space-y-7">
+<div>
+<div class="text-[10px] font-mono tracking-wider font-semibold text-matte-dim uppercase mb-3 flex items-center justify-between">
+<span class="">01 Display &amp; Setup</span>
+
+</div>
+<nav class="space-y-1.5">
+<a class="flex items-center justify-between px-3.5 py-2.5 text-xs font-semibold rounded bg-brand-red text-white" href="#section-display">
+<span class="">Monitor &amp; Resolution</span>
+<span class="w-1.5 h-1.5 rounded-full bg-white"></span>
+</a>
+<a class="flex items-center justify-between px-3.5 py-2.5 text-xs font-medium rounded text-matte-muted hover:text-matte-white hover:bg-white/5 transition-colors" href="#section-triple">
+<span class="">Triple Screen</span>
+<span class="text-[10px] font-mono text-matte-dim">3-WAY</span>
+</a>
+</nav>
+</div>
+<div>
+<div class="text-[10px] font-mono tracking-wider font-semibold text-matte-dim uppercase mb-3">
+          02 Graphics &amp; Engine
+        </div>
+<nav class="space-y-1.5">
+<a class="block px-3.5 py-2 text-xs font-medium rounded text-matte-muted hover:text-matte-white hover:bg-white/5 transition-colors" href="#section-telemetry">
+            GPU &amp; Adapter
+          </a>
+<a class="block px-3.5 py-2 text-xs font-medium rounded text-matte-muted hover:text-matte-white hover:bg-white/5 transition-colors" href="#section-upscaling">
+            Upscaling
+          </a>
+<a class="block px-3.5 py-2 text-xs font-medium rounded text-matte-muted hover:text-matte-white hover:bg-white/5 transition-colors" href="#section-framepacing">
+            Frame Pacing &amp; Sync
+          </a>
+<a class="block px-3.5 py-2 text-xs font-medium rounded text-matte-muted hover:text-matte-white hover:bg-white/5 transition-colors" href="#section-antialiasing">
+            Anti-Aliasing
+          </a>
+</nav>
+</div>
+<div id="section-vr">
+<div class="text-[10px] font-mono tracking-wider font-semibold text-matte-dim uppercase mb-3">
+          03 Specialized Hardware
+        </div>
+<nav class="space-y-1.5">
+<div class="flex items-center justify-between px-3.5 py-2 text-xs font-medium rounded text-matte-dim bg-white/5 border border-white/5">
+<span class="">VR Headset Rig</span>
+<span class="text-[9px] font-mono text-matte-dim">STANDBY</span>
+</div>
+</nav>
+</div>
+<!-- GPU Health Status Card -->
+<div class="pt-4 border-t border-white/10">
+<div class="bg-black/35 p-3.5 border border-white/10 rounded">
+<div class="flex items-center justify-between text-xs font-mono mb-2 text-matte-muted">
+<span class="">GPU Temperature</span>
+<span class="font-bold text-matte-white">52°C</span>
+</div>
+<div class="w-full bg-white/10 h-1.5 rounded-full overflow-hidden mb-2">
+<div class="bg-emerald-400 h-full w-[45%]"></div>
+</div>
+<div class="flex items-center justify-between text-[11px] font-mono text-matte-dim">
+<span class="">Frame Limit</span>
+<span class="text-matte-white font-medium">140 / 144 FPS</span>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<!-- CENTER VIEW: Spacious Settings Sections -->
+<div class="flex-1 overflow-y-auto px-12 py-8 space-y-9 scroll-smooth" data-purpose="settings-canvas">
+<!-- SUBSECTION: Display & Monitor Topology -->
+<section class="space-y-4" id="section-display">
+<div class="flex items-center justify-between pb-3 border-b border-white/10">
+<h2 class="text-sm font-bold uppercase tracking-wider font-racing text-matte-white flex items-center gap-2">
+<span class="w-1.5 h-3.5 bg-brand-red rounded-sm"></span>
+          Display &amp; Monitor
+        </h2>
+<span class="text-[11px] font-mono px-2.5 py-1 bg-white/5 rounded border border-white/10 text-matte-muted">
+          DisplayPort 1.4a
+        </span>
+</div>
+<div class="space-y-4">
+<!-- Active Monitor Selection -->
+<div class="bg-brand-card border border-brand-cardBorder rounded-lg p-5 flex flex-col md:flex-row md:items-center justify-between gap-5 hover:border-brand-cardHover transition-colors">
+<div>
+<div class="text-sm font-semibold text-matte-white">Output Monitor</div>
+<div class="text-xs text-matte-dim mt-0.5">Physical display selection</div>
+</div>
+<div class="w-full md:w-80">
+<select class="w-full bg-[#0B0F17] border border-white/15 rounded text-xs text-matte-white font-mono px-3.5 py-2.5 focus:border-brand-red focus:ring-0">
+<option selected="">LG UltraGear 32GS95UE (Primary)</option>
+<option>Samsung Odyssey Neo G9 (57")</option>
+<option>ASUS ROG Swift PG32UCDM</option>
+</select>
+</div>
+</div>
+<!-- Resolution & Modes -->
+<div class="bg-brand-card border border-brand-cardBorder rounded-lg p-5 space-y-5">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-white/10">
+<div>
+<div class="flex items-center gap-3">
+<span class="text-sm font-semibold text-matte-white">Resolution &amp; Refresh Rate</span>
+<span class="text-xs font-mono px-2.5 py-0.5 bg-white/10 rounded text-matte-white" id="activeModePill">
+                  3840 × 2160 @ 144Hz
+                </span>
+</div>
+<div class="text-xs text-matte-dim mt-0.5">Current rasterizer mode</div>
+</div>
+<button class="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-white bg-brand-red hover:bg-brand-redHover rounded transition-colors self-start sm:self-auto" onclick="toggleResModal()">
+              Change Mode...
+            </button>
+</div>
+<!-- Overview 3-Column Metrics -->
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+<div class="p-4 bg-[#0B0F17]/70 border border-white/10 rounded">
+<div class="text-matte-dim font-mono text-[10px] uppercase mb-1">Aspect Ratio</div>
+<div class="text-base font-bold text-matte-white font-mono" id="cardAspectRatio">16:9 Native</div>
+<div class="text-[11px] font-mono text-matte-dim mt-1">1.777:1 Solved</div>
+</div>
+<div class="p-4 bg-[#0B0F17]/70 border border-white/10 rounded">
+<div class="text-matte-dim font-mono text-[10px] uppercase mb-1">Native Resolution</div>
+<div class="text-base font-bold text-matte-white font-mono" id="cardResolution">3840 × 2160</div>
+<div class="text-[11px] font-mono text-matte-dim mt-1">UHD 4K (8.3 MP)</div>
+</div>
+<div class="p-4 bg-[#0B0F17]/70 border border-white/10 rounded">
+<div class="text-matte-dim font-mono text-[10px] uppercase mb-1">Refresh Rate</div>
+<div class="text-base font-bold text-brand-red font-mono" id="cardRefreshRate">144 Hz</div>
+<div class="text-[11px] font-mono text-matte-dim mt-1">6.94 ms Frame Time</div>
+</div>
+</div>
+</div>
+<!-- Presentation Mode -->
+<div class="bg-brand-card border border-brand-cardBorder rounded-lg p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<div>
+<div class="text-sm font-semibold text-matte-white">Window Presentation</div>
+<div class="text-xs text-matte-dim mt-0.5">Desktop Window Manager configuration</div>
+</div>
+<div class="inline-flex bg-[#0B0F17] border border-white/15 p-1 rounded">
+<button class="px-4 py-1.5 text-xs font-semibold rounded bg-brand-red text-white transition-colors">Exclusive Fullscreen</button>
+<button class="px-4 py-1.5 text-xs font-medium rounded text-matte-muted hover:text-white transition-colors">Borderless</button>
+<button class="px-4 py-1.5 text-xs font-medium rounded text-matte-muted hover:text-white transition-colors">Windowed</button>
+</div>
+</div>
+</div>
+</section>
+<!-- SUBSECTION: Triple Screen Rig -->
+<section class="space-y-4" id="section-triple">
+<div class="flex items-center justify-between pb-3 border-b border-white/10">
+<div class="flex items-center gap-3">
+<h2 class="text-sm font-bold uppercase tracking-wider font-racing text-matte-white flex items-center gap-2">
+<span class="w-1.5 h-3.5 bg-brand-red rounded-sm"></span>
+            Triple Screen Calibration
+          </h2>
+<span class="text-[10px] font-mono px-2 py-0.5 bg-white/10 text-matte-muted rounded">
+            3 Displays Detected
+          </span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only toggle-checkbox" type="checkbox">
+<div class="w-11 h-6 bg-white/20 rounded-full toggle-label transition-colors duration-150 relative after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+</label>
+</div>
+<div class="space-y-4">
+<!-- Perspective Slider -->
+<div class="bg-brand-card border border-brand-cardBorder rounded-lg p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+<div>
+<div class="text-sm font-semibold text-matte-white">Perspective Correction</div>
+<div class="text-xs text-matte-dim mt-0.5">Lateral wing display geometry</div>
+</div>
+<div class="flex items-center gap-4 w-full sm:w-72">
+<input class="w-full" max="1.00" min="0.00" step="0.01" type="range" value="0.15">
+<div class="font-mono text-xs font-semibold px-2.5 py-1.5 bg-[#0B0F17] border border-white/15 rounded text-matte-white w-16 text-center">
+              0.15
+            </div>
+</div>
+</div>
+<!-- Vertical Compression Slider -->
+<div class="bg-brand-card border border-brand-cardBorder rounded-lg p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+<div>
+<div class="text-sm font-semibold text-matte-white">Vertical Compression</div>
+<div class="text-xs text-matte-dim mt-0.5">Side monitor horizon linearity</div>
+</div>
+<div class="flex items-center gap-4 w-full sm:w-72">
+<input class="w-full" max="1.00" min="0.00" step="0.01" type="range" value="0.08">
+<div class="font-mono text-xs font-semibold px-2.5 py-1.5 bg-[#0B0F17] border border-white/15 rounded text-matte-white w-16 text-center">
+              0.08
+            </div>
+</div>
+</div>
+<!-- Bezel & Field of View -->
+<div class="bg-brand-card border border-brand-cardBorder rounded-lg p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<div>
+<div class="text-sm font-semibold text-matte-white">Bezel &amp; Geometry</div>
+<div class="text-xs text-matte-dim mt-0.5">Calculated FOV coverage</div>
+</div>
+<div class="flex flex-wrap items-center gap-3 font-mono text-xs">
+<div class="bg-[#0B0F17] border border-white/15 px-3 py-1.5 rounded text-matte-white">
+<span class="text-matte-dim mr-1">Width:</span> 698 mm
+            </div>
+<div class="bg-[#0B0F17] border border-white/15 px-3 py-1.5 rounded text-matte-white">
+<span class="text-matte-dim mr-1">Bezel:</span> 7.2 mm
+            </div>
+<div class="bg-[#0B0F17] border border-emerald-500/30 px-3 py-1.5 rounded text-emerald-400 font-semibold">
+<span class="text-emerald-500/60 mr-1">FOV:</span> 178.4°
+            </div>
+</div>
+</div>
+</div>
+</section>
+<!-- SUBSECTION: Graphics & Upscaling -->
+<section class="space-y-4" id="section-upscaling">
+<div class="flex items-center justify-between pb-3 border-b border-white/10">
+<h2 class="text-sm font-bold uppercase tracking-wider font-racing text-matte-white flex items-center gap-2">
+<span class="w-1.5 h-3.5 bg-brand-red rounded-sm"></span>
+          Upscaling Architecture
+        </h2>
+<span class="text-xs font-mono text-matte-dim">DirectX 12</span>
+</div>
+<div class="space-y-4">
+<div class="bg-brand-card border border-brand-cardBorder rounded-lg p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<div>
+<div class="text-sm font-semibold text-matte-white">Upscaler Method</div>
+<div class="text-xs text-matte-dim mt-0.5">Super-resolution technique</div>
+</div>
+<div class="inline-flex bg-[#0B0F17] border border-white/15 p-1 rounded">
+<button class="px-3.5 py-1.5 text-xs font-medium rounded text-matte-muted hover:text-white transition-colors">Off</button>
+<button class="px-3.5 py-1.5 text-xs font-medium rounded text-matte-muted hover:text-white transition-colors">AMD FSR 3.1</button>
+<button class="px-3.5 py-1.5 text-xs font-semibold rounded bg-brand-red text-white transition-colors">NVIDIA DLSS</button>
+<button class="px-3.5 py-1.5 text-xs font-medium rounded text-matte-muted hover:text-white transition-colors">Intel XeSS</button>
+</div>
+</div>
+<div class="bg-brand-card border border-brand-cardBorder rounded-lg p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<div>
+<div class="text-sm font-semibold text-matte-white">Render Scale Quality</div>
+<div class="text-xs text-matte-dim mt-0.5">Internal framebuffer resolution</div>
+</div>
+<div class="flex items-center gap-3">
+<span class="text-xs font-mono text-matte-dim">Quality (67%)</span>
+<div class="font-mono text-xs px-3.5 py-1.5 bg-[#0B0F17] border border-white/15 rounded text-brand-red font-semibold">
+              2560 × 1440 → 3840 × 2160
+            </div>
+</div>
+</div>
+</div>
+</section>
+<!-- SUBSECTION: Frame Pacing -->
+<section class="space-y-4" id="section-framepacing">
+<div class="flex items-center justify-between pb-3 border-b border-white/10">
+<h2 class="text-sm font-bold uppercase tracking-wider font-racing text-matte-white flex items-center gap-2">
+<span class="w-1.5 h-3.5 bg-brand-red rounded-sm"></span>
+          Frame Pacing &amp; Sync
+        </h2>
+<span class="text-xs font-mono text-matte-dim">Max Limit: 288 FPS</span>
+</div>
+<div class="space-y-4">
+<!-- Frame Rate Cap -->
+<div class="bg-brand-card border border-brand-cardBorder rounded-lg p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+<div>
+<div class="text-sm font-semibold text-matte-white">Frame Rate Limit</div>
+<div class="text-xs text-matte-dim mt-0.5">Maximum render framerate</div>
+</div>
+<div class="flex items-center gap-4 w-full sm:w-72">
+<input class="w-full" max="288" min="30" type="range" value="140">
+<div class="font-mono text-xs font-semibold px-2.5 py-1.5 bg-[#0B0F17] border border-white/15 rounded text-matte-white w-20 text-center">
+              140 FPS
+            </div>
+</div>
+</div>
+<!-- Vertical Sync -->
+<div class="bg-brand-card border border-brand-cardBorder rounded-lg p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<div>
+<div class="text-sm font-semibold text-matte-white">Vertical Synchronization</div>
+<div class="text-xs text-matte-dim mt-0.5">V-Sync mode</div>
+</div>
+<div class="inline-flex bg-[#0B0F17] border border-white/15 p-1 rounded">
+<button class="px-3.5 py-1.5 text-xs font-medium rounded text-matte-muted hover:text-white transition-colors">Off</button>
+<button class="px-3.5 py-1.5 text-xs font-semibold rounded bg-brand-red text-white transition-colors">Adaptive</button>
+<button class="px-3.5 py-1.5 text-xs font-medium rounded text-matte-muted hover:text-white transition-colors">On</button>
+</div>
+</div>
+<!-- Low Latency -->
+<div class="bg-brand-card border border-brand-cardBorder rounded-lg p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<div>
+<div class="text-sm font-semibold text-matte-white">Low Latency Mode</div>
+<div class="text-xs text-matte-dim mt-0.5">CPU/GPU pipeline queue timing</div>
+</div>
+<div class="inline-flex bg-[#0B0F17] border border-white/15 p-1 rounded">
+<button class="px-3.5 py-1.5 text-xs font-medium rounded text-matte-muted hover:text-white transition-colors">Off</button>
+<button class="px-3.5 py-1.5 text-xs font-medium rounded text-matte-muted hover:text-white transition-colors">AMD Anti-Lag</button>
+<button class="px-3.5 py-1.5 text-xs font-semibold rounded bg-brand-red text-white transition-colors">NVIDIA Reflex + Boost</button>
+</div>
+</div>
+</div>
+</section>
+<!-- SUBSECTION: Anti-Aliasing -->
+<section class="space-y-4" id="section-antialiasing">
+<div class="flex items-center justify-between pb-3 border-b border-white/10">
+<h2 class="text-sm font-bold uppercase tracking-wider font-racing text-matte-white flex items-center gap-2">
+<span class="w-1.5 h-3.5 bg-brand-red rounded-sm"></span>
+          Anti-Aliasing
+        </h2>
+<span class="text-xs font-mono text-emerald-400">Active</span>
+</div>
+<div class="space-y-4">
+<!-- SSAA -->
+<div class="bg-brand-card border border-brand-cardBorder rounded-lg p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<div>
+<div class="text-sm font-semibold text-matte-white">Supersampling (SSAA)</div>
+<div class="text-xs text-matte-dim mt-0.5">Internal framebuffer resolution multiplier</div>
+</div>
+<div class="inline-flex bg-[#0B0F17] border border-white/15 p-1 rounded">
+<button class="px-3.5 py-1.5 text-xs font-medium rounded text-matte-muted hover:text-white transition-colors">Off</button>
+<button class="px-3.5 py-1.5 text-xs font-medium rounded text-matte-muted hover:text-white transition-colors">125%</button>
+<button class="px-3.5 py-1.5 text-xs font-semibold rounded bg-brand-red text-white transition-colors">150%</button>
+<button class="px-3.5 py-1.5 text-xs font-medium rounded text-matte-muted hover:text-white transition-colors">175%</button>
+<button class="px-3.5 py-1.5 text-xs font-medium rounded text-matte-muted hover:text-white transition-colors">200%</button>
+</div>
+</div>
+<!-- MSAA -->
+<div class="bg-brand-card border border-brand-cardBorder rounded-lg p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<div>
+<div class="text-sm font-semibold text-matte-white">Multi-Sample AA (MSAA)</div>
+<div class="text-xs text-matte-dim mt-0.5">Geometry edge sub-sampling</div>
+</div>
+<div class="inline-flex bg-[#0B0F17] border border-white/15 p-1 rounded">
+<button class="px-3.5 py-1.5 text-xs font-medium rounded text-matte-muted hover:text-white transition-colors">Off</button>
+<button class="px-3.5 py-1.5 text-xs font-medium rounded text-matte-muted hover:text-white transition-colors">2x</button>
+<button class="px-3.5 py-1.5 text-xs font-semibold rounded bg-brand-red text-white transition-colors">4x</button>
+<button class="px-3.5 py-1.5 text-xs font-medium rounded text-matte-muted hover:text-white transition-colors">8x</button>
+</div>
+</div>
+</div>
+</section>
+<div class="h-6"></div>
+</div>
+<!-- RIGHT SIDEBAR: Clean Session Activity & Inspector -->
+<aside class="w-80 border-l border-white/10 bg-[#0D121B]/75 backdrop-blur-md flex flex-col shrink-0 overflow-hidden" data-purpose="activity-inspector-rail">
+<!-- Upper: Session Changes -->
+<div class="flex-1 flex flex-col border-b border-white/10 overflow-hidden">
+<div class="p-4 border-b border-white/10 bg-black/30 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="text-xs font-mono font-semibold uppercase tracking-wider text-matte-white">Session Activity</span>
+<span class="px-1.5 py-0.2 text-[10px] font-mono bg-brand-red text-white rounded">
+            4 Changed
+          </span>
+</div>
+<button class="text-xs text-matte-dim hover:text-matte-white font-mono transition-colors">Reset</button>
+</div>
+<div class="flex-1 overflow-y-auto p-4 space-y-2.5">
+<!-- Item 1 -->
+<div class="p-3 bg-[#0B0F17]/60 border border-white/10 rounded">
+<div class="flex items-center justify-between mb-1">
+<span class="text-xs font-semibold text-matte-white">Supersampling (SSAA)</span>
+<span class="text-[10px] font-mono text-brand-red">+2.4 ms</span>
+</div>
+<div class="text-xs font-mono text-matte-dim flex items-center justify-between">
+<span class="">Off → <span class="text-matte-white font-medium">150%</span></span>
+<button class="text-matte-dim hover:text-matte-white text-xs">↺</button>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="p-3 bg-[#0B0F17]/60 border border-white/10 rounded">
+<div class="flex items-center justify-between mb-1">
+<span class="text-xs font-semibold text-matte-white">Frame Rate Limit</span>
+<span class="text-[10px] font-mono text-emerald-400">Sync</span>
+</div>
+<div class="text-xs font-mono text-matte-dim flex items-center justify-between">
+<span class="">100 → <span class="text-matte-white font-medium">140 FPS</span></span>
+<button class="text-matte-dim hover:text-matte-white text-xs">↺</button>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="p-3 bg-[#0B0F17]/60 border border-white/10 rounded">
+<div class="flex items-center justify-between mb-1">
+<span class="text-xs font-semibold text-matte-white">Low Latency Mode</span>
+<span class="text-[10px] font-mono text-brand-red">-4.1 ms</span>
+</div>
+<div class="text-xs font-mono text-matte-dim flex items-center justify-between">
+<span class="">Off → <span class="text-matte-white font-medium">Reflex Boost</span></span>
+<button class="text-matte-dim hover:text-matte-white text-xs">↺</button>
+</div>
+</div>
+<!-- Item 4 -->
+<div class="p-3 bg-[#0B0F17]/60 border border-white/10 rounded">
+<div class="flex items-center justify-between mb-1">
+<span class="text-xs font-semibold text-matte-white">Perspective Correction</span>
+<span class="text-[10px] font-mono text-matte-dim">Geometry</span>
+</div>
+<div class="text-xs font-mono text-matte-dim flex items-center justify-between">
+<span class="">0.00 → <span class="text-matte-white font-medium">0.15</span></span>
+<button class="text-matte-dim hover:text-matte-white text-xs">↺</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Lower: Setting Inspector -->
+<div class="p-4 space-y-3.5 bg-black/40 overflow-y-auto">
+<div class="flex items-center justify-between">
+<span class="text-[11px] font-mono uppercase tracking-wider text-matte-dim">Inspector Focus</span>
+<span class="text-[10px] font-mono text-matte-white bg-white/10 px-2 py-0.5 rounded">SSAA</span>
+</div>
+<div class="p-3 bg-[#0B0F17]/75 border border-white/10 rounded space-y-1">
+<div class="text-xs font-semibold text-matte-white">Supersampling AA (150%)</div>
+<p class="text-xs text-matte-dim">
+          Renders 5760 × 3240 internal buffer with Lanczos filter.
+        </p>
+</div>
+<div class="grid grid-cols-2 gap-3 text-xs font-mono">
+<div class="p-3 bg-[#0B0F17]/70 border border-white/10 rounded">
+<div class="text-[10px] text-matte-dim uppercase">GPU Frametime</div>
+<div class="text-sm font-semibold text-matte-white mt-1">+2.1 ms</div>
+</div>
+<div class="p-3 bg-[#0B0F17]/70 border border-white/10 rounded">
+<div class="text-[10px] text-matte-dim uppercase">VRAM Usage</div>
+<div class="text-sm font-semibold text-brand-red mt-1">+1.18 GB</div>
+</div>
+</div>
+</div>
+</aside>
+</main>
+<!-- BOTTOM COMMAND BAR -->
+<footer class="relative z-20 h-16 border-t border-white/10 bg-[#0A0E16]/90 px-8 flex items-center justify-between shrink-0 backdrop-blur-md" data-purpose="bottom-command-bar">
+<!-- Left Commands -->
+<div class="flex items-center gap-6">
+<button class="text-xs font-semibold uppercase tracking-wider text-matte-muted hover:text-matte-white transition-colors">
+      BACK
+    </button>
+<button class="text-xs font-semibold uppercase tracking-wider text-matte-muted hover:text-matte-white transition-colors">
+      APPLY
+    </button>
+<button class="text-xs font-semibold uppercase tracking-wider text-matte-muted hover:text-matte-white transition-colors">
+      CANCEL
+    </button>
+<div class="h-4 w-[1px] bg-white/10"></div>
+<div class="hidden lg:flex items-center gap-4 text-xs font-mono text-matte-dim">
+<span class="">RTX 4090 24GB</span>
+<span class="">•</span>
+<span class="">VRAM: 9.4 / 24.0 GB</span>
+<span class="">•</span>
+<span class="">3840 × 2160 @ 144Hz</span>
+</div>
+</div>
+<!-- Right Actions -->
+<div class="flex items-center gap-3">
+<button class="px-4 py-2 text-xs font-mono uppercase tracking-wider text-matte-muted hover:text-matte-white bg-white/5 border border-white/10 rounded transition-colors">
+      Export .ini
+    </button>
+<button class="px-5 py-2 text-xs font-semibold uppercase tracking-wider bg-brand-red hover:bg-brand-redHover text-white rounded transition-colors flex items-center gap-2">
+<span class="">Apply Changes</span>
+<span class="px-1.5 py-0.2 bg-black/30 rounded text-[10px] font-mono">4</span>
+</button>
+</div>
+</footer>
+<!-- CHANGE DISPLAY MODE MODAL -->
+<div class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden" id="resModalOverlay">
+<div class="bg-[#111722] border border-white/20 w-full max-w-lg rounded-lg shadow-2xl overflow-hidden">
+<!-- Header -->
+<div class="px-6 py-4 border-b border-white/10 flex items-center justify-between bg-black/30">
+<div>
+<h3 class="text-sm font-semibold tracking-wider uppercase text-matte-white font-racing">Display Mode Selection</h3>
+<p class="text-xs font-mono text-matte-dim">LG UltraGear 32GS95UE (Primary Head)</p>
+</div>
+<button class="text-matte-dim hover:text-white text-base font-mono" onclick="toggleResModal()">
+        ✕
+      </button>
+</div>
+<!-- Body -->
+<div class="p-6 space-y-5">
+<div>
+<label class="text-xs font-semibold text-matte-muted block mb-2 font-mono uppercase tracking-wider">
+          Resolution Option
+        </label>
+<div class="grid grid-cols-2 gap-2.5" id="resOptionGroup">
+<button class="res-opt flex items-center justify-between p-3.5 border border-brand-red bg-brand-red/10 rounded text-left transition-colors" onclick="selectResolution('3840 × 2160', '16:9', 'UHD 4K')">
+<div>
+<div class="text-xs font-bold text-matte-white font-mono">3840 × 2160</div>
+<div class="text-[11px] font-mono text-matte-dim">UHD 4K (Native)</div>
+</div>
+<span class="text-[10px] font-mono px-1.5 py-0.5 bg-brand-red text-white rounded">MAX</span>
+</button>
+<button class="res-opt flex items-center justify-between p-3.5 border border-white/15 bg-black/20 hover:border-white/30 rounded text-left transition-colors" onclick="selectResolution('2560 × 1440', '16:9', 'QHD 1440p')">
+<div>
+<div class="text-xs font-semibold text-matte-white font-mono">2560 × 1440</div>
+<div class="text-[11px] font-mono text-matte-dim">QHD 1440p</div>
+</div>
+</button>
+<button class="res-opt flex items-center justify-between p-3.5 border border-white/15 bg-black/20 hover:border-white/30 rounded text-left transition-colors" onclick="selectResolution('3440 × 1440', '21:9', 'UWQHD')">
+<div>
+<div class="text-xs font-semibold text-matte-white font-mono">3440 × 1440</div>
+<div class="text-[11px] font-mono text-matte-dim">21:9 Ultrawide</div>
+</div>
+</button>
+<button class="res-opt flex items-center justify-between p-3.5 border border-white/15 bg-black/20 hover:border-white/30 rounded text-left transition-colors" onclick="selectResolution('1920 × 1080', '16:9', 'FHD 1080p')">
+<div>
+<div class="text-xs font-semibold text-matte-white font-mono">1920 × 1080</div>
+<div class="text-[11px] font-mono text-matte-dim">Full HD 1080p</div>
+</div>
+</button>
+</div>
+</div>
+<!-- Aspect Ratio Calculation -->
+<div class="p-3 bg-[#0B0F17]/80 border border-white/10 rounded flex items-center justify-between">
+<span class="text-xs text-matte-dim font-mono">Calculated Aspect:</span>
+<span class="text-xs font-mono font-semibold text-brand-red" id="modalLiveAspect">
+          16:9 Native (1.777:1)
+        </span>
+</div>
+<!-- Refresh Rate -->
+<div>
+<label class="text-xs font-semibold text-matte-muted block mb-2 font-mono uppercase tracking-wider">
+          Refresh Rate
+        </label>
+<div class="grid grid-cols-4 gap-2" id="hzOptionGroup">
+<button class="hz-opt p-2.5 border border-white/15 rounded text-center hover:bg-white/5 transition-colors" onclick="selectHz('60Hz')">
+<div class="text-xs font-semibold text-matte-white font-mono">60 Hz</div>
+</button>
+<button class="hz-opt p-2.5 border border-white/15 rounded text-center hover:bg-white/5 transition-colors" onclick="selectHz('120Hz')">
+<div class="text-xs font-semibold text-matte-white font-mono">120 Hz</div>
+</button>
+<button class="hz-opt p-2.5 border border-brand-red bg-brand-red/10 rounded text-center transition-colors" onclick="selectHz('144Hz')">
+<div class="text-xs font-bold text-brand-red font-mono">144 Hz</div>
+</button>
+<button class="hz-opt p-2.5 border border-white/15 rounded text-center hover:bg-white/5 transition-colors" onclick="selectHz('240Hz')">
+<div class="text-xs font-semibold text-matte-white font-mono">240 Hz</div>
+</button>
+</div>
+</div>
+</div>
+<!-- Footer -->
+<div class="px-6 py-4 bg-black/30 border-t border-white/10 flex items-center justify-end gap-3">
+<button class="px-4 py-2 text-xs font-semibold uppercase tracking-wider text-matte-dim hover:text-white transition-colors" onclick="toggleResModal()">
+        Cancel
+      </button>
+<button class="px-5 py-2 text-xs font-semibold uppercase tracking-wider bg-brand-red hover:bg-brand-redHover text-white rounded transition-colors" onclick="applyNewMode()">
+        Confirm Mode
+      </button>
+</div>
+</div>
+</div>
+<script>
+  function toggleResModal() {
+    const modal = document.getElementById('resModalOverlay');
+    modal.classList.toggle('hidden');
+  }
+
+  let currentSelectedRes = "3840 × 2160";
+  let currentSelectedAspect = "16:9 Native";
+  let currentSelectedHz = "144 Hz";
+
+  function selectResolution(res, aspect, label) {
+    currentSelectedRes = res;
+    currentSelectedAspect = aspect === '16:9' ? '16:9 Native' : (aspect === '21:9' ? '21:9 Ultrawide' : '32:9 Superwide');
+    
+    const aspectDetail = aspect === '16:9' ? '(1.777:1)' : (aspect === '21:9' ? '(2.388:1)' : '(3.555:1)');
+    document.getElementById('modalLiveAspect').textContent = `${currentSelectedAspect} ${aspectDetail}`;
+
+    const buttons = document.querySelectorAll('#resOptionGroup .res-opt');
+    buttons.forEach(btn => {
+      btn.className = 'res-opt flex items-center justify-between p-3.5 border border-white/15 bg-black/20 hover:border-white/30 rounded text-left transition-colors';
+    });
+    event.currentTarget.className = 'res-opt flex items-center justify-between p-3.5 border border-brand-red bg-brand-red/10 rounded text-left transition-colors';
+  }
+
+  function selectHz(hz) {
+    currentSelectedHz = hz;
+    const buttons = document.querySelectorAll('#hzOptionGroup .hz-opt');
+    buttons.forEach(btn => {
+      btn.className = 'hz-opt p-2.5 border border-white/15 rounded text-center hover:bg-white/5 transition-colors';
+      const label = btn.querySelector('.text-xs');
+      if (label) label.className = 'text-xs font-semibold text-matte-white font-mono';
+    });
+    event.currentTarget.className = 'hz-opt p-2.5 border border-brand-red bg-brand-red/10 rounded text-center transition-colors';
+    const activeLabel = event.currentTarget.querySelector('.text-xs');
+    if (activeLabel) activeLabel.className = 'text-xs font-bold text-brand-red font-mono';
+  }
+
+  function applyNewMode() {
+    document.getElementById('cardResolution').textContent = currentSelectedRes;
+    document.getElementById('cardAspectRatio').textContent = currentSelectedAspect;
+    document.getElementById('cardRefreshRate').textContent = currentSelectedHz;
+    document.getElementById('activeModePill').textContent = `${currentSelectedRes} @ ${currentSelectedHz}`;
+    
+    const topAspect = document.getElementById('topAspectReadout');
+    if (topAspect) topAspect.textContent = currentSelectedAspect;
+    const topRes = document.getElementById('topResolutionReadout');
+    if (topRes) topRes.textContent = `${currentSelectedRes} @ ${currentSelectedHz}`;
+
+    toggleResModal();
+  }
+
+  // Keyboard shortcut for filter input
+  document.addEventListener('keydown', (e) => {
+    if (e.key === '/' && document.activeElement.tagName !== 'INPUT') {
+      e.preventDefault();
+      const searchInput = document.querySelector('input[type="text"]');
+      if (searchInput) searchInput.focus();
+    }
+  });
+
+  // Dynamic slider values
+  const sliders = document.querySelectorAll('input[type="range"]');
+  sliders.forEach(slider => {
+    slider.addEventListener('input', (e) => {
+      const valueBox = e.target.parentElement.querySelector('div.font-mono');
+      if (valueBox) {
+        const unit = e.target.max > 10 ? ' FPS' : '';
+        valueBox.textContent = e.target.value + unit;
+      }
+    });
+  });
+</script>
+
+
+</body></html>
