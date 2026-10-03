@@ -7,6 +7,7 @@
 //   data-goto="<path>"                       navigate to a field (its group) and focus it
 //   data-revert="<path>"                     drop a pending change
 //   data-hover="<path>" + data-value         hover preview for option readouts (R13)
+//   data-comment="<target>"                  open the review-comment thread (only when ctx.comment is set)
 import { TIER_LABEL, estimate } from './engine.js';
 
 export const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -77,7 +78,7 @@ export function renderCard(f, ctx) {
     ${icon ? `<span class="card-icon"><span class="ms">${esc(icon)}</span></span>` : ''}
     <div class="card-head">
       <div><div class="card-label">${esc(f.label)} ${proposed}</div>${f.help ? `<div class="card-help">${esc(f.help)}</div>` : ''}</div>
-      <div class="badges">${badges.join('')}</div>
+      <div class="badges">${badges.join('')}${ctx.comment ? ctx.comment(`field:${f.path}`) : ''}</div>
     </div>
     <div class="ctl">${renderControl(f, disabled, ctx)}</div>
     ${f.readouts?.length && f.control !== 'readout' ? `<div class="readouts">${f.readouts.map(r => `<div class="readout ${r.tone === 'warn' ? 'warn' : ''}">${esc(r.text)}</div>`).join('')}</div>` : ''}

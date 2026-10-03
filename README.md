@@ -56,8 +56,8 @@ The main menu and the in-game pages use the WinUI 3 (Fluent) design system, with
 | [schema/](schema/) | The data the engine reads: UI schema v4 (fields × facets), dependency rules v3, the upscaling provider matrix, insight rules and the system-facts schema. Older versions are kept for reference. |
 | [tools/build-ui-schema.mjs](tools/build-ui-schema.mjs) | Generates the UI schema from one compact table, so facet defaults stay consistent. |
 | [fixtures/rigs/](fixtures/rigs/) | Six sample PCs (RTX 5080, RTX 4060 laptop on battery, RTX 4070 + VR, RX 6800, RX 9070 triple-screen, Arc B580) used as facts. |
-| [mockups/](mockups/) | The three pages above, plus the engine (`engine.js`), the facet grouping (`facets.js`), shared renderers (`ui.js`), the main menu's page logic (`main-menu.js`) and the WinUI 3 stylesheet (`fluent.css`). |
-| [tests/engine.test.mjs](tests/engine.test.mjs) | Scenario tests that check the rules against the rigs. |
+| [mockups/](mockups/) | The three pages above, plus the engine (`engine.js`), the facet grouping (`facets.js`), shared renderers (`ui.js`), the main menu's page logic (`main-menu.js`), review comments (`comments.js`) and the WinUI 3 stylesheet (`fluent.css`). |
+| [tests/](tests/) | Scenario tests that check the rules against the rigs (`engine.test.mjs`), and tests for the review-comment log (`comments.test.mjs`). |
 | [input/](input/) | The original game config (v2), the first UI prototype and the WinUI 3 design reference. |
 
 ## Running it
@@ -70,7 +70,7 @@ python -m http.server 8765        # or: npx http-server -p 8765
 #      http://127.0.0.1:8765/mockups/explorer.html
 
 node tools/build-ui-schema.mjs    # regenerate the UI schema after editing the field table
-node --test tests/engine.test.mjs # run the rule scenario tests
+node --test tests/*.test.mjs      # run the rule scenarios and the comment-log tests
 ```
 
 The mockups need HTTP because they load the schemas with `fetch`. Use the dark bar at the top of the main menu to switch rigs and detail level. URL parameters: `?rig=<fixture id>&group=<group id>&detail=basic|advanced|expert`.
@@ -84,6 +84,23 @@ The mockups need HTTP because they load the schemas with `fetch`. Use the dark b
 - **Pin a behavior:** add a scenario to [tests/engine.test.mjs](tests/engine.test.mjs).
 
 Cost and performance figures in the mockups are illustrative estimates and are labelled "est." everywhere.
+
+## Review comments
+
+The main menu lets reviewers leave notes on a whole group (nav tab), a section or a single setting. Each note has a kind: rule, suggestion, question or bug. Click the speech-bubble button next to a group title, a section title or a setting's label to open its thread. **Comments** in the dark mockup bar opens the full collection, where you can:
+
+- browse it by group, section and setting, and jump to any item, including settings hidden at the current detail level;
+- view, copy or download it as JSON or YAML;
+- import a file from another reviewer. Comments are merged by id, so importing the same file twice adds nothing.
+
+How it is stored ([mockups/comments.js](mockups/comments.js)):
+
+- Comments are kept only in this browser, as an append-only log in `localStorage['vsc.comments.v1']`. Each entry is `{ id, target, ts, kind, text, author, ctx: { rig, detail, page } }`.
+- An edit appends a new version (`supersedes: <previous id>`), and a delete appends a tombstone (`deleted: true`). Nothing is ever rewritten, so every target keeps a timestamped history.
+- Targets are `group:<group>`, `section:<group>/<section>` or `field:<path>`, for example `section:performance/upscaling` or `field:display.mode`.
+- The export follows the navigation: `groups[] → sections[] → fields[]`, each with its `comments[]`. Every comment includes its earlier versions in `history[]`. Targets that are no longer in the schema are listed under `orphans`.
+
+**Handing comments over (manual for now):** download the JSON or YAML, save it under `feedback/`, and ask Claude Code to process it. That means grouping the comments, changing [tools/build-ui-schema.mjs](tools/build-ui-schema.mjs), the rules or the docs, regenerating the schema, running the tests and committing. Doing this automatically through a local MCP server is planned as a later stage.
 
 ## Caveats
 

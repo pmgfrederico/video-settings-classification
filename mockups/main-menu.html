@@ -26,6 +26,10 @@
   .devbar a { color: #93C5FD; }
   .devbar .links { display: flex; gap: 14px; flex-shrink: 0; }
   .devbar .rigdesc { color: #94A3B8; overflow: hidden; text-overflow: ellipsis; }
+  .devbar .cmt-open { flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px; font: inherit; color: #CBD5E1; background: #1E293B; border: 1px solid #334155; border-radius: 6px; padding: 2px 8px; }
+  .devbar .cmt-open:hover { background: #334155; color: #fff; }
+  .devbar .cmt-open .ms { font-size: 14px; vertical-align: 0; }
+  .devbar .cmt-open #cmtCount:not(:empty) { min-width: 16px; padding: 0 4px; border-radius: 8px; background: #60A5FA; color: #0F172A; font-weight: 600; text-align: center; }
 
   /* Title bar (WinUI custom title bar with back button) */
   .titlebar { height: 48px; flex-shrink: 0; display: flex; align-items: center; gap: 4px; padding-left: 4px; font-size: 12px; line-height: 16px; }
@@ -139,6 +143,7 @@
   <span class="rigdesc" id="rigdesc"></span>
   <span>Detail</span><div class="seg" id="disc"></div>
   <span>Theme</span><div class="seg" id="theme"></div>
+  <button class="cmt-open" id="comments" title="Review comments: view, export or import"><span class="ms">forum</span>Comments<span id="cmtCount"></span></button>
   <span class="links"><a href="explorer.html" id="toExplorer">Facet explorer →</a><a href="in-game.html" id="toGame">In-game →</a></span>
 </div>
 <div class="titlebar">

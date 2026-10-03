@@ -2,9 +2,11 @@
 // Each page supplies its own markup and stylesheet; this module only needs the element ids
 // (rig, rigdesc, disc, toGame, toExplorer, rigstrip, health, search, nav, center, ledger, ledCount,
 // inspector, inspTag, back, export, fstat, applySum, applyBtn, revertAll, layer).
+// Optional: comments + cmtCount enable review comments (mockups/comments.js) on groups, sections and cards.
 import { evaluate, fromV2, toV2, estimate, TIER_LABEL } from './engine.js';
 import { loadAll } from './data.js';
 import { renderCard, renderLedger, renderInspector, estTiles, tierBadge, esc, enc, dec, fmt, cssId } from './ui.js';
+import { createComments } from './comments.js';
 
 const { bundle, v2, rigs, rigIds } = await loadAll();
 const params = new URLSearchParams(location.search);
@@ -48,6 +50,7 @@ function renderDev() {
   $('rig').innerHTML = rigIds.map(id => `<option value="${id}" ${id === S.rigId ? 'selected' : ''}>${esc(rigs[id].label)}</option>`).join('');
   $('rigdesc').textContent = facts.description;
   $('disc').innerHTML = ['basic', 'advanced', 'expert'].map(d => `<button class="${d === S.disclosure ? 'on' : ''}" data-disc="${d}">${d}</button>`).join('');
+  if (C) $('cmtCount').textContent = C.total() || '';
   withQuery($('toGame'), `rig=${S.rigId}`);
   withQuery($('toExplorer'), `rig=${S.rigId}&detail=${S.disclosure}`);
 }
@@ -90,12 +93,12 @@ function pendingByGroup() {
 function renderNav() {
   const counts = pendingByGroup();
   const worst = vm.insights.some(i => i.severity === 'critical') ? 'var(--rebuild)' : vm.insights.some(i => i.severity === 'warn') ? 'var(--warn)' : vm.insights.length ? 'var(--info)' : 'var(--live)';
-  let html = `<button class="nav-i ${S.group === 'system' && !S.search ? 'on' : ''}" data-group="system"><span class="ms">health_and_safety</span>System &amp; health<span class="sev" style="background:${worst}"></span></button>
+  let html = `<button class="nav-i ${S.group === 'system' && !S.search ? 'on' : ''}" data-group="system"><span class="ms">health_and_safety</span>System &amp; health${navComments('system')}<span class="sev" style="background:${worst}"></span></button>
     <div class="nav-h">Settings</div>`;
   for (const g of bundle.ui.groups) {
     const { visible } = groupStats(g.id);
     if (!visible.length) continue; // R7: groups with nothing applicable disappear
-    html += `<button class="nav-i ${S.group === g.id && !S.search ? 'on' : ''}" data-group="${g.id}"><span class="ms">${g.icon}</span>${esc(g.label)}${counts[g.id] ? `<span class="cnt">${counts[g.id]}</span>` : ''}</button>`;
+    html += `<button class="nav-i ${S.group === g.id && !S.search ? 'on' : ''}" data-group="${g.id}"><span class="ms">${g.icon}</span>${esc(g.label)}${navComments(g.id)}${counts[g.id] ? `<span class="cnt">${counts[g.id]}</span>` : ''}</button>`;
   }
   html += `<div class="disc"><div class="nav-h">Legend</div>
     <div style="display:flex;flex-direction:column;gap:5px">${tierBadge(3)}${tierBadge(2)}${tierBadge(1)}
@@ -103,8 +106,14 @@ function renderNav() {
   $('nav').innerHTML = html;
 }
 
+function navComments(gid) {
+  const n = C?.groupCount(gid);
+  return n ? `<span class="ncmt" title="${n} comment${n > 1 ? 's' : ''}"><span class="ms">chat</span>${n}</span>` : '';
+}
+const cmt = target => (C ? C.button(target) : '');
+
 // A page can set window.cardIcon = field => icon name to give setting cards a header icon.
-const ctx = () => ({ bundle, vm, focus: S.focus, disclosure: S.disclosure, icon: window.cardIcon });
+const ctx = () => ({ bundle, vm, focus: S.focus, disclosure: S.disclosure, icon: window.cardIcon, comment: C?.button });
 
 function renderCenter() {
   const el = $('center');
@@ -125,12 +134,12 @@ function renderGroup(gid) {
   if (byScope) notes.push(`<span class="badge b-also">${byScope} hidden: not used in ${esc(scopeName())}</span>`);
   if (byHw) notes.push(`<span class="badge b-also">${byHw} hidden: not supported by this PC</span>`);
   if (byDisc) notes.push(`<span class="badge b-also">${byDisc} more at a higher detail level</span>`);
-  let html = `<div class="group-h"><h1>${esc(g.label)}</h1></div><div class="ctxnote">${notes.join('') || '<span class="note">Showing everything that applies to this PC.</span>'}</div>`;
+  let html = `<div class="group-h"><h1>${esc(g.label)}</h1>${cmt(`group:${gid}`)}</div><div class="ctxnote">${notes.join('') || '<span class="note">Showing everything that applies to this PC.</span>'}</div>`;
   for (const s of g.sections) {
     const cards = fs.filter(f => f.section === s.id && f.visible && !f.disclosureHidden);
     if (!cards.length) continue;
     const why = s.id === 'triple' ? 'shown because Display mode = Triple' : s.id === 'vr' || s.id === 'vrcomfort' ? 'shown because Display mode = VR' : '';
-    html += `<div class="sec"><div class="sec-h"><h2>${esc(s.label)}</h2>${why ? `<span class="why">${why}</span>` : ''}</div><div class="cards">${cards.map(f => renderCard(f, ctx())).join('')}</div></div>`;
+    html += `<div class="sec" id="sec-${gid}-${s.id}"><div class="sec-h"><h2>${esc(s.label)}</h2>${cmt(`section:${gid}/${s.id}`)}${why ? `<span class="why">${why}</span>` : ''}</div><div class="cards">${cards.map(f => renderCard(f, ctx())).join('')}</div></div>`;
   }
   return html;
 }
@@ -179,7 +188,7 @@ function renderSystem() {
     <div><div class="t">${esc(i.title)}</div><div class="d">${esc(i.detail)}</div></div>
     <div>${i.action ? i.action.type === 'link' ? `<a class="btn" href="${esc(i.action.url)}">${esc(i.action.label)}</a>` : `<button class="btn" data-insight="${n}">${esc(i.action.label)}</button>` : ''}</div></div>`).join('');
 
-  return `<div class="group-h"><h1>System &amp; health</h1></div>
+  return `<div class="group-h"><h1>System &amp; health</h1>${cmt('group:system')}</div>
     <div class="ctxnote">What the game detected on this PC, and what that means for the settings it offers.</div>
     <div class="sys-grid">
       <div class="box"><h3><span class="ms">memory</span>Graphics</h3><div class="rig-name">${esc(facts.gpu.name)}</div><div class="rig-sub">${esc(facts.gpu.arch)} · ${facts.gpu.vramGB} GB VRAM · driver ${esc(facts.gpu.driver)}<br>DXR ${esc(facts.gpu.dxr)} · ${facts.gpu.mobile ? 'Laptop GPU' : 'Desktop GPU'} · ${facts.telemetry.gpuTempC} °C · ${facts.telemetry.gpuUtil}% util</div></div>
@@ -272,9 +281,30 @@ function gotoField(path) {
   document.getElementById(`card-${cssId(path)}`)?.scrollIntoView({ block: 'center' });
 }
 
+// ---------- review comments (only on pages with a #comments button) ----------
+// Shows a comment target on the page: a field's card, a section, or a group.
+function showTarget(target) {
+  const [type, rest] = [target.slice(0, target.indexOf(':')), target.slice(target.indexOf(':') + 1)];
+  if (type === 'field') return gotoField(rest);
+  const [gid, sid] = rest.split('/');
+  if (gid !== 'system' && !bundle.ui.groups.some(g => g.id === gid)) return;
+  S.group = gid; S.search = ''; $('search').value = '';
+  render();
+  if (sid) document.getElementById(`sec-${gid}-${sid}`)?.scrollIntoView({ block: 'start' });
+  else $('center').scrollTop = 0;
+}
+const C = $('comments') ? createComments({
+  bundle, storage: localStorage, layer: $('layer'), toast,
+  context: () => ({ rig: S.rigId, detail: S.disclosure, page: location.pathname.split('/').slice(-2).join('/') }),
+  onChange: () => render(),
+  navigate: showTarget,
+}) : null;
+if (C) $('comments').onclick = () => C.openPanel();
+
 document.addEventListener('click', e => {
-  const t = e.target.closest('[data-set],[data-goto],[data-revert],[data-group],[data-disc],[data-insight],[data-focus]');
+  const t = e.target.closest('[data-comment],[data-set],[data-goto],[data-revert],[data-group],[data-disc],[data-insight],[data-focus]');
   if (!t) return;
+  if (t.dataset.comment) { e.stopPropagation(); return C?.openThread(t.dataset.comment); }
   if (t.dataset.goto) { e.stopPropagation(); return gotoField(t.dataset.goto); }
   if (t.dataset.set) return setValue(t.dataset.set, dec(t.dataset.value));
   if (t.dataset.revert) { S.pending = S.pending.filter(p => p.path !== t.dataset.revert); return render(); }
@@ -322,4 +352,4 @@ $('health').onclick = () => { S.group = 'system'; S.search = ''; render(); };
 loadRig(S.rigId);
 render();
 if (params.get('field')) gotoField(params.get('field'));
-window.__mock = { get vm() { return vm; }, S, setValue, gotoField };
+window.__mock = { get vm() { return vm; }, S, setValue, gotoField, comments: C };
